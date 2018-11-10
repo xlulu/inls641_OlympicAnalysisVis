@@ -1,0 +1,42 @@
+<html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <title>Olympics Data Visualization</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="Olympics-style.css">
+  <link href="https://fonts.googleapis.com/css?family=Merriweather:300,400" rel="stylesheet">
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="Olympics-script.js"></script>
+</head>
+
+<body id="medal">
+  <div class="wrap">
+    <header>
+      <!-- <h1>Olympics Game Data Visulaiation</h1> -->
+      <img id = "title-img" src="Title.png" alt="olympics-title">
+    </header>
+    <nav>
+      <ul class="navitems">
+        <li><a href="Olympics.html" class="navtext">About</a></li>
+        <li><a href="#MedalBoard" class="navtext">MedalBoard</a></li>
+        <li><a href="Olympics-athelete.html" class="navtext">AtheleteBoard</a></li>
+      </ul>
+    </nav>
+    <div class="description">
+      <p>The athlete board is designed to let users find out the age, height and weight of athletes participated in the past Olympic Games and explore their possible sports to develop based on their own data by interacting with the graph.</p>
+      <p>User could view the boxplot describing specific game to find out their answers, in which it provides the median value, maximum, minimum and the scope between the first quarter to the third quarter of age/height/weight.. Instead of providing bar chart, boxplot would help users to figure out the outliers as well as the variation between this. By hovering it, user would see the specific value of each boxplot to know a detailed age scope of specific games. By selecting the toggle button of gender choices, users can see those statistical information only about female/male athletes.</p>
+    </div>
+    <div class="chart" id = "MedalBoard">
+      <h2>MedalBoard</h2>
+      //here to draw the chart
+      <div class = "medalchart"></div>
+    </div>
+    <footer>.......</footer>
+  </div>
+</body>
+
+
+</html>
