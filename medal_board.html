@@ -1,4 +1,4 @@
-<!-- 
+<!--
 references used in this project:
     http://bl.ocks.org/jeremycflin/b43ab253f3ae02dced07
     https://github.com/jdamiani27/Data-Visualization-and-D3/blob/master/lesson4/world_countries.json?short_path=c663831
@@ -11,7 +11,7 @@ references used in this project:
 <script src="https://d3js.org/topojson.v1.min.js"></script>
 <script src="https://d3js.org/d3-queue.v3.min.js"></script>
 <style>
-    
+
 </style>
 </head>
 <body>
@@ -63,11 +63,24 @@ references used in this project:
 
         function show_medals (error, country_data, medal_data) {
 
-            svg.append("g")
-                .attr("class", "countries").selectAll("path").data(country_data.features)
-                .enter().append("path")
-                .attr("d", path)
-                .style("fill", "#d2d2d2")
+          svg.append("g")
+              .attr("class", "countries").selectAll("path").data(country_data.features)
+              .enter().append("path")
+              .attr("d", path)
+              .style("fill", "#d4d4d4")
+              .style("opacity",0.6)
+              .on('mouseover',function(d){
+                  d3.select(this)
+                    .style("opacity", 1.0)
+                    .style("stroke","white")
+                    .style("stroke-width",2);
+                  })
+              .on('mouseout', function(d){
+                  d3.select(this)
+                    .style("opacity", 0.6)
+                    .style("stroke","white")
+                    .style("stroke-width", 0);
+                  });
 
 
             svg.append("path")
