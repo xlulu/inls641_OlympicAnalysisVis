@@ -53,7 +53,7 @@
         path = d3.geoPath().projection(projection);
 
         d3.queue()
-          .defer(d3.json, "world_countries.json")
+          .defer(d3.json, "https://raw.githubusercontent.com/xlulu/inls641_OlympicAnalysisVis/master/world_countries.json")
           .await(show_medals);
 
         function show_medals (error, country_data, medal_data) {
