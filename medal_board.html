@@ -1,0 +1,193 @@
+<html>
+<head>
+<title>project test</title>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://unpkg.com/simple-statistics@6.0.1/dist/simple-statistics.min.js"></script>
+<script src="https://d3js.org/topojson.v1.min.js"></script>
+<script src="https://d3js.org/d3-queue.v3.min.js"></script>
+<style>
+/* Style information for axis labels */
+.axis-label {
+    font-family: sans-serif;
+    font-size: 12px;
+}
+
+/* Style information for axis lines and tick marks */
+.axis path,
+.axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 11px;
+}
+
+.regression-line {
+    stroke: black;
+    stroke-width: 1;
+    stroke-dasharray: 10,8;
+}
+
+</style>
+</head>
+<body>
+
+    <!--
+    This span is used to show "details on demand" when a circle in the scatterplot is moused over.
+    -->
+    <span id="details">&nbsp;</span><br/>
+
+    <!--
+    This span is used to show the computed correlation value for the selected subset of data.
+    -->
+    <span id="correlation">&nbsp;</span>
+
+    <!--
+    This is the container in which D3 will draw the scatter plot.
+    -->
+    <div id="vis_container">
+    </div>
+
+    <p>
+    The data used in this exercise was retrieved on July 23, 2013 from the Henry J. Kaiser Family Foundation's 2011
+    study on State Health Facts (http://kff.org/statedata/).
+    </p>
+    <!--
+    Finally, here comes the actual JavaScript code.
+    -->
+    <script>
+        var height = 500;
+        var width = 960;
+        var svg = d3.select("#vis_container")
+                        .append("svg")
+                        .attr("width", width)
+                        .attr("height", height);
+
+        d3.queue()
+          .defer(d3.json, "world-countries.json")
+          .await(show_medals)
+
+        // Create projection
+
+        var projection = d3.geoMercator()
+                               .scale(130)
+                              .translate( [width / 2, height / 1.5]);
+
+        // create path
+        var path = d3.geoPath();
+        var path = d3.geoPath().projection(projection);
+
+        function show_medals(error, data) {
+          console.log(data)
+          var countries = d3.json.feature(data, data.objects.countries)
+
+        }
+
+        var country_id = d3.map(data, function(d){return d.NOC;}).keys()
+
+
+
+                    svg.append("g")
+                        .attr("class", "map");
+
+                    svg.append("g")
+                        .attr("class", "countries")
+                      .selectAll("path")
+                        .data(country_id)
+                      .enter().append("path")
+                        .attr("d", path)
+                        .style("fill", "gray")
+                        .style('stroke', 'white')
+                        .style('stroke-width', 1.5)
+                        .style("opacity",0.8)
+
+
+                    svg.append("path")
+                        .datum(topojson.mesh(country_id))
+                        .attr("class", "names")
+                        .attr("d", path);
+
+
+
+
+
+
+        // Next, we define the renderVis callback.  This is used when the page first loads
+        // to draw data for the entire US.  It is also called whenever the select control
+        // is changed (e.g., to show only the South or only the Northeast).
+        function renderVis(_subset) {
+            var data_subset = data;
+            if (_subset != "United States") {
+                data_subset = data.filter(function(d) {return (d.region == _subset); });
+            }
+
+            // Update the correlation score now that we have the requested data subset.
+            updateCorrelation(data_subset,_subset);
+
+            // Compute and render the regression line.
+            // INLS641: You should add code here.
+
+            // Render the scatterplot.
+            var circles = svg.selectAll("circle").data(data_subset, function(d) {return d.state;});
+
+            circles.exit()
+                .transition()
+                    .duration(250)
+                    .attr("r",0)
+                    .remove();
+
+            circles.enter().append("circle")
+                .attr("r", 0)
+                .attr("cx", function(d) { return x(d.poverty_rate); })
+                .attr("cy", function(d) { return y(d.life_expectancy); })
+                .style("fill", function(d) { return region_color(regions.indexOf(d.region)); })
+                .on("mouseover", function(){
+                    document.getElementById("details").innerHTML = this.__data__.state + " has a life expectancy of " +
+                                                                   this.__data__.life_expectancy + " and a poverty rate of " +
+                                                                   this.__data__.poverty_rate + "%.";
+                })
+                .on("mouseout", function(){ document.getElementById("details").innerHTML = "&nbsp;"; })
+                // Animate the radius to have the circles slowly grow to full size.
+                .transition()
+                    .duration(750)
+                    .attr("r",5)
+                    // Finally, go back to the enter selection (the circles to which we just added a transition) to
+                    // add an svg:title for mouse hovers.
+                    .selection().append("svg:title")
+                        .text(function(d) { return d.state; });
+
+            // Note: we don't need to deal with the update selection.  WHY?
+        }
+
+        // Update the correlation score based on the selected subset.
+        function updateCorrelation(data_subset, _region) {
+            // INLS641: You should add code here.
+            var life_expectancy = data_subset.map(function(d) {return d.life_expectancy});
+            var poverty_rate = data_subset.map(function(d) {return d.poverty_rate});
+            var score = ss.sampleCorrelation(life_expectancy, poverty_rate).toFixed(2)
+            document.getElementById("correlation").innerHTML = "In the " + _region + ", life expectancy and poverty rate have" +
+                                                               " a correlation score of " + score + ".";
+            var pl_points =data_subset.map(function(d) {return [d.poverty_rate, d.life_expectancy]});
+            var regression = ss.linearRegression(pl_points)
+            var m = regression['m']
+            var b = regression['b']
+            console.log(m,b);
+
+            var regression_line = svg.selectAll(".regression-line");
+
+            regression_line
+              .transition()
+                  .duration(750)
+                  .attr("x1", x(0))
+                  .attr("y1", y(b))
+                  .attr("x2", x(30))
+                  .attr("y2", y(m*30+b));
+
+        }
+
+    </script>
+</body>
+</html>
