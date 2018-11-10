@@ -1,0 +1,119 @@
+---
+title: "Analysis of 120 Years of Olympic Athletes and Results"
+author: "Yiwen Jiang | Tianlin Lan | Lu Xu | Yu Yuan"
+date: "10/7/2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Load Data
+
+```{r olympic}
+setwd("/Users/ltl/Desktop/2018-Fall/INLS641/Project/data_clean")
+olympics <- read.csv("athlete_events.csv")
+olympics <- as.tibble(olympics)
+olympics
+```
+
+## Remove Winter Olympic Data & Null data
+
+```{r clean-1}
+# Remove Winter Olympic Data
+# The size of dataset was reduced from 271,116 to 222,552 rows.
+SummerData <- olympics %>% filter(Season == "Summer")
+SummerData
+
+# Remove rows with null values in Height or Weight or Age
+# The size of dataset was reduced from 222,552 to 166,706 rows.
+SummerData <- 
+  SummerData %>% drop_na(Height, Weight, Age)
+SummerData
+```
+
+## Select the Will-be-excluded Sports.
+
+We need to decide and select the sports that will be excluded from our project. Those sports are discontinued sports or sports with fewer participant countries. We have no bias on those sports. But in order to keep consistent with the scope of our project, we will remove them.
+
+First, we extract two tables from our original dataset. One is `spt_year_num` (sport year information) which contains the sport name, first held year, last held year and held times. Another is `spt_ctry_num` (sport country number) which contains the sport name and the number of participant country.
+
+```{r clean-2}
+# spt_held_number
+spt_year <- 
+  SummerData %>%
+    group_by(Sport, Year) %>%
+    count()
+
+spt_held_number <-
+  spt_year %>%
+    group_by(Sport) %>%
+    count() %>%
+    arrange(nn)
+
+# spt_year_info (firstY, lastY)
+spt_year_info <-
+  spt_year %>%
+    group_by(Sport) %>%
+    summarise(lastY = max(Year), firstY = min(Year)) %>%
+    arrange(lastY)
+
+# spt_year_num (combine upper two tables' info)
+spt_year_num <-
+  inner_join(spt_year_info, spt_held_number, by = "Sport") %>%
+  arrange(nn, lastY) %>%
+  rename(held_times = nn)
+
+# spt_ctry_num
+ctr_event <- 
+  SummerData %>% 
+  select(Sport, NOC)
+
+spt_ctry_num <- 
+  ctr_event[!duplicated(ctr_event),] %>%
+  group_by(Sport) %>%
+  count() %>%
+  arrange(n) %>%
+  rename(number_of_countries = n)
+
+spt_ctry_num
+```
+
+Then use the upper two tables, we selected the candidates of the will-be-excluded sports using two principles and combine their results.
+
+* `a`: according to the number of held times of a Sport program. We found the sports held less than 10 times in Olympic history and not held in recent 5 Olympics. Besides, we also selected the special sport of one Olympic which has the characteristic that `lastY == firstY`.
+
+* `b`: according to the number of participant countries. We found the sports have less than 20 participant countries.
+
+```{r clean-3}
+# Sports held less than 10 times in Olympic history and not held in recent 5 Olympics. 
+# Besides, "lastY == firstY" implies the special sport events of each Olympic.
+# So, they will be removed too.
+a <- filter(spt_year_num, (lastY == firstY) | ((held_times <= 40) & (lastY < 1996)))
+a$Sport
+# Sports have less than 20 participant countries
+b <- filter(spt_ctry_num, number_of_countries <= 20)
+b$Sport
+# Sports we will remove from the dataset
+(c <- union(a$Sport, b$Sport))
+```
+
+## Get Updated Dataset
+
+Finally, remove data of those sports and store our data into a new csv file.
+
+```{r clean-4}
+# Remove rows with Sport in Sports
+# The size of dataset was reduced from 166,706 to 164,913 rows.
+ProjectData <- 
+  SummerData %>%
+    filter(!Sport %in% c)
+ProjectData
+
+# Output the new dataset.
+write.csv(ProjectData, '/Users/ltl/Desktop/2018-Fall/INLS641/Project/Project_Data.csv')
+
+```
+
