@@ -40,10 +40,7 @@ function show_medals (error, country_data, medal_data) {
                   .append("svg")
                   .attr("width", "100%")
                   .attr("height", 450)
-                  .style("padding-top", "100px")
-                  .style("margin-top", "20px")
-                  .append('g')
-                  .attr('class', 'map');
+                  .style("margin-top", "20px");
 
   var path = d3.geoPath();
 
@@ -52,32 +49,56 @@ function show_medals (error, country_data, medal_data) {
 
   path = d3.geoPath().projection(projection);
 
-    console.log(country_data.features.id)
 
-    svg.append("g")
-        .attr("class", "countries").selectAll("path").data(country_data.features)
+
+  // Tool tip for showing the state when mouse over the point
+  var tool_tip = d3.tip()
+    .attr("class", "d3-tip")
+    .offset([-8, 0])
+    .html(function(d){
+      return d.properties.name+": "+d.medal_count;
+    });
+  tool_tip(svg);
+
+  count_medals(country_data, medal_data);
+
+  svg.append("g")
+        .attr("class", "countries")
+        .attr("width", "100%")
+        .attr("height", 450)
+        .style("margin-top", "20px")
+        .selectAll("path").data(country_data.features)
         .enter().append("path")
         .attr("d", path)
         .style("fill", "#d4d4d4")
         .style("opacity",0.6)
         .on('mouseover',function(d){
+            if(d.medal_count){
+              tool_tip.show(d);}
             d3.select(this)
               .style("opacity", 1.0)
               .style("stroke","white")
               .style("stroke-width",2);
             })
         .on('mouseout', function(d){
+          if(d.medal_count){
+            tool_tip.hide(d);}
             d3.select(this)
               .style("opacity", 0.6)
               .style("stroke","white")
               .style("stroke-width", 0);
-});
+        });
 
+}
 
-    svg.append("path")
-        .datum(topojson.mesh(country_data.features, function(a, b) { return a.id !== b.id; }))
-        // .datum(topojson.mesh(data.features, function(a, b) { return a !== b; }))
-        .attr("class", "names")
-        .attr("d", path);
+function count_medals(country_data, medal_data){
+  var medal_count_by_ctry = {};
 
+  medal_data.forEach(function(d) {
+      if(!medal_count_by_ctry[d.NOC]) {
+            medal_count_by_ctry[d.NOC] = 0;
+      }
+      medal_count_by_ctry[d.NOC]++
+      });
+  country_data.features.forEach(function(d) { d.medal_count = medal_count_by_ctry[d.id];});
 }
