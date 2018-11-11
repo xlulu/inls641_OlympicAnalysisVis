@@ -62,6 +62,16 @@ function show_medals (error, country_data, medal_data) {
 
   count_medals(country_data, medal_data);
 
+  var min_medals = d3.min(country_data.features, function(d){ return d.medal_count;});
+  var max_medals = d3.max(country_data.features, function(d){ return d.medal_count;});
+  console.log(min_medals, max_medals);
+
+
+  var radius = d3.scaleLinear()
+      .domain([0, max_medals])
+      .range([0, 30]);
+
+
   svg.append("g")
         .attr("class", "countries")
         .attr("width", "100%")
@@ -89,16 +99,33 @@ function show_medals (error, country_data, medal_data) {
               .style("stroke-width", 0);
         });
 
+    svg.append("g")
+        .attr("class", "bubble")
+      .selectAll("circle")
+        .data(country_data.features)
+      .enter().append("circle")
+        .attr("transform", function(d) { return "translate(" + path.centroid(d) + ")"; })
+        .attr("r", function(d) { return radius(d.medal_count); })
+        .style("fill", "#2ecc71");
+
 }
 
 function count_medals(country_data, medal_data){
   var medal_count_by_ctry = {};
 
   medal_data.forEach(function(d) {
-      if(!medal_count_by_ctry[d.NOC]) {
-            medal_count_by_ctry[d.NOC] = 0;
-      }
-      medal_count_by_ctry[d.NOC]++
-      });
-  country_data.features.forEach(function(d) { d.medal_count = medal_count_by_ctry[d.id];});
+
+      if(d.Year == "2008"){
+        if(!medal_count_by_ctry[d.NOC])
+              medal_count_by_ctry[d.NOC] = 0;
+
+        medal_count_by_ctry[d.NOC]++;
+      }});
+      
+  country_data.features.forEach(function(d) {
+    if(medal_count_by_ctry[d.id])
+      d.medal_count = medal_count_by_ctry[d.id];
+    else
+      d.medal_count = 0;
+    });
 }
