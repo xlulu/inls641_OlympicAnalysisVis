@@ -168,28 +168,26 @@ $(document).ready(() => {
 class MedalVis_Location {
 
     constructor(country_data, medal_data) {
+        var this_v = this;
         this.medal = "All";
         this.game = "All";
+        this.year = "1904";
         this.country_data = country_data;
         this.medal_data = medal_data;
         this.radius = d3.scaleLinear()
             .domain([0, 300])
             .range([0, 40]);
-
-        this.tool_tip = d3.tip()
-            .attr("class", "d3-tip")
-            .offset([-8, 0])
-            .html(function(d) {
-                return d.properties.name+": "+d.medal_count;
-            });
         // Get a reference to the SVG element.
         this.svg = d3.select("#medal-chart")
                         .append("svg")
                         .attr("width", "100%")
                         .attr("height", 600)
                         .style("margin-top", "20px");
+    }
 
-        this.tool_tip(this.svg);
+    setYear(new_year) {
+      this.year = new_year;
+      this.show_medals_changes();
     }
 
     // Callback for changing the kind of the medal.
@@ -204,19 +202,17 @@ class MedalVis_Location {
         this.show_medals_changes();
     }
 
-    count_medals(country_data, medal_data){
+    // Count the medals
+    count_medals(medal_data_year){
       var medal_count_by_ctry = {};
 
-      medal_data.forEach(function(d) {
-
-          if(d.Year == "2008"){
+      medal_data_year.forEach(function(d) {
             if(!medal_count_by_ctry[d.NOC])
                   medal_count_by_ctry[d.NOC] = 0;
-
             medal_count_by_ctry[d.NOC]++;
-          }});
+          });
 
-      country_data.features.forEach(function(d) {
+      this.country_data.features.forEach(function(d) {
         if(medal_count_by_ctry[d.id])
           d.medal_count = medal_count_by_ctry[d.id];
         else
@@ -224,19 +220,55 @@ class MedalVis_Location {
         });
     }
 
-    data_filter(){
+    // Count medals for specific kind (gold, silver and bronze)
+    count_medals_kind(country_id){
       var thisvis = this;
-      if (this.medal == "All" && this.game == "All")
-        return this.medal_data;
-      else if (this.medal == "All")
-        return this.medal_data.filter(function(d){ return d.Sport == thisvis.game;});
-      else if (this.game == "All")
-        return this.medal_data.filter(function(d){ return d.Medal == thisvis.medal;});
-      else
-        return this.medal_data.filter(function(d){ return (d.Medal == thisvis.medal && d.Sport == thisvis.game);});
+      var medals_kind = {};
+      var medal_data_year = this.medal_data.filter(function(d){ return d.Year == thisvis.year;});
+      var country_medal_data = medal_data_year.filter(function(d){ return (d.NOC == country_id);});
+      country_medal_data.forEach(function(d){
+        if(!medals_kind[d.Medal])
+              medals_kind[d.Medal] = 0;
+        medals_kind[d.Medal]++;
+      });
+      return medals_kind;
     }
 
-    // show bubbles on the world map in default mode
+    // Count top-5 sports for each country
+    count_top_5(country_id){
+      var sport_medals = {};
+      var sortable = [];
+      var thisvis = this;
+      var medal_data_year = this.medal_data.filter(function(d){ return d.Year == thisvis.year;});
+      var country_medal_data = medal_data_year.filter(function(d){ return (d.NOC == country_id);});
+      country_medal_data.forEach(function(d){
+        if(!sport_medals[d.Sport])
+              sport_medals[d.Sport] = 0;
+        sport_medals[d.Sport]++;
+      });
+
+      for (var sport in sport_medals)
+            sortable.push([sport, sport_medals[sport]]);
+
+      sortable.sort(function(sport_a, sport_b){ return sport_b[1] - sport_a[1];});
+      return sortable;
+    }
+
+    // Filter the data based on user's choices
+    data_filter(){
+      var thisvis = this;
+      var medal_data_year = this.medal_data.filter(function(d){ return d.Year == thisvis.year;});
+      if (this.medal == "All" && this.game == "All")
+        return medal_data_year;
+      else if (this.medal == "All")
+        return medal_data_year.filter(function(d){ return d.Sport == thisvis.game;});
+      else if (this.game == "All")
+        return medal_data_year.filter(function(d){ return d.Medal == thisvis.medal;});
+      else
+        return medal_data_year.filter(function(d){ return (d.Medal == thisvis.medal && d.Sport == thisvis.game);});
+    }
+
+    // Show bubbles on the world map in default mode (All, All)
     show_medals_default(){
 
         var thisvis = this;
@@ -254,11 +286,23 @@ class MedalVis_Location {
             .attr("class", "d3-tip")
             .offset([-8, 0])
             .html(function(d){
-              return d.properties.name+": "+d.medal_count;
+              var top5_html = "<table><tr><td align=\"center\">" + d.properties.name + ": " + d.medal_count + "</td></tr>";
+              var medals_kind = thisvis.count_medals_kind(d.id);
+              top5_html += "<tr><td><span class=\"golddot\"></span> " + medals_kind["Gold"];
+              top5_html += "<span class=\"silverdot\"></span> " + medals_kind["Silver"];
+              top5_html += "<span class=\"bronzedot\"></span> " + medals_kind["Bronze"] + "</td></tr>";
+
+              var sorted_sport = thisvis.count_top_5(d.id);
+
+              for (var i = 0; i < (sorted_sport.length < 5 ? sorted_sport.length : 5); i++){
+                  var order = i+1;
+                  top5_html += "<tr><td>#" + order +" "+ sorted_sport[i][0] + ":</td><td>" + sorted_sport[i][1] + "</td></tr>";
+              }
+              return top5_html;
             });
         tool_tip(this.svg);
 
-        this.count_medals(this.country_data, this.medal_data);
+        this.count_medals(this.medal_data.filter(function(d){ return d.Year == "1904";}));
 
         this.svg.append("g")
               .attr("class", "countries")
@@ -300,10 +344,10 @@ class MedalVis_Location {
                 });
     }
 
-    // change bubble size based on user's choices
+    // Change bubble size based on user's choices
     show_medals_changes() {
         var thisvis = this;
-        this.count_medals(this.country_data, this.data_filter());
+        this.count_medals(this.data_filter());
 
         this.svg.selectAll("circle")
           .data(this.country_data.features)

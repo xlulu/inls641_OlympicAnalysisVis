@@ -43,12 +43,23 @@
       <div class = "time-slot"></div>
       <!-- here to the drop-down menu -->
       <div class = "drop-down medal-menu">
+        <div class = "select-year">
+          <!-- 'medalFilter' is used to filter the data by specific medal  -->
+          <select id = "year-options" onchange="medal_vis_location.setYear(this.value);">
+            <option value="1904">1904</option>          
+            <option value="1996">1996</option>
+            <option value="2000">2000</option>
+            <option value="2004">2004</option>
+            <option value="2008">2008</option>
+          </select>
+          <b>years</b>
+        </div>
         <div class = "select-medal">
           <!-- 'medalFilter' is used to filter the data by specific medal  -->
           <select id = "medal-options" onchange="medal_vis_location.setMedal(this.value);">
             <option value="All">All</option>
             <option value="Gold">Gold</option>
-            <option value="Silver">Silsver</option>
+            <option value="Silver">Silver</option>
             <option value="Bronze">Bronze</option>
           </select>
           <b>medals</b>
