@@ -5,6 +5,7 @@ $(document).ready(() => {
     "Shooting", "Archery",
     "Swimming", "Athletics", "Cycling", "Modern Pentathlon", "Triathlon", "Canoeing", "Rowing", "Sailing"
   ];
+
   show_map();
   //add list into the game drop-down menu
   for (i in games) {
@@ -36,16 +37,20 @@ function show_map(){
 
 function show_medals (error, country_data, medal_data) {
 
+  var chart_w = $("#medal-chart").width();
+  console.log(chart_w);
+
   var svg = d3.select("#medal-chart")
                   .append("svg")
                   .attr("width", "100%")
-                  .attr("height", 450)
+                  .attr("height", 600)
                   .style("margin-top", "20px");
 
   var path = d3.geoPath();
 
   var projection = d3.geoMercator()
-      .scale(130);
+      .scale(chart_w / 2 / Math.PI)
+      .translate([chart_w / 2, 800 / 2]);
 
   path = d3.geoPath().projection(projection);
 
@@ -121,7 +126,7 @@ function count_medals(country_data, medal_data){
 
         medal_count_by_ctry[d.NOC]++;
       }});
-      
+
   country_data.features.forEach(function(d) {
     if(medal_count_by_ctry[d.id])
       d.medal_count = medal_count_by_ctry[d.id];
