@@ -45,18 +45,18 @@
       <div class = "drop-down medal-menu">
         <div class = "select-medal">
           <!-- 'medalFilter' is used to filter the data by specific medal  -->
-          <select onchange="medalFilter(this.options[this.selectedIndex].value);">
-            <option value="all">All</option>
-            <option value="gold">Gold</option>
-            <option value="sliver">Sliver</option>
-            <option value="bronze">Bronze</option>
+          <select id = "medal-options" onchange="medal_vis_location.setMedal(this.value);">
+            <option value="All">All</option>
+            <option value="Gold">Gold</option>
+            <option value="Silver">Silsver</option>
+            <option value="Bronze">Bronze</option>
           </select>
           <b>medals</b>
         </div>
         <div class = "select-game">
           <!-- 'gameFilter' is used to filter the data by specific game  -->
-          <select classonchange="gameFilter(this.options[this.selectedIndex].value);">
-            <option value="all" id = "games-all">All</option>
+          <select id = "game-options" onchange="medal_vis_location.setGame(this.value);">
+            <option value="All" id = "games-all">All</option>
           </select>
           <b>games</b>
         </div>
