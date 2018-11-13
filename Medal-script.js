@@ -168,7 +168,7 @@ $(document).ready(() => {
 class MedalVis_Location {
 
     constructor(country_data, medal_data) {
-        var this_v = this;
+        var thisvis = this;
         this.medal = "All";
         this.game = "All";
         this.year = "1904";
@@ -177,12 +177,32 @@ class MedalVis_Location {
         this.radius = d3.scaleLinear()
             .domain([0, 300])
             .range([0, 40]);
+
         // Get a reference to the SVG element.
         this.svg = d3.select("#medal-chart")
                         .append("svg")
                         .attr("width", "100%")
                         .attr("height", 600)
                         .style("margin-top", "20px");
+
+        this.tool_tip = d3.tip()
+                          .attr("class", "d3-tip")
+                          .offset([-8, 0])
+                          .html(function(d){
+                              var top5_html = "<table><tr><td align=\"center\">" + d.properties.name + ": " + d.medal_count + "</td></tr>";
+                              var medals_kind = thisvis.count_medals_kind(d.id);
+                              top5_html += "<tr><td><span class=\"golddot\"></span> " + medals_kind["Gold"];
+                              top5_html += "<span class=\"silverdot\"></span> " + medals_kind["Silver"];
+                              top5_html += "<span class=\"bronzedot\"></span> " + medals_kind["Bronze"] + "</td></tr>";
+
+                              var sorted_sport = thisvis.count_top_5(d.id);
+
+                              for (var i = 0; i < (sorted_sport.length < 5 ? sorted_sport.length : 5); i++){
+                                  var order = i+1;
+                                  top5_html += "<tr><td>#" + order +" "+ sorted_sport[i][0] + ":</td><td>" + sorted_sport[i][1] + "</td></tr>";
+                              }
+                              return top5_html;
+                            });
     }
 
     setYear(new_year) {
@@ -282,25 +302,7 @@ class MedalVis_Location {
 
         path = d3.geoPath().projection(projection);
 
-        var tool_tip = d3.tip()
-            .attr("class", "d3-tip")
-            .offset([-8, 0])
-            .html(function(d){
-              var top5_html = "<table><tr><td align=\"center\">" + d.properties.name + ": " + d.medal_count + "</td></tr>";
-              var medals_kind = thisvis.count_medals_kind(d.id);
-              top5_html += "<tr><td><span class=\"golddot\"></span> " + medals_kind["Gold"];
-              top5_html += "<span class=\"silverdot\"></span> " + medals_kind["Silver"];
-              top5_html += "<span class=\"bronzedot\"></span> " + medals_kind["Bronze"] + "</td></tr>";
-
-              var sorted_sport = thisvis.count_top_5(d.id);
-
-              for (var i = 0; i < (sorted_sport.length < 5 ? sorted_sport.length : 5); i++){
-                  var order = i+1;
-                  top5_html += "<tr><td>#" + order +" "+ sorted_sport[i][0] + ":</td><td>" + sorted_sport[i][1] + "</td></tr>";
-              }
-              return top5_html;
-            });
-        tool_tip(this.svg);
+        this.tool_tip(this.svg);
 
         this.count_medals(this.medal_data.filter(function(d){ return d.Year == "1904";}));
 
@@ -326,7 +328,7 @@ class MedalVis_Location {
                 .style("fill", "#2ecc71")
                 .on('mouseover',function(d){
                     if(d.medal_count){
-                      tool_tip.show(d);}
+                      thisvis.tool_tip.show(d);}
                     d3.select("#"+d.id)
                       .style("opacity", 1.0)
                       .style("stroke","white")
@@ -335,7 +337,7 @@ class MedalVis_Location {
                     })
                 .on('mouseout', function(d){
                   if(d.medal_count){
-                    tool_tip.hide(d);}
+                    thisvis.tool_tip.hide(d);}
                     d3.select("#"+d.id)
                       .style("opacity", 0.6)
                       .style("stroke","white")
@@ -348,9 +350,39 @@ class MedalVis_Location {
     show_medals_changes() {
         var thisvis = this;
         this.count_medals(this.data_filter());
+        var changed_tool_tip = this.tool_tip;
+
+        if(!(this.medal == "All" && this.game == "All"))
+        {
+            var changed_tool_tip = d3.tip()
+                                     .attr("class", "d3-tip")
+                                     .offset([-8, 0])
+                                     .html(function(d){
+                                          return d.properties.name + ": " + d.medal_count;
+                                       });
+        }
+        changed_tool_tip(this.svg);
 
         this.svg.selectAll("circle")
           .data(this.country_data.features)
-                          .attr("r", function(d) { return thisvis.radius(d.medal_count); });
+                          .attr("r", function(d) { return thisvis.radius(d.medal_count); })
+                          .on('mouseover',function(d){
+                              if(d.medal_count){
+                                changed_tool_tip.show(d);}
+                              d3.select("#"+d.id)
+                                .style("opacity", 1.0)
+                                .style("stroke","white")
+                                .style("stroke-width",2);
+                              d3.select(this).style("opacity", 0.6);
+                              })
+                          .on('mouseout', function(d){
+                            if(d.medal_count){
+                              changed_tool_tip.hide(d);}
+                              d3.select("#"+d.id)
+                                .style("opacity", 0.6)
+                                .style("stroke","white")
+                                .style("stroke-width", 0);
+                              d3.select(this).style("opacity", 1);
+                          });;
     }
 }
