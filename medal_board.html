@@ -1,0 +1,98 @@
+<!--
+references used in this project:
+    http://bl.ocks.org/jeremycflin/b43ab253f3ae02dced07
+    https://github.com/jdamiani27/Data-Visualization-and-D3/blob/master/lesson4/world_countries.json?short_path=c663831
+-->
+<html>
+<head>
+<title>project test</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js"></script>
+<script src="https://unpkg.com/simple-statistics@6.0.1/dist/simple-statistics.min.js"></script>
+<script src="https://d3js.org/topojson.v1.min.js"></script>
+<script src="https://d3js.org/d3-queue.v3.min.js"></script>
+<style>
+
+</style>
+</head>
+<body>
+
+    <!--
+    This span is used to show "details on demand" when a circle in the scatterplot is moused over.
+    -->
+    <span id="details">&nbsp;</span><br/>
+
+    <!--
+    This span is used to show the computed correlation value for the selected subset of data.
+    -->
+    <span id="correlation">&nbsp;</span>
+
+    <!--
+    This is the container in which D3 will draw the scatter plot.
+    -->
+    <div id="vis_container">
+    </div>
+
+    <p>
+    Project data source: https://www.kaggle.com/heesoo37/120-years-of-olympic-history-athletes-and-results
+    </p>
+    <!--
+    Finally, here comes the actual JavaScript code.
+    -->
+    <script>
+
+        var height = 500;
+        var width = 960;
+        var svg = d3.select("#vis_container")
+                        .append("svg")
+                        .attr("width", width)
+                        .attr("height", height)
+                        .append('g')
+                        .attr('class', 'map');
+
+        var path = d3.geoPath();
+
+        var projection = d3.geoMercator()
+            .scale(130)
+            .translate( [width / 2, height / 1.5]);
+
+        path = d3.geoPath().projection(projection);
+
+        d3.queue()
+          .defer(d3.json, "https://raw.githubusercontent.com/xlulu/inls641_OlympicAnalysisVis/master/world_countries.json")
+          .await(show_medals);
+
+        function show_medals (error, country_data, medal_data) {
+
+          svg.append("g")
+              .attr("class", "countries").selectAll("path").data(country_data.features)
+              .enter().append("path")
+              .attr("d", path)
+              .style("fill", "#d4d4d4")
+              .style("opacity",0.6)
+              .on('mouseover',function(d){
+                  d3.select(this)
+                    .style("opacity", 1.0)
+                    .style("stroke","white")
+                    .style("stroke-width",2);
+                  })
+              .on('mouseout', function(d){
+                  d3.select(this)
+                    .style("opacity", 0.6)
+                    .style("stroke","white")
+                    .style("stroke-width", 0);
+                  });
+
+
+            svg.append("path")
+                .datum(topojson.mesh(country_data.features, function(a, b) { return a.id !== b.id; }))
+                // .datum(topojson.mesh(data.features, function(a, b) { return a !== b; }))
+                .attr("class", "names")
+                .attr("d", path);
+
+        }
+
+
+
+    </script>
+</body>
+</html>

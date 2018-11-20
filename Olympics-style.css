@@ -1,0 +1,274 @@
+header {
+  grid-area: head;
+  /* background-color: #F2F1F1; */
+  /* width: 35%; */
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 8px;
+  /* color: #F2F1F1; */
+  text-align: center;
+}
+
+nav {
+  grid-area: navi;
+  padding: 10px;
+}
+
+.Lside {
+  grid-area: sidL;
+}
+
+.Rside {
+  grid-area: sidR;
+}
+
+.description {
+  grid-area: desp;
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 25px;
+}
+
+.chart {
+  grid-area: chrt;
+  background-color: #FFFFFF;
+  font-family: 'Andale Mono';
+}
+
+footer {
+  grid-area: foot;
+  padding: 40px 0 0 0;
+  font-size: 10px;
+  color: #5f5f5f;
+}
+
+/* Grid layout for MedalBoard & AtheleteBoard page */
+.wrap {
+  display: grid;
+  grid-gap: 0px;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  grid-template-areas:
+    "head head head head head head head"
+    "navi navi navi navi navi navi navi"
+    "sidL desp desp desp desp desp sidR"
+    "sidL chrt chrt chrt chrt chrt sidR"
+    "foot foot foot foot foot foot foot";
+}
+
+body {
+  /* background-color: #272727; */
+  color: #272727;
+  font-family: "merriweather", serif;
+}
+
+.navitems {
+  clear: none;
+  max-height: none;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* h1 {
+  font-size: 35px;
+  font-family: 'Playfair Display', serif;
+  text-align: center;
+} */
+/* Style of Board title */
+h2 {
+  font-size: 30px;
+  color: #000000;
+  letter-spacing: -2px;
+  text-align: center;
+  text-shadow: 2px -2px 0 rgba(111, 111, 111, 0.50);
+}
+
+.navtext {
+  margin: 20px;
+  color: #3F3F3F;
+  text-decoration: none;
+  border-bottom: 1px dotted;
+}
+
+#title-img {
+  width: 30%;
+}
+
+.time-slot {
+  background-color: #000000;
+  height: 30px;
+  margin-bottom: 20px;
+}
+
+.toggle-background {
+  background-color: #000000;
+  /* height: 30px; */
+  margin-bottom: 20px;
+  color: #FFFFFF;
+}
+
+/* set the style of toggles in Athlete page */
+.tog-sex, .tog-female, .tog-male, .toggle-male, .toggle-female, .see-result{
+  border: 0px solid #3E4246;
+  font-size: 14px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  margin-left: -2px;
+  font-size: 15px;
+  font-family: 'Andale Mono';
+  margin-top: 5px;
+  margin-bottom: 5px;
+  color: #b5b5b5;
+  background-color: #3f3f3f;
+}
+
+/* set clicked toggle button */
+.clicked {
+  color: #FFFFFF;
+  border: 2px solid #FFFFFF;
+}
+
+/* set the gap between ins and input */
+.athelete-ins {
+  margin-bottom: -10px;
+}
+
+.drop-down, .athelete-input {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.drop-down>*, .athelete-input>* {
+  margin-left: 15px;
+  margin-right: 15px;
+  font-size: 15px;
+}
+
+.athelete-input>* {
+  /* border-color: #3E4246; */
+  border: 0.15em solid;
+  padding: 3px 6px;
+  margin-left: -2px;
+  background-color: #000000;
+  color: #FFFFFF;
+}
+
+.toggle-female, .toggle-male {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+/* ok button style */
+.see-result{
+  border-radius: 7px;
+  background-color: #54C58F;
+}
+
+#age-input, #height-input, #weight-input {
+  padding: 5px;
+  width: 50px;
+}
+
+/* overwrite the drop down menu style */
+select {
+  font-family: 'Andale Mono';
+  font-size: 15px;
+  text-align-last: right;
+  margin: 3px 0;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  border: 2px solid #000000;
+  border-radius: 0px;
+  color: #000000;
+  -webkit-appearance: menulist;
+  /* -webkit-padding-end: 20px;
+  -webkit-padding-start: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis; */
+}
+
+#medal-toggle {
+  grid-area: togl;
+  clear: none;
+  max-height: none;
+  list-style: none;
+  padding-left: 0px;
+  margin-top: 120%;
+}
+
+.tog-number, .tog-location {
+  width: 85%;
+  border: 2px solid #000000;
+  font-size: 14px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  font-family: 'Andale Mono';
+  letter-spacing: -1px;
+  background-color: #000000;
+  color: #3F3F3F;
+}
+
+.tog-number {
+  margin-top: -2px;
+}
+
+.tog-location {
+  margin-top: 2px;
+}
+
+#medal-toggle>b {
+  font-size: 14px;
+  width: 85%;
+}
+
+/* set the toggled button style */
+.down {
+  background-color: #FFFFFF;
+  color: #000000;
+}
+
+#medal-chart {
+  grid-area: mech;
+}
+
+/* set the grid layout of medal artboard */
+.medal-artboard {
+  display: grid;
+  grid-gap: 0;
+  grid-template-columns: 90% auto;
+  grid-template-areas:
+    "mech togl";
+}
+
+
+.golddot, .silverdot, .bronzedot {
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    margin-left: 15px;
+    display: inline-block;
+}
+
+.golddot {
+  background-color:goldenrod;
+}
+
+.silverdot{
+  background-color:silver;
+}
+
+.bronzedot{
+    background-color:#CD7F32;
+}
