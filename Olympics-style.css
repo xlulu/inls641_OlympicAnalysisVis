@@ -87,7 +87,7 @@ h2 {
   color: #000000;
   letter-spacing: -2px;
   text-align: center;
-  text-shadow: 4px -2px 0 rgba(111, 111, 111, 0.50);
+  text-shadow: 2px -2px 0 rgba(111, 111, 111, 0.50);
 }
 
 .navtext {
@@ -107,7 +107,40 @@ h2 {
   margin-bottom: 20px;
 }
 
-.drop-down {
+.toggle-background {
+  background-color: #000000;
+  /* height: 30px; */
+  margin-bottom: 20px;
+  color: #FFFFFF;
+}
+
+/* set the style of toggles in Athlete page */
+.tog-sex, .tog-female, .tog-male, .toggle-male, .toggle-female, .see-result{
+  border: 0px solid #3E4246;
+  font-size: 14px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  margin-left: -2px;
+  font-size: 15px;
+  font-family: 'Andale Mono';
+  margin-top: 5px;
+  margin-bottom: 5px;
+  color: #b5b5b5;
+  background-color: #3f3f3f;
+}
+
+/* set clicked toggle button */
+.clicked {
+  color: #FFFFFF;
+  border: 2px solid #FFFFFF;
+}
+
+/* set the gap between ins and input */
+.athelete-ins {
+  margin-bottom: -10px;
+}
+
+.drop-down, .athelete-input {
   text-align: center;
   display: flex;
   align-items: center;
@@ -115,10 +148,37 @@ h2 {
   justify-content: center;
 }
 
-.drop-down>* {
+.drop-down>*, .athelete-input>* {
   margin-left: 15px;
   margin-right: 15px;
   font-size: 15px;
+}
+
+.athelete-input>* {
+  /* border-color: #3E4246; */
+  border: 0.15em solid;
+  padding: 3px 6px;
+  margin-left: -2px;
+  background-color: #000000;
+  color: #FFFFFF;
+}
+
+.toggle-female, .toggle-male {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+/* ok button style */
+.see-result{
+  border-radius: 7px;
+  background-color: #54C58F;
+}
+
+#age-input, #height-input, #weight-input {
+  padding: 5px;
+  width: 50px;
 }
 
 /* overwrite the drop down menu style */
@@ -145,11 +205,10 @@ select {
   max-height: none;
   list-style: none;
   padding-left: 0px;
-  margin-top:120%;
-
+  margin-top: 120%;
 }
 
- .tog-number,.tog-location {
+.tog-number, .tog-location {
   width: 85%;
   border: 2px solid #000000;
   font-size: 14px;
@@ -158,22 +217,26 @@ select {
   font-family: 'Andale Mono';
   letter-spacing: -1px;
   background-color: #000000;
-  color:#3F3F3F;
+  color: #3F3F3F;
 }
-.tog-number{
+
+.tog-number {
   margin-top: -2px;
 }
-.tog-location{
+
+.tog-location {
   margin-top: 2px;
 }
-#medal-toggle>b{
+
+#medal-toggle>b {
   font-size: 14px;
   width: 85%;
 }
+
 /* set the toggled button style */
-.down{
-  background-color:#FFFFFF;
-  color:#000000;
+.down {
+  background-color: #FFFFFF;
+  color: #000000;
 }
 
 #medal-chart {
@@ -182,8 +245,6 @@ select {
 
 /* set the grid layout of medal artboard */
 .medal-artboard {
-
-  position: relative;
   display: grid;
   grid-gap: 0;
   grid-template-columns: 90% auto;
