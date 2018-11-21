@@ -318,6 +318,7 @@ class MedalVis_Location {
 
   //draw timeline
   show_timeline() {
+    var thisvis = this;
     var margin = 20;
     var time_width = $(".time-slot").width();
     var format = d3.format("d");
@@ -418,9 +419,7 @@ class MedalVis_Location {
         .classed("clicked", true);
       var change_year = bold_label(d).text();
       bold_label(d).classed("highlighted", true);
-      this.year = change_year;
-      console.log(change_year);
-
+      thisvis.setYear(change_year);
     }
   }
 
