@@ -12,6 +12,9 @@ $(document).ready(() => {
     .await(function(error, country_data, medal_data) {
       medal_vis_location = new MedalVis_Location(country_data, medal_data);
       medal_vis_location.show_medals_default();
+      // //draw the timeline
+      // let s_width = $(".time-slot").width();
+      medal_vis_location.show_timeline();
     });
 
   //add list into the game drop-down menu
@@ -168,6 +171,8 @@ $(document).ready(() => {
 //   return medal, game;
 // }
 
+
+
 class MedalVis_Location {
 
   constructor(country_data, medal_data) {
@@ -207,6 +212,7 @@ class MedalVis_Location {
         return top5_html;
       });
   }
+
 
   setYear(new_year) {
     this.year = new_year;
@@ -309,6 +315,116 @@ class MedalVis_Location {
       });
   }
 
+
+  //draw timeline
+  show_timeline() {
+    var margin = 20;
+    var time_width = $(".time-slot").width();
+    var format = d3.format("d");
+    var year_data = d3.set(this.medal_data.map(function(d) {
+        return d.Year;
+      }))
+      .values()
+      .sort();
+    console.log(year_data);
+    // var x = d3.scaleTime()
+    //   .domain([new Date(1908, 1, 1), new Date(2016, 1, 1)])
+    //   .range([margin, time_width - margin]);
+
+    var x = d3.scaleLinear()
+      .domain([1896, 2016])
+      .range([margin, time_width - margin]);
+
+    // Create the SVG canvas that will be used to render the visualization.
+    var time_svg = d3.select(".time-slot")
+      .append("svg")
+      .attr("width", time_width)
+      .attr("height", "60px")
+      .style("margin-top", "20px");
+
+    // Add axes.  First the X axis and label.
+    var x_axis = d3.axisBottom(x)
+      .tickFormat(format)
+      .tickValues(year_data);
+
+    //get the click tick element
+    function bold_label(year) {
+      return d3.select('.axis')
+        .selectAll('text')
+        .filter(function(x) {
+          return x == year;
+        });
+    }
+
+    time_svg.append("g")
+      .attr("class", "axis")
+      .call(x_axis)
+      .attr("transform", "translate(5,5)")
+      .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("dx", "-.8em")
+      .attr("dy", ".15em")
+      .attr("transform", "rotate(-45)");
+
+
+    time_svg.selectAll(".rec")
+      .data(year_data)
+      .enter().append("rect")
+      .attr("class", "rec")
+      .attr("x", function(d) {
+        return x(d);
+      })
+      .attr("y", 1)
+      .attr("width", "8px")
+      .attr("height", "8px")
+      .style("fill", "#FFFFFF")
+      .on('mouseover', handleMouseIn)
+      .on('mouseout', handleMouseOut)
+      .on('click', handleClick);
+
+    function handleMouseOut(d) {
+      if (!d3.select(this).classed("clicked")) {
+        bold_label(d).attr('style', "fill:#FFFFFF;font-weight:normal;")
+          .style("text-anchor", "end");
+        d3.select(this).attr("width", "8px")
+          .attr("height", "8px")
+          .style("fill", "#FFFFFF");
+      }
+    }
+
+    function handleMouseIn(d) {
+      bold_label(d).attr('style', "fill:goldenrod;font-weight:bold;")
+        .style("text-anchor", "end");
+      d3.select(this).attr("width", "10px")
+        .attr("height", "10px")
+        .style("fill", "goldenrod");
+    }
+
+    function handleClick(d) {
+
+      d3.selectAll(".clicked")
+        .classed("clicked", false)
+        .attr("width", "8px")
+        .attr("height", "8px")
+        .style("fill", "#FFFFFF");
+
+      d3.select(".highlighted").attr('style', "fill:#FFFFFF;font-weight:normal;")
+        .style("text-anchor", "end")
+        .classed("highlighted", false);
+
+      d3.select(this).attr("width", "10px")
+        .attr("height", "10px")
+        .style("fill", "goldenrod")
+        .classed("clicked", true);
+      var change_year = bold_label(d).text();
+      bold_label(d).classed("highlighted", true);
+      this.year = change_year;
+      console.log(change_year);
+
+    }
+  }
+
+
   // Show bubbles on the world map in default mode (All, All)
   show_medals_default() {
 
@@ -354,7 +470,8 @@ class MedalVis_Location {
       .attr("r", function(d) {
         return thisvis.radius(d.medal_count);
       })
-      .style("fill", "#2ecc71")
+      .style("fill", "#7ea23e")
+      .style("fill-opacity", "0.7")
       .on('mouseover', function(d) {
         if (d.medal_count) {
           thisvis.tool_tip.show(d);
