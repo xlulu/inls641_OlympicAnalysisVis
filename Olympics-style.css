@@ -120,6 +120,14 @@ h2 {
   fill: #FFFFFF;
   font-family: 'Andale Mono';
   font-size: 10px;
+
+}
+
+.parameter-value> text{
+  fill: goldenrod;
+  font-family: 'Andale Mono';
+  font-size: 12px;
+
 }
 
 .tick line :hover{

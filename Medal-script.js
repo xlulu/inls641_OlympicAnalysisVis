@@ -318,7 +318,6 @@ class MedalVis_Location {
 
   //draw timeline
   show_timeline() {
-    var thisvis = this;
     var margin = 20;
     var time_width = $(".time-slot").width();
     var format = d3.format("d");
@@ -343,88 +342,122 @@ class MedalVis_Location {
       .attr("height", "60px")
       .style("margin-top", "20px");
 
-    // Add axes.  First the X axis and label.
-    var x_axis = d3.axisBottom(x)
+    //Add slider
+    var time_slider = d3.sliderHorizontal()
+      .min(d3.min(year_data))
+      .max(d3.max(year_data))
+      .step(2)
+      .width(time_width - 2 * margin)
       .tickFormat(format)
       .tickValues(year_data);
+      // .on('onchange', function(d,i){
+      //   console.log(d3.select(this));
+      //   // console.log(d);
+      //   // console.log("2016" in year_data);
+      //   // console.log(i);
+      //    // d3.selectAll("text[opacity = 0]").attr("opacity","1");
+      // });
 
-    //get the click tick element
-    function bold_label(year) {
-      return d3.select('.axis')
-        .selectAll('text')
-        .filter(function(x) {
-          return x == year;
-        });
-    }
 
     time_svg.append("g")
-      .attr("class", "axis")
-      .call(x_axis)
-      .attr("transform", "translate(5,5)")
+      .call(time_slider)
+      .attr("transform", "translate(15,0)")
       .selectAll("text")
       .style("text-anchor", "end")
       .attr("dx", "-.8em")
-      .attr("dy", ".15em")
+      .attr("dy", "-.3em")
       .attr("transform", "rotate(-45)");
 
 
-    time_svg.selectAll(".rec")
-      .data(year_data)
-      .enter().append("rect")
-      .attr("class", "rec")
-      .attr("x", function(d) {
-        return x(d);
-      })
-      .attr("y", 1)
-      .attr("width", "8px")
-      .attr("height", "8px")
-      .style("fill", "#FFFFFF")
-      .on('mouseover', handleMouseIn)
-      .on('mouseout', handleMouseOut)
-      .on('click', handleClick);
 
-    function handleMouseOut(d) {
-      if (!d3.select(this).classed("clicked")) {
-        bold_label(d).attr('style', "fill:#FFFFFF;font-weight:normal;")
-          .style("text-anchor", "end");
-        d3.select(this).attr("width", "8px")
-          .attr("height", "8px")
-          .style("fill", "#FFFFFF");
-      }
-    }
-
-    function handleMouseIn(d) {
-      bold_label(d).attr('style', "fill:goldenrod;font-weight:bold;")
-        .style("text-anchor", "end");
-      d3.select(this).attr("width", "10px")
-        .attr("height", "10px")
-        .style("padding","5px")
-        .style("fill", "goldenrod");
-        var change_year = bold_label(d).text();
-        bold_label(d).classed("highlighted", true);
-        thisvis.setYear(change_year);
-    }
-
-    function handleClick(d) {
-
-      d3.selectAll(".clicked")
-        .classed("clicked", false)
-        .attr("width", "8px")
-        .attr("height", "8px")
-        .style("fill", "#FFFFFF");
-
-      d3.select(".highlighted").attr('style', "fill:#FFFFFF;font-weight:normal;")
-        .style("text-anchor", "end")
-        .classed("highlighted", false);
-
-      d3.select(this).attr("width", "10px")
-        .attr("height", "10px")
-        .style("fill", "goldenrod")
-        .classed("clicked", true);
-      var change_year = bold_label(d).text();
-      bold_label(d).classed("highlighted", true);
-      thisvis.setYear(change_year);
-    }
+    // // Add axes.  First the X axis and label.
+    // var x_axis = d3.axisBottom(x)
+    //   .tickFormat(format)
+    //   .tickValues(year_data);
+    //
+    // //get the click tick element
+    // function bold_label(year) {
+    //   return d3.select('.axis')
+    //     .selectAll('text')
+    //     .filter(function(x) {
+    //       return x == year;
+    //     });
+    // }
+    //
+    // time_svg.append("g")
+    //   .attr("class", "axis")
+    //   .call(x_axis)
+    //   .attr("transform", "translate(5,5)")
+    //   .selectAll("text")
+    //   .style("text-anchor", "end")
+    //   .attr("dx", "-.8em")
+    //   .attr("dy", ".15em")
+    //   .attr("transform", "rotate(-45)");
+    //
+    //   time_svg.selectAll(".line")
+    //     .enter().append("line")
+    //     .attr("class","line")
+    //     .attr("x", 1)
+    //     .attr("y", 1)
+    //
+    //
+    // time_svg.selectAll(".rec")
+    //   .data(year_data)
+    //   .enter().append("rect")
+    //   .attr("class", "rec")
+    //   .attr("x", function(d) {
+    //     return x(d);
+    //   })
+    //   .attr("y", 1)
+    //   .attr("width", "8px")
+    //   .attr("height", "8px")
+    //   .style("fill", "#FFFFFF")
+    //   .on('mouseover', handleMouseIn)
+    //   .on('mouseout', handleMouseOut)
+    //   .on('click', handleClick);
+    //
+    //
+    // function handleMouseOut(d) {
+    //   if (!d3.select(this).classed("clicked")) {
+    //     bold_label(d).attr('style', "fill:#FFFFFF;font-weight:normal;")
+    //       .style("text-anchor", "end");
+    //     d3.select(this).attr("width", "8px")
+    //       .attr("height", "8px")
+    //       .style("fill", "#FFFFFF");
+    //   }
+    // }
+    //
+    // function handleMouseIn(d) {
+    //   bold_label(d).attr('style', "fill:goldenrod;font-weight:bold;")
+    //     .style("text-anchor", "end")
+    //     .style("font-size", "11px");
+    //   d3.select(this).attr("width", "10px")
+    //     .attr("height", "10px")
+    //     .style("fill", "goldenrod");
+    // }
+    //
+    // function handleClick(d) {
+    //
+    //   d3.selectAll(".clicked")
+    //     .classed("clicked", false)
+    //     .attr("width", "8px")
+    //     .attr("height", "8px")
+    //     .style("fill", "#FFFFFF");
+    //
+    //   d3.select(".highlighted").attr('style', "fill:#FFFFFF;font-weight:normal;")
+    //     .style("text-anchor", "end")
+    //     .classed("highlighted", false);
+    //
+    //   d3.select(this).attr("width", "10px")
+    //     .attr("height", "10px")
+    //     .style("fill", "goldenrod")
+    //     .classed("clicked", true);
+    //   var change_year = bold_label(d).text();
+    //   bold_label(d).classed("highlighted", true);
+    //   this.year = change_year;
+    //   console.log(change_year);
+    //
+    // }
   }
 
 
