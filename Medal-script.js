@@ -318,6 +318,7 @@ class MedalVis_Location {
 
   //draw timeline
   show_timeline() {
+    var thisvis = this;
     var margin = 20;
     var time_width = $(".time-slot").width();
     var format = d3.format("d");
@@ -327,9 +328,11 @@ class MedalVis_Location {
       .values()
       .sort();
     console.log(year_data);
-    // var x = d3.scaleTime()
-    //   .domain([new Date(1908, 1, 1), new Date(2016, 1, 1)])
-    //   .range([margin, time_width - margin]);
+    //curve the hover data
+    var bisectDate = d3.bisector(function(d) {
+      return d;
+    }).left;
+    console.log(year_data[bisectDate(year_data, 2013)]);
 
     var x = d3.scaleLinear()
       .domain([1896, 2016])
@@ -339,94 +342,149 @@ class MedalVis_Location {
     var time_svg = d3.select(".time-slot")
       .append("svg")
       .attr("width", time_width)
-      .attr("height", "60px")
-      .style("margin-top", "20px");
-
-    //Add slider
-    var time_slider = d3.sliderHorizontal()
-      .min(d3.min(year_data))
-      .max(d3.max(year_data))
-      .step(2)
-      .width(time_width - 2 * margin)
-      .tickFormat(format)
-      .tickValues(year_data);
-      // .on('onchange', function(d,i){
-      //   console.log(d3.select(this));
-      //   // console.log(d);
-      //   // console.log("2016" in year_data);
-      //   // console.log(i);
-      //    // d3.selectAll("text[opacity = 0]").attr("opacity","1");
-      // });
-
-
-    time_svg.append("g")
-      .call(time_slider)
-      .attr("transform", "translate(15,0)")
-      .selectAll("text")
-      .style("text-anchor", "end")
-      .attr("dx", "-.8em")
-      .attr("dy", "-.3em")
-      .attr("transform", "rotate(-45)");
-
-
-
-    // // Add axes.  First the X axis and label.
-    // var x_axis = d3.axisBottom(x)
+      .attr("height", "60px");
+    // .style("margin-top", "10px");
+    //
+    // //Add slider
+    // var time_slider = d3.sliderHorizontal()
+    //   .min(d3.min(year_data))
+    //   .max(d3.max(year_data))
+    //   .step(2)
+    //   .width(time_width - 2 * margin)
     //   .tickFormat(format)
     //   .tickValues(year_data);
+    //   // .on('onchange', function(d,i){
+    //   //   console.log(d3.select(this));
+    //   //   // console.log(d);
+    //   //   // console.log("2016" in year_data);
+    //   //   // console.log(i);
+    //   //    // d3.selectAll("text[opacity = 0]").attr("opacity","1");
+    //   // });
     //
-    // //get the click tick element
-    // function bold_label(year) {
-    //   return d3.select('.axis')
-    //     .selectAll('text')
-    //     .filter(function(x) {
-    //       return x == year;
-    //     });
-    // }
     //
     // time_svg.append("g")
-    //   .attr("class", "axis")
-    //   .call(x_axis)
-    //   .attr("transform", "translate(5,5)")
+    //   .call(time_slider)
+    //   .attr("transform", "translate(15,0)")
     //   .selectAll("text")
     //   .style("text-anchor", "end")
     //   .attr("dx", "-.8em")
-    //   .attr("dy", ".15em")
+    //   .attr("dy", "-.3em")
     //   .attr("transform", "rotate(-45)");
-    //
-    //   time_svg.selectAll(".line")
-    //     .enter().append("line")
-    //     .attr("class","line")
-    //     .attr("x", 1)
-    //     .attr("y", 1)
-    //
-    //
-    // time_svg.selectAll(".rec")
-    //   .data(year_data)
-    //   .enter().append("rect")
-    //   .attr("class", "rec")
-    //   .attr("x", function(d) {
-    //     return x(d);
-    //   })
-    //   .attr("y", 1)
-    //   .attr("width", "8px")
-    //   .attr("height", "8px")
-    //   .style("fill", "#FFFFFF")
-    //   .on('mouseover', handleMouseIn)
-    //   .on('mouseout', handleMouseOut)
-    //   .on('click', handleClick);
-    //
-    //
-    // function handleMouseOut(d) {
-    //   if (!d3.select(this).classed("clicked")) {
-    //     bold_label(d).attr('style', "fill:#FFFFFF;font-weight:normal;")
-    //       .style("text-anchor", "end");
-    //     d3.select(this).attr("width", "8px")
-    //       .attr("height", "8px")
-    //       .style("fill", "#FFFFFF");
-    //   }
-    // }
-    //
+
+
+
+    // Add axes.  First the X axis and label.
+    var x_axis = d3.axisBottom(x)
+      .tickFormat(format)
+      .tickValues(year_data);
+
+    //get the click tick element
+    function bold_label(year) {
+      return d3.select('.axis')
+        .selectAll('text')
+        .filter(function(x) {
+          return x == year;
+        });
+    }
+
+    //get the text by year
+    function get_text(year) {
+      return d3.selectAll('.tick text')
+        .filter(function(d) {
+          // console.log(d);
+          // console.log(year);
+          return d == year;
+        });
+    }
+
+    time_svg.append("g")
+      .attr("class", "axis")
+      .call(x_axis)
+      .attr("transform", "translate(5,20)")
+      .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("dx", "-.8em")
+      .attr("dy", ".15em")
+      .attr("transform", "rotate(-45)");
+
+
+    time_svg.selectAll(".rec")
+      .data(year_data)
+      .enter().append("rect")
+      .attr("class", "rec")
+      .attr("x", function(d) {
+        return x(d);
+      })
+      .attr("y", 18)
+      .attr("width", "8px")
+      .attr("height", "8px")
+      .style("fill", "#FFFFFF");
+    // .on('mouseover', handleMouseIn)
+    // .on('mouseout', handleMouseOut)
+    // .on("mousemove", handleMouseMove)
+    // .on('click', handleClick);
+
+    //add a vertical line following the mouse
+    var focus = time_svg.append("g")
+      .attr("class", "focus")
+      .style("display", "none");
+
+    focus.append("line")
+      .attr("class", "x-hover-line hover-line")
+      .attr("y1", 0)
+      .attr("y2", 30)
+      .attr("transform", "translate(4,-10)");
+
+    time_svg.append("rect")
+      // .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      .attr("class", "overlay")
+      .attr("width", time_width)
+      .attr("height", "60px")
+      .attr("transform", "translate(0,-10)")
+      .attr("opacity", "0")
+      .on("mouseover", function() {
+        focus.style("display", null);
+      })
+      .on("mouseout", function() {
+        focus.style("display", "none");
+      })
+      .on("mousemove", handleMouseMove);
+      // .on("click", handleClick);
+
+    function handleMouseMove(d) {
+      //refresh the timeline once change
+      handleMouseOut();
+      //add new highlight
+      var x0 = x.invert(d3.mouse(this)[0]),
+        i = bisectDate(year_data, format(x0)),
+        d0 = year_data[i - 1],
+        d1 = year_data[i],
+        d = x0 - d0 > d1 - x0 ? d1 : d0;
+      // console.log(d);
+      focus.attr("transform", "translate(" + x(d) + ", 12)");
+      thisvis.setYear(d);
+      // console.log(get_text(d));
+      get_text(d).style("fill", "goldenrod")
+        .style("font-size", "12px");
+    }
+
+    function handleMouseOut() {
+      d3.selectAll(".tick text")
+        .filter(function() {
+          return !this.classList.contains('clicked')
+        })
+        .attr('style', "fill:#FFFFFF;font-weight:normal;")
+        .style("text-anchor", "end");
+
+      // if (!d3.select(this).classed("clicked")) {
+      //   bold_label(d).attr('style', "fill:#FFFFFF;font-weight:normal;")
+      //     .style("text-anchor", "end");
+      //   d3.select(this).attr("width", "8px")
+      //     .attr("height", "8px")
+      //     .style("fill", "#FFFFFF");
+      // }
+    }
+
     // function handleMouseIn(d) {
     //   bold_label(d).attr('style', "fill:goldenrod;font-weight:bold;")
     //     .style("text-anchor", "end")
@@ -435,29 +493,45 @@ class MedalVis_Location {
     //     .attr("height", "10px")
     //     .style("fill", "goldenrod");
     // }
-    //
-    // function handleClick(d) {
-    //
-    //   d3.selectAll(".clicked")
-    //     .classed("clicked", false)
-    //     .attr("width", "8px")
-    //     .attr("height", "8px")
-    //     .style("fill", "#FFFFFF");
-    //
-    //   d3.select(".highlighted").attr('style', "fill:#FFFFFF;font-weight:normal;")
-    //     .style("text-anchor", "end")
-    //     .classed("highlighted", false);
-    //
-    //   d3.select(this).attr("width", "10px")
-    //     .attr("height", "10px")
-    //     .style("fill", "goldenrod")
-    //     .classed("clicked", true);
-    //   var change_year = bold_label(d).text();
-    //   bold_label(d).classed("highlighted", true);
-    //   this.year = change_year;
-    //   console.log(change_year);
-    //
-    // }
+
+    function handleClick(d) {
+      //clear the highlight
+      d3.selectAll(".tick text").classed("clicked",false);
+      handleMouseOut();
+      //add new highlight
+      var x0 = x.invert(d3.mouse(this)[0]),
+        i = bisectDate(year_data, format(x0)),
+        d0 = year_data[i - 1],
+        d1 = year_data[i],
+        d = x0 - d0 > d1 - x0 ? d1 : d0;
+      // console.log(d);
+      focus.attr("transform", "translate(" + x(d) + ", 12)");
+      // console.log(get_text(d));
+
+      get_text(d).style("fill", "goldenrod")
+        .style("font-size", "12px")
+        .classed("clicked", true);
+
+      // d3.selectAll(".clicked")
+      //   .classed("clicked", false)
+      //   .attr("width", "8px")
+      //   .attr("height", "8px")
+      //   .style("fill", "#FFFFFF");
+      //
+      // d3.select(".highlighted").attr('style', "fill:#FFFFFF;font-weight:normal;")
+      //   .style("text-anchor", "end")
+      //   .classed("highlighted", false);
+      //
+      // d3.select(this).attr("width", "10px")
+      //   .attr("height", "10px")
+      //   .style("fill", "goldenrod")
+      //   .classed("clicked", true);
+      // var change_year = bold_label(d).text();
+      // bold_label(d).classed("highlighted", true);
+      // this.year = change_year;
+      // console.log(change_year);
+
+    }
   }
 
 
@@ -570,6 +644,6 @@ class MedalVis_Location {
           .style("stroke", "white")
           .style("stroke-width", 0);
         d3.select(this).style("opacity", 1);
-      });;
+      });
   }
 }
