@@ -398,7 +398,11 @@ class MedalVis_Location {
         .style("text-anchor", "end");
       d3.select(this).attr("width", "10px")
         .attr("height", "10px")
+        .style("padding","5px")
         .style("fill", "goldenrod");
+        var change_year = bold_label(d).text();
+        bold_label(d).classed("highlighted", true);
+        thisvis.setYear(change_year);
     }
 
     function handleClick(d) {
