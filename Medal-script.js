@@ -41,137 +41,13 @@ $(document).ready(() => {
   $(".tog-number").click(function() {
     $(this).toggleClass("down");
     $(".tog-location").toggleClass("down", false);
-    $("#medal-chart").children().remove();
+    $(".countries").remove();
     // call function to draw chart by number
+    medal_vis_location.sort_circles();
+      
   });
 
 });
-
-// function show_map(){
-//   d3.queue()
-//     .defer(d3.json, "https://raw.githubusercontent.com/xlulu/inls641_OlympicAnalysisVis/master/world_countries.json")
-//     .defer(d3.csv, "https://raw.githubusercontent.com/xlulu/inls641_OlympicAnalysisVis/master/data/medal_board_data.csv")
-//     .await(show_medals);
-// }
-//
-// function show_medals (error, country_data, medal_data) {
-//
-//   var chart_w = $("#medal-chart").width();
-//   var svg = d3.select("#medal-chart")
-//                   .append("svg")
-//                   .attr("width", "100%")
-//                   .attr("height", 600)
-//                   .style("margin-top", "20px");
-//
-//   var path = d3.geoPath();
-//
-//   var projection = d3.geoMercator()
-//       .scale(chart_w / 2 / Math.PI)
-//       .translate([chart_w / 2, 800 / 2]);
-//
-//   path = d3.geoPath().projection(projection);
-//
-//   // Tool tip for showing the state when mouse over the point
-//   var tool_tip = d3.tip()
-//     .attr("class", "d3-tip")
-//     .offset([-8, 0])
-//     .html(function(d){
-//       return d.properties.name+": "+d.medal_count;
-//     });
-//   tool_tip(svg);
-//
-//   count_medals(country_data, data_filter(medal_data));
-//
-//   var min_medals = d3.min(country_data.features, function(d){ return d.medal_count;});
-//   var max_medals = d3.max(country_data.features, function(d){ return d.medal_count;});
-//   console.log(min_medals, max_medals);
-//
-//
-//   var radius = d3.scaleLinear()
-//       .domain([0, max_medals])
-//       .range([0, 40]);
-//
-//
-//   svg.append("g")
-//         .attr("class", "countries")
-//         .attr("width", "100%")
-//         .attr("height", 450)
-//         .style("margin-top", "20px")
-//         .selectAll("path").data(country_data.features)
-//         .enter().append("path")
-//         .attr("d", path)
-//         .attr("id", function(d){ return d.id;})
-//         .style("fill", "#d4d4d4")
-//         .style("opacity",0.6);
-//
-//     svg.append("g")
-//         .attr("class", "bubble")
-//       .selectAll("circle")
-//         .data(country_data.features)
-//       .enter().append("circle")
-//         .attr("transform", function(d) { return "translate(" + path.centroid(d) + ")"; })
-//         .attr("r", function(d) { return radius(d.medal_count); })
-//         .style("fill", "#2ecc71")
-//         .on('mouseover',function(d){
-//             if(d.medal_count){
-//               tool_tip.show(d);}
-//             d3.select("#"+d.id)
-//               .style("opacity", 1.0)
-//               .style("stroke","white")
-//               .style("stroke-width",2);
-//             })
-//         .on('mouseout', function(d){
-//           if(d.medal_count){
-//             tool_tip.hide(d);}
-//             d3.select("#"+d.id)
-//               .style("opacity", 0.6)
-//               .style("stroke","white")
-//               .style("stroke-width", 0);
-//         });
-//
-// }
-//
-// function count_medals(country_data, medal_data){
-//   var medal_count_by_ctry = {};
-//
-//   medal_data.forEach(function(d) {
-//
-//       if(d.Year == "2008"){
-//         if(!medal_count_by_ctry[d.NOC])
-//               medal_count_by_ctry[d.NOC] = 0;
-//
-//         medal_count_by_ctry[d.NOC]++;
-//       }});
-//
-//   country_data.features.forEach(function(d) {
-//     if(medal_count_by_ctry[d.id])
-//       d.medal_count = medal_count_by_ctry[d.id];
-//     else
-//       d.medal_count = 0;
-//     });
-// }
-//
-// function data_filter(medal_data){
-//   var medal, game = dataFilter();
-//   if (medal == "All" && game == "All")
-//     return medal_data;
-//   else if (medal == "All")
-//     return medal_data.filter(function(d){ return d.Sport == game;});
-//   else if (game == "All")
-//     return medal_data.filter(function(d){ return d.Medal == medal;});
-//   else
-//     return medal_data.filter(function(d){ return (d.Medal == medal && d.Sport == game);});
-// }
-//
-// function dataFilter(){
-//   var medal_options = document.getElementById("medal-options");
-//   var medal = medal_options.options[medal_options.selectedIndex].text;
-//   var game_options = document.getElementById("game-options");
-//   var game = game_options.options[game_options.selectedIndex].text;
-//   return medal, game;
-// }
-
-
 
 class MedalVis_Location {
 
@@ -199,7 +75,7 @@ class MedalVis_Location {
       .html(function(d) {
         var top5_html = "<table><tr><td align=\"center\">" + d.properties.name + ": " + d.medal_count + "</td></tr>";
         var medals_kind = thisvis.count_medals_kind(d.id);
-        top5_html += "<tr><td><span class=\"golddot\"></span> " + medals_kind["Gold"];
+        top5_html += "<tr><td><span class=\"golddot\"></span> " + medals_kind['Gold'];
         top5_html += "<span class=\"silverdot\"></span> " + medals_kind["Silver"];
         top5_html += "<span class=\"bronzedot\"></span> " + medals_kind["Bronze"] + "</td></tr>";
 
@@ -326,7 +202,6 @@ class MedalVis_Location {
       }))
       .values()
       .sort();
-    console.log(year_data);
     // var x = d3.scaleTime()
     //   .domain([new Date(1908, 1, 1), new Date(2016, 1, 1)])
     //   .range([margin, time_width - margin]);
@@ -459,39 +334,109 @@ class MedalVis_Location {
       .style("fill", "#d4d4d4")
       .style("opacity", 0.6);
 
-    this.svg.append("g")
-      .attr("class", "bubble")
-      .selectAll("circle")
-      .data(this.country_data.features)
-      .enter().append("circle")
-      .attr("transform", function(d) {
-        return "translate(" + path.centroid(d) + ")";
-      })
+    // this.svg.append("g")
+    //   .attr("class", "bubble")
+    //   .selectAll("circle")
+    //   .data(this.country_data.features)
+    //   .enter().append("g")
+    //   .attr("transform", function(d) {
+    //     return "translate(" + path.centroid(d) + ")";
+    //   });
+    
+    var ctry_g = this.svg.append("g")
+          .attr("class", "bubble")
+              .selectAll("circle")
+              .data(this.country_data.features)
+              .enter().append("g")
+              .attr("transform", function(d) {
+                return "translate(" + path.centroid(d) + ")";
+              })
+              .on('mouseover', function(d) {
+                if (d.medal_count) {
+                  thisvis.tool_tip.show(d);
+                }
+                d3.select("#" + d.id)
+                  .style("opacity", 1.0)
+                  .style("stroke", "white")
+                  .style("stroke-width", 2);
+                d3.select(this).style("opacity", 0.6);
+              })
+              .on('mouseout', function(d) {
+                if (d.medal_count) {
+                  thisvis.tool_tip.hide(d);
+                }
+                d3.select("#" + d.id)
+                  .style("opacity", 0.6)
+                  .style("stroke", "white")
+                  .style("stroke-width", 0);
+                d3.select(this).style("opacity", 1);
+              });
+
+    ctry_g.attr('id', "cg")
+      .append('circle')
       .attr("r", function(d) {
         return thisvis.radius(d.medal_count);
       })
-      .style("fill", "#7ea23e")
-      .style("fill-opacity", "0.7")
-      .on('mouseover', function(d) {
-        if (d.medal_count) {
-          thisvis.tool_tip.show(d);
-        }
-        d3.select("#" + d.id)
-          .style("opacity", 1.0)
-          .style("stroke", "white")
-          .style("stroke-width", 2);
-        d3.select(this).style("opacity", 0.6);
+      .attr("id", function(d) {
+        return d.id + d.id;
       })
-      .on('mouseout', function(d) {
-        if (d.medal_count) {
-          thisvis.tool_tip.hide(d);
+      .style("fill", "#7ea23e")
+      .style("fill-opacity", "0.7");
+      
+      this.svg.selectAll("#cg")
+        .each(
+          function(d){
+            var elt = d3.select(this);
+            if(d.medal_count > 50){
+              elt.attr()
+                .append('text')
+                .attr("dx", -12)
+                .attr("dy", 3)
+                .text(function(d){return d.id;})
+                .attr("font-size", "12px")
+                .style("fill", "#272727bd");
+            }
+          }
+        );
+      
+  }
+
+  sort_circles() {
+
+    var thisvis = this;
+    var radius_map = new Map();
+
+    // Get all the non-zero redius value of all circles.
+    this.svg.selectAll("circle")
+      .each(    
+        function(d){
+          var elt = d3.select(this);
+          if(elt.attr("r") > 0){
+            radius_map.set(elt.attr("id"), elt.attr("r"));
+          }
         }
-        d3.select("#" + d.id)
-          .style("opacity", 0.6)
-          .style("stroke", "white")
-          .style("stroke-width", 0);
-        d3.select(this).style("opacity", 1);
-      });
+      );
+    
+    // // compute the total radius length
+    var total_r = d3.sum(Array.from(radius_map.values()));
+
+    // sort map by values
+    // reference to https://stackoverflow.com/questions/37982476/how-to-sort-a-map-by-value-in-javascript
+    const sorted_radius_map = new Map([...radius_map.entries()].sort((a, b) => b[1] - a[1]));
+    var sorted_ctry = Array.from(sorted_radius_map.keys());
+    
+    for (var i in sorted_ctry){
+      let circle_id = "#" + sorted_ctry[i];
+      console.log(circle_id);
+
+      this.svg.select(circle_id)
+            .transition().duration(1000)
+            .attr("transform", null)
+            .attr('cx', radius_map.get(sorted_ctry[i])+20*i)
+            .attr('cy', radius_map.get(sorted_ctry[i])+50)
+            .style("fill", "red")
+            .duration(1000);
+    }      
   }
 
   // Change bubble size based on user's choices
@@ -510,12 +455,16 @@ class MedalVis_Location {
     }
     changed_tool_tip(this.svg);
 
+    this.svg.selectAll("text").exit().remove();
+
     this.svg.selectAll("circle")
       .data(this.country_data.features)
       .attr("r", function(d) {
         return thisvis.radius(d.medal_count);
-      })
-      .on('mouseover', function(d) {
+      });
+      
+    this.svg.selectAll("#cg")
+        .on('mouseover', function(d) {
         if (d.medal_count) {
           changed_tool_tip.show(d);
         }
@@ -534,6 +483,19 @@ class MedalVis_Location {
           .style("stroke", "white")
           .style("stroke-width", 0);
         d3.select(this).style("opacity", 1);
-      });;
+      })
+      .each(
+        function(d){
+          var elt = d3.select(this);
+          if(d.medal_count > 50){
+            elt.append('text')
+              .attr("dx", -12)
+              .attr("dy", 3)
+              .text(function(d){return d.id;})
+              .attr("font-size", "12px")
+              .style("fill", "#272727bd");
+          }
+        }
+      );
   }
 }
