@@ -11,10 +11,10 @@ $(document).ready(() => {
     .defer(d3.csv, "https://raw.githubusercontent.com/xlulu/inls641_OlympicAnalysisVis/master/data/medal_board_data.csv")
     .await(function(error, country_data, medal_data) {
       medal_vis_location = new MedalVis_Location(country_data, medal_data);
+      medal_vis_location.show_timeline();
       medal_vis_location.show_medals_default();
       // //draw the timeline
       // let s_width = $(".time-slot").width();
-      medal_vis_location.show_timeline();
     });
 
   //add list into the game drop-down menu
@@ -443,15 +443,6 @@ class MedalVis_Location {
       })
       .style("fill", "#d4d4d4")
       .style("opacity", 0.6);
-
-    // this.svg.append("g")
-    //   .attr("class", "bubble")
-    //   .selectAll("circle")
-    //   .data(this.country_data.features)
-    //   .enter().append("g")
-    //   .attr("transform", function(d) {
-    //     return "translate(" + path.centroid(d) + ")";
-    //   });
     
     var ctry_g = this.svg.append("g")
           .attr("class", "bubble")
@@ -493,24 +484,24 @@ class MedalVis_Location {
       .style("fill", "#7ea23e")
       .style("fill-opacity", "0.7");
       
-      this.svg.selectAll("#cg")
-        .each(
-          function(d){
-            var elt = d3.select(this);
-            if(d.medal_count > 50){
-              elt.attr()
-                .append('text')
-                .attr("dx", -12)
-                .attr("dy", 3)
-                .text(function(d){return d.id;})
-                .attr("font-size", "12px")
-                .style("fill", "#272727bd");
-            }
+    this.svg.selectAll("#cg")
+      .each(
+        function(d){
+          var elt = d3.select(this);
+          if(d.medal_count > 45){
+            elt.append('text')
+              .attr("dx", -12)
+              .attr("dy", 3)
+              .text(function(d){return d.id;})
+              .attr("font-size", "12px")
+              .style("fill", "#272727bd");
           }
-        );
+        }
+      );
       
   }
 
+  // Show sorted circles after click the "number" button
   sort_circles() {
 
     var thisvis = this;
@@ -527,13 +518,14 @@ class MedalVis_Location {
         }
       );
     
-    // // compute the total radius length
-    var total_r = d3.sum(Array.from(radius_map.values()));
+    // compute the total radius length
+    let row_width = 200;
+    let total_r = d3.sum(Array.from(radius_map.values()));
 
     // sort map by values
     // reference to https://stackoverflow.com/questions/37982476/how-to-sort-a-map-by-value-in-javascript
     const sorted_radius_map = new Map([...radius_map.entries()].sort((a, b) => b[1] - a[1]));
-    var sorted_ctry = Array.from(sorted_radius_map.keys());
+    let sorted_ctry = Array.from(sorted_radius_map.keys());
     
     for (var i in sorted_ctry){
       let circle_id = "#" + sorted_ctry[i];
@@ -564,8 +556,9 @@ class MedalVis_Location {
         });
     }
     changed_tool_tip(this.svg);
-
-    this.svg.selectAll("text").exit().remove();
+    
+    // clear former text
+    this.svg.selectAll("text").remove();
 
     this.svg.selectAll("circle")
       .data(this.country_data.features)
@@ -574,30 +567,10 @@ class MedalVis_Location {
       });
       
     this.svg.selectAll("#cg")
-        .on('mouseover', function(d) {
-        if (d.medal_count) {
-          changed_tool_tip.show(d);
-        }
-        d3.select("#" + d.id)
-          .style("opacity", 1.0)
-          .style("stroke", "white")
-          .style("stroke-width", 2);
-        d3.select(this).style("opacity", 0.6);
-      })
-      .on('mouseout', function(d) {
-        if (d.medal_count) {
-          changed_tool_tip.hide(d);
-        }
-        d3.select("#" + d.id)
-          .style("opacity", 0.6)
-          .style("stroke", "white")
-          .style("stroke-width", 0);
-        d3.select(this).style("opacity", 1);
-      })
       .each(
         function(d){
           var elt = d3.select(this);
-          if(d.medal_count > 50){
+          if(d.medal_count > 45){
             elt.append('text')
               .attr("dx", -12)
               .attr("dy", 3)
@@ -606,6 +579,26 @@ class MedalVis_Location {
               .style("fill", "#272727bd");
           }
         }
-      );
+      )
+      .on('mouseover', function(d) {
+      if (d.medal_count) {
+        changed_tool_tip.show(d);
+      }
+      d3.select("#" + d.id)
+        .style("opacity", 1.0)
+        .style("stroke", "white")
+        .style("stroke-width", 2);
+      d3.select(this).style("opacity", 0.6);
+    })
+    .on('mouseout', function(d) {
+      if (d.medal_count) {
+        changed_tool_tip.hide(d);
+      }
+      d3.select("#" + d.id)
+        .style("opacity", 0.6)
+        .style("stroke", "white")
+        .style("stroke-width", 0);
+      d3.select(this).style("opacity", 1);
+    });
   }
 }
