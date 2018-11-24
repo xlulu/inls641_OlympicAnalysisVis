@@ -54,12 +54,12 @@ class MedalVis_Location {
     var thisvis = this;
     this.medal = "All";
     this.game = "All";
-    this.year = "1904";
+    this.year = "2016";
     this.country_data = country_data;
     this.medal_data = medal_data;
     this.radius = d3.scaleLinear()
-      .domain([0, 300])
-      .range([0, 40]);
+      .domain([0, 230])
+      .range([0, 100]);
 
     // Get a reference to the SVG element.
     this.svg = d3.select("#medal-chart")
@@ -427,7 +427,7 @@ class MedalVis_Location {
     this.tool_tip(this.svg);
 
     this.count_medals(this.medal_data.filter(function(d) {
-      return d.Year == "1904";
+      return d.Year == "2016";
     }));
 
     this.svg.append("g")
@@ -488,7 +488,7 @@ class MedalVis_Location {
       .each(
         function(d){
           var elt = d3.select(this);
-          if(d.medal_count > 45){
+          if(d.medal_count > 15){
             elt.append('text')
               .attr("dx", -12)
               .attr("dy", 3)
@@ -499,6 +499,67 @@ class MedalVis_Location {
         }
       );
       
+  }
+
+  // Change bubble size based on user's choices
+  show_medals_changes() {
+    var thisvis = this;
+    this.count_medals(this.data_filter());
+    var changed_tool_tip = this.tool_tip;
+
+    if (!(this.medal == "All" && this.game == "All")) {
+      var changed_tool_tip = d3.tip()
+        .attr("class", "d3-tip")
+        .offset([-8, 0])
+        .html(function(d) {
+          return d.properties.name + ": " + d.medal_count;
+        });
+    }
+    changed_tool_tip(this.svg);
+    
+    // clear former text
+    this.svg.selectAll("text").remove();
+
+    this.svg.selectAll("circle")
+      .data(this.country_data.features)
+      .attr("r", function(d) {
+        return thisvis.radius(d.medal_count);
+      });
+      
+    this.svg.selectAll("#cg")
+      .each(
+        function(d){
+          var elt = d3.select(this);
+          if(d.medal_count > 15){
+            elt.append('text')
+              .attr("dx", -12)
+              .attr("dy", 3)
+              .text(function(d){return d.id;})
+              .attr("font-size", "12px")
+              .style("fill", "#272727bd");
+          }
+        }
+      )
+      .on('mouseover', function(d) {
+      if (d.medal_count) {
+        changed_tool_tip.show(d);
+      }
+      d3.select("#" + d.id)
+        .style("opacity", 1.0)
+        .style("stroke", "white")
+        .style("stroke-width", 2);
+      d3.select(this).style("opacity", 0.6);
+    })
+    .on('mouseout', function(d) {
+      if (d.medal_count) {
+        changed_tool_tip.hide(d);
+      }
+      d3.select("#" + d.id)
+        .style("opacity", 0.6)
+        .style("stroke", "white")
+        .style("stroke-width", 0);
+      d3.select(this).style("opacity", 1);
+    });
   }
 
   // Show sorted circles after click the "number" button
@@ -539,66 +600,5 @@ class MedalVis_Location {
             .style("fill", "red")
             .duration(1000);
     }      
-  }
-
-  // Change bubble size based on user's choices
-  show_medals_changes() {
-    var thisvis = this;
-    this.count_medals(this.data_filter());
-    var changed_tool_tip = this.tool_tip;
-
-    if (!(this.medal == "All" && this.game == "All")) {
-      var changed_tool_tip = d3.tip()
-        .attr("class", "d3-tip")
-        .offset([-8, 0])
-        .html(function(d) {
-          return d.properties.name + ": " + d.medal_count;
-        });
-    }
-    changed_tool_tip(this.svg);
-    
-    // clear former text
-    this.svg.selectAll("text").remove();
-
-    this.svg.selectAll("circle")
-      .data(this.country_data.features)
-      .attr("r", function(d) {
-        return thisvis.radius(d.medal_count);
-      });
-      
-    this.svg.selectAll("#cg")
-      .each(
-        function(d){
-          var elt = d3.select(this);
-          if(d.medal_count > 45){
-            elt.append('text')
-              .attr("dx", -12)
-              .attr("dy", 3)
-              .text(function(d){return d.id;})
-              .attr("font-size", "12px")
-              .style("fill", "#272727bd");
-          }
-        }
-      )
-      .on('mouseover', function(d) {
-      if (d.medal_count) {
-        changed_tool_tip.show(d);
-      }
-      d3.select("#" + d.id)
-        .style("opacity", 1.0)
-        .style("stroke", "white")
-        .style("stroke-width", 2);
-      d3.select(this).style("opacity", 0.6);
-    })
-    .on('mouseout', function(d) {
-      if (d.medal_count) {
-        changed_tool_tip.hide(d);
-      }
-      d3.select("#" + d.id)
-        .style("opacity", 0.6)
-        .style("stroke", "white")
-        .style("stroke-width", 0);
-      d3.select(this).style("opacity", 1);
-    });
   }
 }
