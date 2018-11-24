@@ -120,11 +120,30 @@ h2 {
   fill: #FFFFFF;
   font-family: 'Andale Mono';
   font-size: 10px;
+
+}
+
+.clicked{
+  fill: goldenrod;
+  font-family: 'Andale Mono';
+  font-size: 12px;
+
+}
+
+.tick line {
+  stroke: #FFFFFF;
+
 }
 
 .tick line :hover{
   stroke: goldenrod;
   stroke-width: 8px;
+}
+
+.hover-line {
+  stroke: goldenrod;
+  stroke-width: 2px;
+  stroke-dasharray: 3,3;
 }
 
 
