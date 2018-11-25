@@ -43,6 +43,7 @@ $(document).ready(() => {
     $(".tog-location").toggleClass("down", false);
     $(".countries").remove();
     // call function to draw chart by number
+    medal_vis_location.number = true;
     medal_vis_location.sort_circles();
   });
 
@@ -55,6 +56,7 @@ class MedalVis_Location {
     this.medal = "All";
     this.game = "All";
     this.year = "2016";
+    this.number = false;
     this.country_data = country_data;
     this.medal_data = medal_data;
     this.radius = d3.scaleLinear()
@@ -92,18 +94,24 @@ class MedalVis_Location {
   setYear(new_year) {
     this.year = new_year;
     this.show_medals_changes();
+    if(this.number == true)
+        this.sort_circles();
   }
 
   // Callback for changing the kind of the medal.
   setMedal(new_medal) {
     this.medal = new_medal;
     this.show_medals_changes();
+    if(this.number == true)
+        this.sort_circles();
   }
 
   // Callback for changing the game.
   setGame(new_game) {
     this.game = new_game;
     this.show_medals_changes();
+    if(this.number == true)
+        this.sort_circles();
   }
 
   // Count the medals
@@ -387,12 +395,13 @@ class MedalVis_Location {
       })
       .style("fill", "#d4d4d4")
       .style("opacity", 0.6);
-    
+
     var ctry_g = this.svg.append("g")
           .attr("class", "bubble")
-              .selectAll("circle")
+              .selectAll("g")
               .data(this.country_data.features)
               .enter().append("g")
+              .attr("class", "ctr_g")
               .attr("transform", function(d) {
                 return "translate(" + path.centroid(d) + ")";
               })
@@ -429,9 +438,8 @@ class MedalVis_Location {
       })
       .style("fill", "#7ea23e")
       .style("fill-opacity", "0.7");
-      
-    this.svg.selectAll("g")
-      .each(
+
+    ctry_g.each(
         function(d){
           var elt = d3.select(this);
           if (elt.attr("id") != null && elt.attr("id").startsWith("g-")){
@@ -446,7 +454,7 @@ class MedalVis_Location {
           }
         }
       );
-      
+
   }
 
   // Change bubble size based on user's choices
@@ -464,7 +472,7 @@ class MedalVis_Location {
         });
     }
     changed_tool_tip(this.svg);
-    
+
     // clear former text
     this.svg.selectAll("text").remove();
 
@@ -474,9 +482,9 @@ class MedalVis_Location {
         return thisvis.radius(d.medal_count);
       });
 
-
-    this.svg.selectAll("g")
-      .each(
+    this.svg.selectAll(".ctr_g")
+      .data(this.country_data.features)
+      .each( // add text again based on new size of bubbles
         function(d){
           var elt = d3.select(this);
           if (elt.attr("id") != null && elt.attr("id").startsWith("g-")){
@@ -521,7 +529,7 @@ class MedalVis_Location {
 
     // Get all the non-zero redius value of all circles.
     this.svg.selectAll("circle")
-      .each(    
+      .each(
         function(d){
           var elt = d3.select(this);
           if(elt.attr("r") > 0){
@@ -539,7 +547,7 @@ class MedalVis_Location {
     let x_pos = 0;
     let y_start = [];
     y_start.push(2 * Number(this.svg.select("#" + sorted_ctry[0]).attr("r")) + 15);
-    
+
     // The row will display current circle.
     let row = 1;
     for (i in sorted_ctry){
@@ -560,11 +568,10 @@ class MedalVis_Location {
       this.svg.select(g_id)
         .transition().duration(1000)
         .attr("transform", "translate(" + x_pos + ", " + y_pos + ")")
-        .style("fill", "red")
         .duration(1000);
-      
+
       x_pos += current_r;
     }
-    
+
   }
 }
