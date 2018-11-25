@@ -202,12 +202,10 @@ class MedalVis_Location {
       }))
       .values()
       .sort();
-    console.log(year_data);
     //curve the hover data
     var bisectDate = d3.bisector(function(d) {
       return d;
     }).left;
-    console.log(year_data[bisectDate(year_data, 2013)]);
 
     var x = d3.scaleLinear()
       .domain([1896, 2016])
@@ -218,35 +216,6 @@ class MedalVis_Location {
       .append("svg")
       .attr("width", time_width)
       .attr("height", "60px");
-    // .style("margin-top", "10px");
-    //
-    // //Add slider
-    // var time_slider = d3.sliderHorizontal()
-    //   .min(d3.min(year_data))
-    //   .max(d3.max(year_data))
-    //   .step(2)
-    //   .width(time_width - 2 * margin)
-    //   .tickFormat(format)
-    //   .tickValues(year_data);
-    //   // .on('onchange', function(d,i){
-    //   //   console.log(d3.select(this));
-    //   //   // console.log(d);
-    //   //   // console.log("2016" in year_data);
-    //   //   // console.log(i);
-    //   //    // d3.selectAll("text[opacity = 0]").attr("opacity","1");
-    //   // });
-    //
-    //
-    // time_svg.append("g")
-    //   .call(time_slider)
-    //   .attr("transform", "translate(15,0)")
-    //   .selectAll("text")
-    //   .style("text-anchor", "end")
-    //   .attr("dx", "-.8em")
-    //   .attr("dy", "-.3em")
-    //   .attr("transform", "rotate(-45)");
-
-
 
     // Add axes.  First the X axis and label.
     var x_axis = d3.axisBottom(x)
@@ -266,8 +235,6 @@ class MedalVis_Location {
     function get_text(year) {
       return d3.selectAll('.tick text')
         .filter(function(d) {
-          // console.log(d);
-          // console.log(year);
           return d == year;
         });
     }
@@ -335,10 +302,8 @@ class MedalVis_Location {
         d0 = year_data[i - 1],
         d1 = year_data[i],
         d = x0 - d0 > d1 - x0 ? d1 : d0;
-      // console.log(d);
       focus.attr("transform", "translate(" + x(d) + ", 12)");
       thisvis.setYear(d);
-      // console.log(get_text(d));
       get_text(d).style("fill", "goldenrod")
         .style("font-size", "12px");
     }
@@ -379,32 +344,11 @@ class MedalVis_Location {
         d0 = year_data[i - 1],
         d1 = year_data[i],
         d = x0 - d0 > d1 - x0 ? d1 : d0;
-      // console.log(d);
       focus.attr("transform", "translate(" + x(d) + ", 12)");
-      // console.log(get_text(d));
 
       get_text(d).style("fill", "goldenrod")
         .style("font-size", "12px")
         .classed("clicked", true);
-
-      // d3.selectAll(".clicked")
-      //   .classed("clicked", false)
-      //   .attr("width", "8px")
-      //   .attr("height", "8px")
-      //   .style("fill", "#FFFFFF");
-      //
-      // d3.select(".highlighted").attr('style', "fill:#FFFFFF;font-weight:normal;")
-      //   .style("text-anchor", "end")
-      //   .classed("highlighted", false);
-      //
-      // d3.select(this).attr("width", "10px")
-      //   .attr("height", "10px")
-      //   .style("fill", "goldenrod")
-      //   .classed("clicked", true);
-      // var change_year = bold_label(d).text();
-      // bold_label(d).classed("highlighted", true);
-      // this.year = change_year;
-      // console.log(change_year);
 
     }
   }
@@ -473,28 +417,32 @@ class MedalVis_Location {
                 d3.select(this).style("opacity", 1);
               });
 
-    ctry_g.attr('id', "cg")
+    ctry_g.attr('id', function(d) {
+        return "g-" + d.id;
+      })
       .append('circle')
       .attr("r", function(d) {
         return thisvis.radius(d.medal_count);
       })
       .attr("id", function(d) {
-        return d.id + d.id;
+        return "c-" + d.id;
       })
       .style("fill", "#7ea23e")
       .style("fill-opacity", "0.7");
       
-    this.svg.selectAll("#cg")
+    this.svg.selectAll("g")
       .each(
         function(d){
           var elt = d3.select(this);
-          if(d.medal_count > 15){
-            elt.append('text')
-              .attr("dx", -12)
-              .attr("dy", 3)
-              .text(function(d){return d.id;})
-              .attr("font-size", "12px")
-              .style("fill", "#272727bd");
+          if (elt.attr("id") != null && elt.attr("id").startsWith("g-")){
+            if(d.medal_count > 15){
+              elt.append('text')
+                .attr("dx", -12)
+                .attr("dy", 3)
+                .text(function(d){return d.id;})
+                .attr("font-size", "12px")
+                .style("fill", "#272727bd");
+            }
           }
         }
       );
@@ -525,41 +473,44 @@ class MedalVis_Location {
       .attr("r", function(d) {
         return thisvis.radius(d.medal_count);
       });
-      
-    this.svg.selectAll("#cg")
+
+
+    this.svg.selectAll("g")
       .each(
         function(d){
           var elt = d3.select(this);
-          if(d.medal_count > 15){
-            elt.append('text')
-              .attr("dx", -12)
-              .attr("dy", 3)
-              .text(function(d){return d.id;})
-              .attr("font-size", "12px")
-              .style("fill", "#272727bd");
+          if (elt.attr("id") != null && elt.attr("id").startsWith("g-")){
+            if(d.medal_count > 15){
+              elt.append('text')
+                .attr("dx", -12)
+                .attr("dy", 3)
+                .text(function(d){return d.id;})
+                .attr("font-size", "12px")
+                .style("fill", "#272727bd");
+            }
           }
         }
       )
       .on('mouseover', function(d) {
-      if (d.medal_count) {
-        changed_tool_tip.show(d);
-      }
-      d3.select("#" + d.id)
-        .style("opacity", 1.0)
-        .style("stroke", "white")
-        .style("stroke-width", 2);
-      d3.select(this).style("opacity", 0.6);
-    })
-    .on('mouseout', function(d) {
-      if (d.medal_count) {
-        changed_tool_tip.hide(d);
-      }
-      d3.select("#" + d.id)
-        .style("opacity", 0.6)
-        .style("stroke", "white")
-        .style("stroke-width", 0);
-      d3.select(this).style("opacity", 1);
-    });
+        if (d.medal_count) {
+          changed_tool_tip.show(d);
+        }
+        d3.select("#" + d.id)
+          .style("opacity", 1.0)
+          .style("stroke", "white")
+          .style("stroke-width", 2);
+        d3.select(this).style("opacity", 0.6);
+      })
+      .on('mouseout', function(d) {
+        if (d.medal_count) {
+          changed_tool_tip.hide(d);
+        }
+        d3.select("#" + d.id)
+          .style("opacity", 0.6)
+          .style("stroke", "white")
+          .style("stroke-width", 0);
+        d3.select(this).style("opacity", 1);
+      });
   }
 
   // Show sorted circles after click the "number" button
@@ -578,27 +529,42 @@ class MedalVis_Location {
           }
         }
       );
-    
-    // compute the total radius length
-    let row_width = 200;
-    let total_r = d3.sum(Array.from(radius_map.values()));
 
     // sort map by values
     // reference to https://stackoverflow.com/questions/37982476/how-to-sort-a-map-by-value-in-javascript
     const sorted_radius_map = new Map([...radius_map.entries()].sort((a, b) => b[1] - a[1]));
     let sorted_ctry = Array.from(sorted_radius_map.keys());
-    
-    for (var i in sorted_ctry){
-      let circle_id = "#" + sorted_ctry[i];
-      console.log(circle_id);
 
-      this.svg.select(circle_id)
-            .transition().duration(1000)
-            .attr("transform", null)
-            .attr('cx', radius_map.get(sorted_ctry[i])+20*i)
-            .attr('cy', radius_map.get(sorted_ctry[i])+50)
-            .style("fill", "red")
-            .duration(1000);
-    }      
+    // compute the position of circles after movement.
+    let x_pos = 0;
+    let y_start = [];
+    y_start.push(2 * Number(this.svg.select("#" + sorted_ctry[0]).attr("r")) + 15);
+    
+    // The row will display current circle.
+    let row = 1;
+    for (i in sorted_ctry){
+      let g_id = "#g-" + sorted_ctry[i].substr(2, 4);
+      let current_r = Number(this.svg.select("#" + sorted_ctry[i]).attr("r"));
+
+      x_pos += current_r + 15;
+
+      if ((x_pos > 800)&& (!y_start[row])) {
+        console.log(y_start);
+        y_start.push(y_start[row-1] + 15 + 2 * current_r);
+        row += 1;
+        x_pos = current_r + 15;
+      }
+
+      let y_pos = y_start[row-1] - current_r;
+
+      this.svg.select(g_id)
+        .transition().duration(1000)
+        .attr("transform", "translate(" + x_pos + ", " + y_pos + ")")
+        .style("fill", "red")
+        .duration(1000);
+      
+      x_pos += current_r;
+    }
+    
   }
 }
