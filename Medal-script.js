@@ -269,10 +269,6 @@ class MedalVis_Location {
       .attr("width", "8px")
       .attr("height", "8px")
       .style("fill", "#FFFFFF");
-    // .on('mouseover', handleMouseIn)
-    // .on('mouseout', handleMouseOut)
-    // .on("mousemove", handleMouseMove)
-    // .on('click', handleClick);
 
     //add a vertical line following the mouse
     var focus = time_svg.append("g")
@@ -324,24 +320,6 @@ class MedalVis_Location {
         .attr('style', "fill:#FFFFFF;font-weight:normal;")
         .style("text-anchor", "end");
 
-      // if (!d3.select(this).classed("clicked")) {
-      //   bold_label(d).attr('style', "fill:#FFFFFF;font-weight:normal;")
-      //     .style("text-anchor", "end");
-      //   d3.select(this).attr("width", "8px")
-      //     .attr("height", "8px")
-      //     .style("fill", "#FFFFFF");
-      // }
-    }
-
-    // function handleMouseIn(d) {
-    //   bold_label(d).attr('style', "fill:goldenrod;font-weight:bold;")
-    //     .style("text-anchor", "end")
-    //     .style("font-size", "11px");
-    //   d3.select(this).attr("width", "10px")
-    //     .attr("height", "10px")
-    //     .style("fill", "goldenrod");
-    // }
-
     function handleClick(d) {
       //clear the highlight
       d3.selectAll(".tick text").classed("clicked",false);
@@ -360,7 +338,6 @@ class MedalVis_Location {
 
     }
   }
-
 
   // Show bubbles on the world map in default mode (All, All)
   show_medals_default() {
@@ -557,7 +534,6 @@ class MedalVis_Location {
       x_pos += current_r + 15;
 
       if ((x_pos > 800)&& (!y_start[row])) {
-        console.log(y_start);
         y_start.push(y_start[row-1] + 15 + 2 * current_r);
         row += 1;
         x_pos = current_r + 15;
