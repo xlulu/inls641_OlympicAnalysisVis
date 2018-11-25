@@ -256,7 +256,7 @@ select {
   padding-bottom: 8px;
   font-family: 'Andale Mono';
   letter-spacing: -1px;
-  background-color: #000000;
+  background-color: #FFFFFF;
   color: #3F3F3F;
 }
 
@@ -275,8 +275,8 @@ select {
 
 /* set the toggled button style */
 .down {
-  background-color: #FFFFFF;
-  color: #000000;
+  background-color: #000000;
+  color: #FFFFFF;
 }
 
 #medal-chart {
