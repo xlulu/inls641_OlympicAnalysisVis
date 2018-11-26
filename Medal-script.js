@@ -1,11 +1,4 @@
 $(document).ready(() => {
-  games = ["Football", "Handball", "Water Polo", "Hockey", "Baseball", "Volleyball", "Tennis", "Badminton", "Beach Volleyball", "Table Tennis",
-    "Gymnastics", "Rhythmic Gymnastics", "Trampolining", "Synchronized Swimming", "Diving", "Equestrianism",
-    "Fencing", "Wrestling", "Judo", "Boxing", "Taekwondo", "Weightlifting",
-    "Shooting", "Archery",
-    "Swimming", "Athletics", "Cycling", "Modern Pentathlon", "Triathlon", "Canoeing", "Rowing", "Sailing"
-  ];
-
   d3.queue()
     .defer(d3.json, "https://raw.githubusercontent.com/xlulu/inls641_OlympicAnalysisVis/master/world_countries.json")
     .defer(d3.csv, "https://raw.githubusercontent.com/xlulu/inls641_OlympicAnalysisVis/master/data/medal_board_data.csv")
@@ -13,15 +6,11 @@ $(document).ready(() => {
       medal_vis_location = new MedalVis_Location(country_data, medal_data);
       medal_vis_location.show_timeline();
       medal_vis_location.show_medals_default();
-      // //draw the timeline
-      // let s_width = $(".time-slot").width();
+      medal_vis_location.game_options();
+
+      $( "text:contains('2016')" ).css( "fill", "goldenrod" );
     });
 
-  //add list into the game drop-down menu
-  for (i in games) {
-    var game_to_add = "<option value= '" + games[i] + "'>" + games[i] + "</option>";
-    $("#games-all").after(game_to_add);
-  }
   //Listen the toggle clicking
   //By location(default)
   $(".tog-location").click(function() {
@@ -55,6 +44,10 @@ class MedalVis_Location {
     this.number = false;
     this.country_data = country_data;
     this.medal_data = medal_data;
+    this.year_city = {};
+    this.medal_data.map(function(d) {
+      thisvis.year_city[d.Year] = d.City;
+      });
     this.radius = d3.scaleLinear()
       .domain([0, 230])
       .range([0, 120]);
@@ -89,7 +82,10 @@ class MedalVis_Location {
 
   setYear(new_year) {
     this.year = new_year;
+    var city = this.year_city[new_year];
+    $("#olympic-info").html("<b>" + new_year + "  </b><b>" + city + "</b>");
     this.show_medals_changes();
+    this.game_options();
     if(this.number == true)
         this.sort_circles();
   }
@@ -513,7 +509,7 @@ class MedalVis_Location {
   }
 
   // Show sorted circles after click the "number" button
-sort_circles() {
+  sort_circles() {
 
   var thisvis = this;
   var radius_map = new Map();
@@ -541,7 +537,7 @@ sort_circles() {
 
   // The row will display current circle.
   let row = 1;
-  for (i in sorted_ctry){
+  for (var i in sorted_ctry){
     let g_id = "#g-" + sorted_ctry[i].substr(2, 4);
     let current_r = Number(this.svg.select("#" + sorted_ctry[i]).attr("r"));
 
@@ -563,6 +559,20 @@ sort_circles() {
     x_pos += current_r;
   }
 
+}
+
+  game_options() {
+  this.data_filter();
+  var games = this.data_filter().map(function(d){return d.Sport;});
+  games = Array.from(new Set(games)).sort().reverse();
+
+  // add the sport list of the selected year into the game drop-down menu
+  $("#game-options").empty();
+  $("#game-options").append('<option value="All" id = "games-all">All</option>');
+  for (var i in games) {
+    var game_to_add = "<option value= '" + games[i] + "'>" + games[i] + "</option>";
+    $("#games-all").after(game_to_add);
+  }
 }
 
 }
