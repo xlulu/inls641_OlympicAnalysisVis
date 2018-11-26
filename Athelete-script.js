@@ -3,7 +3,7 @@ $(document).ready(() => {
     .defer(d3.csv, "https://raw.githubusercontent.com/xlulu/inls641_OlympicAnalysisVis/master/data/athlete_board_data.csv")
     .await(function(error, athelete_data) {
       athelete_vis = new AtheleteVis(athelete_data);
-      athelete_vis.calculateHeightData();
+      athelete_vis.calculateData();
       athelete_vis.show_athelete_default();
     });
 
@@ -127,37 +127,81 @@ class AtheleteVis {
 
 
 
-  // Tackle the data set
-  calculateHeightData(games_data) {
-    var thisvis = this;
-    //filter the data
-    console.log(typeof(this.games_data));
-    for (var i in this.games_data) {
-      var game = this.games_data[i];
-      var filtered_data = this.athelete_data.filter(function(d) {
-        return d.Sport == game;
-      });
-      //Get the height data via games
-      var filtered_height = filtered_data.map(function(d) {
-        return d.Height;
-      });
-      filtered_height = filtered_height.sort(this.sortNumber);
+  // // Tackle the data set
+  // calculateHeightData(games_data) {
+  //   var thisvis = this;
+  //   //filter the data
+  //   console.log(typeof(this.games_data));
+  //   for (var i in this.games_data) {
+  //     var game = this.games_data[i];
+  //     var filtered_data = this.athelete_data.filter(function(d) {
+  //       return d.Sport == game;
+  //     });
+  //     //Get the height data via games
+  //     var filtered_height = filtered_data.map(function(d) {
+  //       return d.Height;
+  //     });
+  //     filtered_height = filtered_height.sort(this.sortNumber);
+  //
+  //     // var sorted_height = Object.values(filtered_height).sort(function(a, b) {
+  //     //   return filtered_height[a] - filtered_height[b];
+  //     // })
+  //     // console.log(filtered_height);
+  //     var record = {};
+  //     var localMin = d3.min(filtered_height);
+  //     var localMax = d3.max(filtered_height);
+  //     record["game"] = game;
+  //     record["height"] = filtered_height;
+  //     record["quartile"] = this.boxQuartiles(filtered_height);
+  //     record["whiskers"] = [localMin, localMax];
+  //     this.height_data.push(record);
+  //   }
+  //   console.log(this.height_data);
+  // }
 
-      // var sorted_height = Object.values(filtered_height).sort(function(a, b) {
-      //   return filtered_height[a] - filtered_height[b];
-      // })
-      // console.log(filtered_height);
-      var record = {};
-      var localMin = d3.min(filtered_height);
-      var localMax = d3.max(filtered_height);
-      record["game"] = game;
-      record["height"] = filtered_height;
-      record["quartile"] = this.boxQuartiles(filtered_height);
-      record["whiskers"] = [localMin, localMax];
-      this.height_data.push(record);
+    // Tackle the data set
+    calculateData(games_data) {
+        var thisvis = this;
+        //filter the data
+        console.log(typeof(this.games_data));
+        for (var i in this.games_data) {
+            var game = this.games_data[i];
+            var filtered_data = this.athelete_data.filter(function(d) {
+                return d.Sport == game;
+            });
+            //Get the height data via games
+            var filtered_height = filtered_data.map(function(d) {
+                return d.Height;
+            });
+            filtered_height = filtered_height.sort(this.sortNumber);
+            // Get the weight data via games
+            var filtered_weight = filtered_data.map(function(d) {
+                return d.Weight;
+            });
+            filtered_weight = filtered_weight.sort(this.sortNumber);
+            // Get the age data via games
+            var filtered_age = filtered_data.map(function(d) {
+                return d.Age;
+            });
+            filtered_age = filtered_age.sort(this.sortNumber);
+
+
+
+            // var sorted_height = Object.values(filtered_height).sort(function(a, b) {
+            //   return filtered_height[a] - filtered_height[b];
+            // })
+            // console.log(filtered_height);
+            var record = {};
+            var localMin = d3.min(filtered_height);
+            var localMax = d3.max(filtered_height);
+            record["game"] = game;
+            record["height"] = filtered_height;
+            record["quartile"] = this.boxQuartiles(filtered_height);
+            record["whiskers"] = [localMin, localMax];
+            this.height_data.push(record);
+        }
+        console.log(this.height_data);
     }
-    console.log(this.height_data);
-  }
 
 
   // Callback for changing the gender.
@@ -179,9 +223,38 @@ class AtheleteVis {
       var x = d3.scaleLinear()
           .domain([min_h, max_h])
           .range([0, (this.chart_w - margin) / 3]);
-      console.log(x(data));
       return x(data);
   }
+    // set x linear func for input weight
+    x_w(data){
+        var thisvis = this;
+        var margin = 120;
+        var min_w = d3.min(this.athelete_data, function(d) {
+            return d.Weight;
+        });
+        var max_w = d3.max(this.athelete_data, function(d) {
+            return d.Weight;
+        });
+        var x = d3.scaleLinear()
+            .domain([min_w, max_w])
+            .range([(this.chart_w - margin) / 3, 2 * (this.chart_w - margin) / 3]);
+        return x(data);
+    }
+    // set x linear func for input age
+    x_a(data){
+        var thisvis = this;
+        var margin = 120;
+        var min_a = d3.min(this.athelete_data, function(d) {
+            return d.Age;
+        });
+        var max_a = d3.max(this.athelete_data, function(d) {
+            return d.Age;
+        });
+        var x = d3.scaleLinear()
+            .domain([min_a, max_a])
+            .range([2 * (this.chart_w - margin) / 3, this.chart_w - margin]);
+        return x(data);
+    }
 
 
 
@@ -195,11 +268,37 @@ class AtheleteVis {
     var max_h = d3.max(this.athelete_data, function(d) {
       return d.Height;
     });
+    console.log("min h:" + min_h);
+    console.log("max h:" + max_h);
+    var min_w = d3.min(this.athelete_data, function(d) {
+      //console.log(typeof(d.Weight));
+      return d.Weight;
+    });
+    var max_w = d3.max(this.athelete_data, function(d) {
+      return d.Weight;
+    });
+    console.log("min w:" + min_w);
+    console.log("max w:" + max_w);
+    var min_a = d3.min(this.athelete_data, function(d) {
+      return d.Age;
+    });
+    var max_a = d3.max(this.athelete_data, function(d) {
+      return d.Age;
+    });
+      console.log("min a:" + min_a);
+      console.log("max a:" + max_a);
 
-
-    // Define X scales for height
+      // Define X scales for height
       var x_h = d3.scaleLinear()
           .domain([min_h, max_h])
+          .range([0, (this.chart_w - margin) / 3]);
+      // Define X scales for weight
+      var x_w = d3.scaleLinear()
+          .domain([min_w, max_w])
+          .range([0, (this.chart_w - margin) / 3]);
+      // Define X scales for age
+      var x_a = d3.scaleLinear()
+          .domain([min_a, max_a])
           .range([0, (this.chart_w - margin) / 3]);
 
       // Define y scales
@@ -227,7 +326,8 @@ class AtheleteVis {
       .style("font-size", "10px");
 
     this.svg.append("g")
-        .attr("class", "a")
+        .attr("class", "a");
+
 
     // Then the Y axis.
     this.svg.append("g")
@@ -356,6 +456,7 @@ class AtheleteVis {
 
 
     inputLine(age, height, weight, sex) {
+        // line for input height
         this.svg.append("line")
             .attr("x1", this.x_h(height))
             .attr("x2", this.x_h(height))
@@ -364,6 +465,12 @@ class AtheleteVis {
             .style("stroke", "gold")
             .style("stroke-width", 3)
             .style("stroke-dasharray", "4,4");
+        //line for input weight
+
+        //line for input age
+
+
+
         console.log("line printed!")
     }
 
