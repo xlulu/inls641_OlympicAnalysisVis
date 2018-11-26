@@ -28,24 +28,16 @@ $(document).ready(() => {
     var cur_year = medal_vis_location.year;
     $(this).toggleClass("down");
     $(".tog-number").toggleClass("down", false);
-    $("#medal-chart").children().remove();
-    $(".time-slot").children().remove();
-    // call function to draw chart by location
-    d3.queue()
-      .defer(d3.json, "https://raw.githubusercontent.com/xlulu/inls641_OlympicAnalysisVis/master/world_countries.json")
-      .defer(d3.csv, "https://raw.githubusercontent.com/xlulu/inls641_OlympicAnalysisVis/master/data/medal_board_data.csv")
-      .await(function(error, country_data, medal_data) {
-        medal_vis_location = new MedalVis_Location(country_data, medal_data);
-        medal_vis_location.show_timeline();
-        medal_vis_location.show_medals_default();
-        medal_vis_location.setYear(cur_year);
-      });
+    $(".countries").show(1000);
+    medal_vis_location.number = false;
+    medal_vis_location.year = cur_year;
+    medal_vis_location.move_medals_to_map();
   });
   //By number
   $(".tog-number").click(function() {
     $(this).toggleClass("down");
     $(".tog-location").toggleClass("down", false);
-    $(".countries").remove();
+    $(".countries").hide(1000);
     // call function to draw chart by number
     medal_vis_location.number = true;
     medal_vis_location.sort_circles();
@@ -65,7 +57,7 @@ class MedalVis_Location {
     this.medal_data = medal_data;
     this.radius = d3.scaleLinear()
       .domain([0, 230])
-      .range([0, 100]);
+      .range([0, 120]);
 
     // Get a reference to the SVG element.
     this.svg = d3.select("#medal-chart")
@@ -440,6 +432,24 @@ class MedalVis_Location {
 
   }
 
+  move_medals_to_map() {
+    var chart_w = $("#medal-chart").width();
+    var path = d3.geoPath();
+
+    var projection = d3.geoMercator()
+      .scale(chart_w / 2 / Math.PI)
+      .translate([chart_w / 2, 800 / 2]);
+
+    path = d3.geoPath().projection(projection);
+
+    this.svg.selectAll(".ctr_g")
+      .data(this.country_data.features)
+      .transition().duration(1000)
+      .attr("transform", function(d) {
+        return "translate(" + path.centroid(d) + ")";
+      });
+  }
+
   // Change bubble size based on user's choices
   show_medals_changes() {
     var thisvis = this;
@@ -477,12 +487,10 @@ class MedalVis_Location {
                 .attr("dy", 3)
                 .text(function(d){return d.id;})
                 .attr("font-size", "12px")
-                .style("fill", "#272727bd");
-            }
+                .style("fill", "#272727bd");}
           }
         }
-      )
-      .on('mouseover', function(d) {
+      ).on('mouseover', function(d) {
         if (d.medal_count) {
           changed_tool_tip.show(d);
         }
@@ -505,55 +513,56 @@ class MedalVis_Location {
   }
 
   // Show sorted circles after click the "number" button
-  sort_circles() {
+sort_circles() {
 
-    var thisvis = this;
-    var radius_map = new Map();
+  var thisvis = this;
+  var radius_map = new Map();
 
-    // Get all the non-zero redius value of all circles.
-    this.svg.selectAll("circle")
-      .each(
-        function(d){
-          var elt = d3.select(this);
-          if(elt.attr("r") > 0){
-            radius_map.set(elt.attr("id"), elt.attr("r"));
-          }
+  // Get all the non-zero redius value of all circles.
+  this.svg.selectAll("circle")
+    .each(
+      function(d){
+        var elt = d3.select(this);
+        if(elt.attr("r") > 0){
+          radius_map.set(elt.attr("id"), elt.attr("r"));
         }
-      );
-
-    // sort map by values
-    // reference to https://stackoverflow.com/questions/37982476/how-to-sort-a-map-by-value-in-javascript
-    const sorted_radius_map = new Map([...radius_map.entries()].sort((a, b) => b[1] - a[1]));
-    let sorted_ctry = Array.from(sorted_radius_map.keys());
-
-    // compute the position of circles after movement.
-    let x_pos = 0;
-    let y_start = [];
-    y_start.push(2 * Number(this.svg.select("#" + sorted_ctry[0]).attr("r")) + 15);
-
-    // The row will display current circle.
-    let row = 1;
-    for (i in sorted_ctry){
-      let g_id = "#g-" + sorted_ctry[i].substr(2, 4);
-      let current_r = Number(this.svg.select("#" + sorted_ctry[i]).attr("r"));
-
-      x_pos += current_r + 15;
-
-      if ((x_pos > 800)&& (!y_start[row])) {
-        y_start.push(y_start[row-1] + 15 + 2 * current_r);
-        row += 1;
-        x_pos = current_r + 15;
       }
+    );
 
-      let y_pos = y_start[row-1] - current_r;
+  // sort map by values
+  // reference to https://stackoverflow.com/questions/37982476/how-to-sort-a-map-by-value-in-javascript
+  const sorted_radius_map = new Map([...radius_map.entries()].sort((a, b) => b[1] - a[1]));
+  let sorted_ctry = Array.from(sorted_radius_map.keys());
 
-      this.svg.select(g_id)
-        .transition().duration(1000)
-        .attr("transform", "translate(" + x_pos + ", " + y_pos + ")")
-        .duration(1000);
+  // compute the position of circles after movement.
+  let x_pos = 0;
+  let y_start = [];
+  y_start.push(2 * Number(this.svg.select("#" + sorted_ctry[0]).attr("r")) + 15);
 
-      x_pos += current_r;
+  // The row will display current circle.
+  let row = 1;
+  for (i in sorted_ctry){
+    let g_id = "#g-" + sorted_ctry[i].substr(2, 4);
+    let current_r = Number(this.svg.select("#" + sorted_ctry[i]).attr("r"));
+
+    x_pos += current_r + 15;
+
+    if ((x_pos > 800)&& (!y_start[row])) {
+      y_start.push(y_start[row-1] + 15 + 2 * current_r);
+      row += 1;
+      x_pos = current_r + 15;
     }
 
+    let y_pos = y_start[row-1] - current_r;
+
+    this.svg.select(g_id)
+      .transition().duration(1000)
+      .attr("transform", "translate(" + x_pos + ", " + y_pos + ")")
+      .duration(1000);
+
+    x_pos += current_r;
   }
+
+}
+
 }
