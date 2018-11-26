@@ -3,7 +3,6 @@ $(document).ready(() => {
     .defer(d3.csv, "https://raw.githubusercontent.com/xlulu/inls641_OlympicAnalysisVis/master/data/athlete_board_data.csv")
     .await(function(error, athelete_data) {
       athelete_vis = new AtheleteVis(athelete_data);
-      athelete_vis.show_athelete_default();
       athelete_vis.calculateHeightData();
       athelete_vis.show_athelete_default();
     });
@@ -19,8 +18,8 @@ $(document).ready(() => {
     d3.queue()
       .defer(d3.csv, "https://raw.githubusercontent.com/xlulu/inls641_OlympicAnalysisVis/master/data/athlete_board_data.csv")
       .await(function(error, athelete_data) {
-        athelete_vis = new AtheleteVis(athelete_data);
-        athelete_vis.show_athelete_default();
+          athelete_vis = new AtheleteVis(athelete_data);
+          athelete_vis.show_athelete_default();
       });
   });
 
@@ -31,6 +30,7 @@ $(document).ready(() => {
     $(".tog-male").toggleClass("clicked", false);
     $("#athelete-chart").children().remove();
     // call function to draw chart with FEMALE athelete data
+
 
   });
 
@@ -66,11 +66,14 @@ $(document).ready(() => {
     age = Number($('#age-input').val());
     height = Number($('#height-input').val());
     weight = Number($('#weight-input').val());
+
     console.log("age: " + age);
     console.log("height: " + height);
     console.log("weight: " + weight);
     console.log("sex: " + sex);
+
     // call function to write the filter and give result
+      athelete_vis.inputLine(age, height, weight, sex);
 
   });
 
@@ -81,6 +84,7 @@ class AtheleteVis {
     this.athelete_data = athelete_data;
     this.gender = "All";
     this.chart_w = $("#athelete-chart").width();
+    //console.log(this.chart_w);
     var thisvis = this;
     //get all the games name
     this.games_data = d3.set(this.athelete_data.map(function(d) {
@@ -92,7 +96,7 @@ class AtheleteVis {
 
     this.height_data = [];
 
-    // Get a reference to the SVG element.
+    // Get a reference to the  SVG element.
     this.svg = d3.select("#athelete-chart")
       .append("svg")
       .attr("width", "100%")
@@ -120,6 +124,7 @@ class AtheleteVis {
   //     hs[key] = hs.sort();
   //   }
   // }
+
 
 
   // Tackle the data set
@@ -161,6 +166,24 @@ class AtheleteVis {
     this.show_athelete_changes();
   }
 
+  // set x linear func for input height
+  x_h(data){
+      var thisvis = this;
+      var margin = 120;
+      var min_h = d3.min(this.athelete_data, function(d) {
+          return d.Height;
+      });
+      var max_h = d3.max(this.athelete_data, function(d) {
+          return d.Height;
+      });
+      var x = d3.scaleLinear()
+          .domain([min_h, max_h])
+          .range([0, (this.chart_w - margin) / 3]);
+      console.log(x(data));
+      return x(data);
+  }
+
+
 
   // Show boxplot in default mode (All sex)
   show_athelete_default() {
@@ -175,16 +198,16 @@ class AtheleteVis {
 
 
     // Define X scales for height
-    var x_h = d3.scaleLinear()
-      .domain([min_h, max_h])
-      .range([0, (this.chart_w - margin) / 3]);
+      var x_h = d3.scaleLinear()
+          .domain([min_h, max_h])
+          .range([0, (this.chart_w - margin) / 3]);
 
-    // Define y scales
-    var y = d3.scalePoint()
-      .domain(this.games_data)
-      .range([0, 580]);
+      // Define y scales
+      var y = d3.scalePoint()
+          .domain(this.games_data)
+          .range([0, 580]);
 
-    var y_axis = d3.axisLeft().scale(y);
+      var y_axis = d3.axisLeft().scale(y);
 
 
 
@@ -202,6 +225,9 @@ class AtheleteVis {
       .style("text-anchor", "middle")
       .text("Height")
       .style("font-size", "10px");
+
+    this.svg.append("g")
+        .attr("class", "a")
 
     // Then the Y axis.
     this.svg.append("g")
@@ -326,11 +352,23 @@ class AtheleteVis {
         .attr("stroke-width", 1)
         .attr("fill", "none");
     }
-
-
-
-
   }
+
+
+    inputLine(age, height, weight, sex) {
+        this.svg.append("line")
+            .attr("x1", this.x_h(height))
+            .attr("x2", this.x_h(height))
+            .attr("y1", 0)
+            .attr("y2", 620)
+            .style("stroke", "gold")
+            .style("stroke-width", 3)
+            .style("stroke-dasharray", "4,4");
+        console.log("line printed!")
+    }
+
+
+
 
 
 }
