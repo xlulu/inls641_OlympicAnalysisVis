@@ -25,16 +25,20 @@ $(document).ready(() => {
   //Listen the toggle clicking
   //By location(default)
   $(".tog-location").click(function() {
+    var cur_year = medal_vis_location.year;
     $(this).toggleClass("down");
     $(".tog-number").toggleClass("down", false);
     $("#medal-chart").children().remove();
+    $(".time-slot").children().remove();
     // call function to draw chart by location
     d3.queue()
       .defer(d3.json, "https://raw.githubusercontent.com/xlulu/inls641_OlympicAnalysisVis/master/world_countries.json")
       .defer(d3.csv, "https://raw.githubusercontent.com/xlulu/inls641_OlympicAnalysisVis/master/data/medal_board_data.csv")
       .await(function(error, country_data, medal_data) {
         medal_vis_location = new MedalVis_Location(country_data, medal_data);
+        medal_vis_location.show_timeline();
         medal_vis_location.show_medals_default();
+        medal_vis_location.setYear(cur_year);
       });
   });
   //By number
@@ -269,10 +273,6 @@ class MedalVis_Location {
       .attr("width", "8px")
       .attr("height", "8px")
       .style("fill", "#FFFFFF");
-    // .on('mouseover', handleMouseIn)
-    // .on('mouseout', handleMouseOut)
-    // .on("mousemove", handleMouseMove)
-    // .on('click', handleClick);
 
     //add a vertical line following the mouse
     var focus = time_svg.append("g")
@@ -323,24 +323,7 @@ class MedalVis_Location {
         })
         .attr('style', "fill:#FFFFFF;font-weight:normal;")
         .style("text-anchor", "end");
-
-      // if (!d3.select(this).classed("clicked")) {
-      //   bold_label(d).attr('style', "fill:#FFFFFF;font-weight:normal;")
-      //     .style("text-anchor", "end");
-      //   d3.select(this).attr("width", "8px")
-      //     .attr("height", "8px")
-      //     .style("fill", "#FFFFFF");
-      // }
     }
-
-    // function handleMouseIn(d) {
-    //   bold_label(d).attr('style', "fill:goldenrod;font-weight:bold;")
-    //     .style("text-anchor", "end")
-    //     .style("font-size", "11px");
-    //   d3.select(this).attr("width", "10px")
-    //     .attr("height", "10px")
-    //     .style("fill", "goldenrod");
-    // }
 
     function handleClick(d) {
       //clear the highlight
@@ -557,7 +540,6 @@ class MedalVis_Location {
       x_pos += current_r + 15;
 
       if ((x_pos > 800)&& (!y_start[row])) {
-        console.log(y_start);
         y_start.push(y_start[row-1] + 15 + 2 * current_r);
         row += 1;
         x_pos = current_r + 15;

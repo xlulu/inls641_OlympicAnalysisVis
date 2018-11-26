@@ -116,7 +116,7 @@ h2 {
   stroke: #FFFFFF;
   stroke-width: 6px;
 } */
-.tick > text{
+.axis .tick text{
   fill: #FFFFFF;
   font-family: 'Andale Mono';
   font-size: 10px;
@@ -130,12 +130,12 @@ h2 {
 
 }
 
-.tick line {
+.axis .tick line  {
   stroke: #FFFFFF;
 
 }
 
-.tick line :hover{
+.axis .tick line :hover{
   stroke: goldenrod;
   stroke-width: 8px;
 }
@@ -256,7 +256,7 @@ select {
   padding-bottom: 8px;
   font-family: 'Andale Mono';
   letter-spacing: -1px;
-  background-color: #000000;
+  background-color: #FFFFFF;
   color: #3F3F3F;
 }
 
@@ -275,8 +275,8 @@ select {
 
 /* set the toggled button style */
 .down {
-  background-color: #FFFFFF;
-  color: #000000;
+  background-color: #000000;
+  color: #FFFFFF;
 }
 
 #medal-chart {
