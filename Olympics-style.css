@@ -116,7 +116,7 @@ h2 {
   stroke: #FFFFFF;
   stroke-width: 6px;
 } */
-.tick > text{
+.axis .tick text{
   fill: #FFFFFF;
   font-family: 'Andale Mono';
   font-size: 10px;
@@ -130,12 +130,12 @@ h2 {
 
 }
 
-.tick line {
+.axis .tick line  {
   stroke: #FFFFFF;
 
 }
 
-.tick line :hover{
+.axis .tick line :hover{
   stroke: goldenrod;
   stroke-width: 8px;
 }
