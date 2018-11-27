@@ -452,7 +452,7 @@ class MedalVis_Location {
                   .style("opacity", 1.0)
                   .style("stroke", "white")
                   .style("stroke-width", 2);
-                d3.select(this).style("opacity", 0.6);
+                d3.select(this).style("opacity", 0.7);
               })
               .on('mouseout', function(d) {
                 if (d.medal_count) {
@@ -661,11 +661,11 @@ class MedalVis_Location {
   // red yellow blue black green
   var colors = ["red", "yellow", "blue", "black", "green"];
   var rgb = {
-    red : "#d65567",
-    yellow :"#ffc107",
-    blue : "#00a6cb",
-    black : "#607d8b",
-    green : "#8bc34a"
+    red : "#d03113",
+    yellow :"#F7C007",
+    blue : "#1981c7",
+    black : "#3C3C3C",
+    green : "#3F8E1C"
   };
 
   for (var i in groupBy_NOC){
