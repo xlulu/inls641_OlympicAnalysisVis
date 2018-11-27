@@ -13,12 +13,13 @@
   <script src="https://d3js.org/d3-queue.v3.min.js"></script>
   <script src="https://unpkg.com/simple-statistics@6.0.1/dist/simple-statistics.min.js"></script>
   <script src="https://ils.unc.edu/~gotz/courses/js/gotz-d3-tip.js"></script>
-  <link rel="stylesheet" type="text/css" href="https://ils.unc.edu/~gotz/courses/js/d3-tip.css"/>
-  <script
-        src="https://code.jquery.com/jquery-3.3.1.min.js"
-        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous"></script>
+  <link rel="stylesheet" type="text/css" href="https://ils.unc.edu/~gotz/courses/js/d3-tip.css" />
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+  <script>FontAwesomeConfig = { autoReplaceSvg: 'nest' } </script>
   <script src="Athelete-script.js"></script>
+
+
 </head>
 
 <body id="athelete">
@@ -40,10 +41,10 @@
         bar chart, boxplot would help users to figure out the outliers as well as the variation between this. By hovering it, user would see the specific value of each boxplot to know a detailed age scope of specific games. By selecting the toggle
         button of gender choices, users can see those statistical information only about female/male athletes.</p>
     </div>
-    <div class="chart" id="AtheleteBoard">
+    <div class="chart">
       <h2>AtheleteBoard</h2>
       <!-- here to have the toggle button -->
-      <div class="toggle-background">
+      <div class="toggle-background" id="AtheleteBoard">
         <button class="tog-sex clicked">All</button>
         <button class="tog-female">Female</button>
         <button class="tog-male">Male</button>
@@ -53,36 +54,38 @@
 
       <div class="athelete-artboard">
         <!-- here to give the instruction -->
-        <div class="athelete-ins">
-          <p>
-            <space>👀</space>See what you're still gooding at<space>👇</space>
-          </p>
-        </div>
-        <!-- here to get the input -->
-        <div class="athelete-input">
-          <div class="sex-toggle">
-            <button class="toggle-male down">Male</button>
-            <button class="toggle-female">Female</button>
+        <i class="fas fa-chevron-circle-down" id="arrow"></i>
+        <div class="collapse">
+          <div class="athelete-ins">
+            <p>
+              <space>👀</space>See what you're still gooding at<space>👇</space>
+            </p>
           </div>
-          <div class="age-box">
-            <space>Age</space>
-            <input type="text" name="Age" id="age-input">
+          <!-- here to get the input -->
+          <div class="athelete-input">
+            <div class="sex-toggle">
+              <button class="toggle-male down">Male</button>
+              <button class="toggle-female">Female</button>
+            </div>
+            <div class="age-box">
+              <space>Age</space>
+              <input type="text" name="Age" id="age-input">
+            </div>
+            <div class="height-box">
+              <space>Height</space>
+              <input type="text" name="Height" id="height-input">
+              <space>cm</space>
+            </div>
+            <div class="weight-box">
+              <space>Weight</space>
+              <input type="text" name="Weight" id="weight-input">
+              <space>kg</space>
+            </div>
+            <button class="see-result">See <space>👌</space></button>
           </div>
-          <div class="height-box">
-            <space>Height</space>
-            <input type="text" name="Height" id="height-input">
-            <space>cm</space>
-          </div>
-          <div class="weight-box">
-            <space>Weight</space>
-            <input type="text" name="Weight" id="weight-input">
-            <space>kg</space>
-          </div>
-          <button class="see-result">See <space>👌</space></button>
         </div>
         <!-- here to draw the chart -->
         <div id="athelete-chart"></div>
-
       </div>
 
 
