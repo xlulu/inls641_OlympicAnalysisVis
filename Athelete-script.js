@@ -126,7 +126,7 @@ $(document).ready(() => {
           .append("svg")
           .attr("id", "box-svg")
           .attr("width", "100%")
-          .attr("height", 650)
+          .attr("height", 630)
           .style("margin-top", "10px");
         // .style("background-color", "#000000");
 
@@ -228,13 +228,13 @@ $(document).ready(() => {
         // Define X scales for height
         var x_h = d3.scaleLinear()
           .domain([min_h - 1, max_h + 1])
-          .range([0, wid]);
+          .range([0, wid-5]);
         var x_axis = d3.axisBottom().scale(x_h);
 
         // Define y scales
         var y = d3.scalePoint()
           .domain(this.games_data)
-          .range([0, 580]);
+          .range([0, 560]);
 
         var y_axis = d3.axisLeft().scale(y);
 
@@ -242,12 +242,12 @@ $(document).ready(() => {
         //First the Y axis and label.
         this.svg.append("g")
           .attr("class", this.game_chart[info] + "axis")
-          .attr("transform", "translate(" + (margin + 5) + ",600)")
+          .attr("transform", "translate(" + (margin + 5) + ",580)")
           .call(x_axis);
 
         this.svg.append("text")
           .attr("class", "a_axis-label")
-          .attr("y", 635)
+          .attr("y", 610)
           .attr("x", (this.chart_w - margin) / 3 - 20)
           .attr("class", this.game_chart[info] + "text")
           .style("text-anchor", "middle")
@@ -388,12 +388,12 @@ $(document).ready(() => {
         }
 
         //render the boxplot
-        d3.selectAll(".age").attr("transform", "translate(" + (margin + 30 + 2 * wid) + ",0)");
+        d3.selectAll(".age").attr("transform", "translate(" + (margin + 25 + 2 * wid) + ",0)");
         d3.selectAll(".agetext").attr("transform", "translate(" + (2 * textwid) + ",0)");
-        d3.selectAll(".ageaxis").attr("transform", "translate(" + (margin + 30 + 2 * wid) + ",600)");
+        d3.selectAll(".ageaxis").attr("transform", "translate(" + (margin + 25 + 2 * wid) + ",580)");
         d3.selectAll(".weight").attr("transform", "translate(" + (margin + 15 + wid) + ",0)");
         d3.selectAll(".weighttext").attr("transform", "translate(" + textwid + ",0)");
-        d3.selectAll(".weightaxis").attr("transform", "translate(" + (margin + 15 + wid) + ",600)");
+        d3.selectAll(".weightaxis").attr("transform", "translate(" + (margin + 15 + wid) + ",580)");
 
         // inputLine(age, height, weight, sex) {
         //     // line for input height
