@@ -277,7 +277,7 @@ select {
 .detail-info {
   display: grid;
   grid-gap: 0;
-  grid-template-columns: 55% auto;
+  grid-template-columns: 60% auto;
   grid-template-areas:
     "mdde code";
 }
@@ -314,12 +314,26 @@ select {
     "mech togl";
 }
 
-.golddot, .silverdot, .bronzedot {
+.color-span {
+  border-radius: 50%;
+  margin-left: 15px;
+  display: inline-block;
+}
+
+.golddot, .silverdot, .bronzedot{
   height: 10px;
   width: 10px;
   border-radius: 50%;
   margin-left: 15px;
   display: inline-block;
+}
+
+.colordot {
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 3px 0;
 }
 
 .golddot {
@@ -345,6 +359,12 @@ select {
   color: #000000;
 }
 
+.color-name {
+  font-weight: 900;
+  font-size: 12px;
+  text-indent: 10px;
+}
+
 #play-year {
   border: 2px solid #000000;
   font-size: 12px;
@@ -368,9 +388,6 @@ select {
   line-height: 2;
 }
 
-#medal-detail {
-  grid-area: mdde;
-}
 .color-info{
   margin-top:30px;
 }

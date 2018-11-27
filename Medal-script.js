@@ -13,8 +13,6 @@ $(document).ready(() => {
       $("text:contains('2016')").css("fill", "goldenrod");
       $("#2016").css("fill", "goldenrod");
 
-      // addTable();
-
     });
 
   //Listen the toggle clicking
@@ -49,14 +47,14 @@ var color_dic = {
 };
 
 // red yellow blue black green
-var colors = ["red", "yellow", "blue", "black", "green"];
+var colors = ["red", "yellow", "blue", "green", "black"];
 
 var rgb = {
-  red: "#d03113",
-  yellow: "#F7C007",
-  blue: "#0396e6",
-  black: "#3C3C3C",
-  green: "#3F8E1C"
+  red: { color: "#d03113", name: "Fight"},
+  yellow: { color: "#F7C007", name: "Speed"},
+  blue: { color: "#0396e6", name: "Aesthetic"},
+  black: { color: "#3C3C3C", name: "Accuracy"},
+  green: { color: "#3F8E1C", name: "Ball"}
 };
 
 
@@ -692,16 +690,6 @@ class MedalVis_Location {
     }, Object.create(null));
     //console.log(groupBy_NOC);
 
-    // red yellow blue black green
-    var colors = ["red", "yellow", "blue", "black", "green"];
-    var rgb = {
-      red: "#d03113",
-      yellow: "#F7C007",
-      blue: "#0396e6",
-      black: "#3C3C3C",
-      green: "#3F8E1C"
-    };
-
     for (var i in groupBy_NOC) {
       noc_color_count[i] = [];
       let color_sport_quantity = this.count_color(groupBy_NOC[i]);
@@ -724,7 +712,7 @@ class MedalVis_Location {
           if (thisvis.svg.select("#c-" + noc).attr("r") > 0) {
             let arr = noc_color_count[noc];
             let max_index = arr.indexOf(Math.max(...arr));
-            elt.style("fill", rgb[colors[max_index]]);
+            elt.style("fill", rgb[colors[max_index]].color);
           }
         });
   }
@@ -768,10 +756,15 @@ class MedalVis_Location {
 // function for show detail info of colors, the sports included in each color.
 function color_detail() {
 
-  var color_info = "<table class='color-info'><b style = 'line-height:2'>Color Infos</b>";
+  var color_info = "<table class='color-info'><b style='text-align:left'>Colors Info</b>";
 
   for (var i in color_dic) {
-    color_info += "<tr><td class='color' width = '10px' style = \"background-color:" + rgb[i] + "\"" + i + "\"></td><td class='sport'>";
+    // the name of each color
+    color_info += "<tr><td class = 'colordot' style = 'background-color:" + rgb[i].color + "'></td><td class='color-name' style = 'color:" + rgb[i].color + "'>" + rgb[i].name + "</td>";
+    // the color bar
+    color_info += "<tr><td style = 'width:10px; background-color:" + rgb[i].color + "'</td><td class='sport'>";
+    
+    // the sports in each color
     for (var j in color_dic[i].sort()) {
       color_info += "<span class = 'sport-span " + i + "'>" + color_dic[i][j] + "</span>";
     }
