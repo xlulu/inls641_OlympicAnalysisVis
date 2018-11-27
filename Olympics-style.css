@@ -344,3 +344,31 @@ select {
   background-color: #FFFFFF;
   color: #3F3F3F;
 }
+
+.detail-info {
+  display: grid;
+  grid-gap: 0;
+  grid-template-areas:
+    "mdde code";
+}
+
+#medal-detail{
+  grid-area: mdde;
+}
+
+#color-detail{
+  grid-area: code;
+}
+
+.sport-name, .ctry-name {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.ctry-name {
+  text-align: right;
+}
+
+.medal-info {
+  font-size: 12px;
+}
