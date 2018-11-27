@@ -1,5 +1,7 @@
 $(document).ready(() => {
   $("#color-detail").html(color_detail());
+
+
   d3.queue()
     .defer(d3.json, "https://raw.githubusercontent.com/xlulu/inls641_OlympicAnalysisVis/master/world_countries.json")
     .defer(d3.csv, "https://raw.githubusercontent.com/xlulu/inls641_OlympicAnalysisVis/master/data/medal_board_data.csv")
@@ -76,6 +78,9 @@ class MedalVis_Location {
       .domain([0, 230])
       .range([0, 120]);
 
+    this.div_height = $("#color-detail").height();
+    console.log( this.div_height );
+
     // Get a reference to the SVG element.
     this.svg = d3.select("#medal-chart")
       .append("svg")
@@ -110,7 +115,9 @@ class MedalVis_Location {
     this.year = new_year;
     var city = this.year_city[new_year];
     $("#olympic-info").html("<b>" + new_year + "  </b><b>" + city + "</b>");
-    $("#medal-detail").html("Click on a country to show details..");
+    $("#medal-detail b").text("Click on a country to show details..");
+    $("#medal-info").remove();
+  //  $("#medal-detail").html("Click on a country to show details..");
     this.show_medals_changes();
     this.game_options();
     if (this.number == true)
@@ -485,11 +492,14 @@ class MedalVis_Location {
       })
       .on('click', function(d) {
         var [country, medal] = thisvis.find_ctry_data(d.id, d.properties.name);
-        var div_height = $("#color-detail").height();
+
 
         $("#medal-detail b").text(country);
+        $("#medal-info").remove();
         $("#medal-detail").append(medal);
-        $("#medal-info").attr("height",div_height-15);
+        console.log(thisvis.div_height);
+        $("#medal-info").attr("height",thisvis.div_height-15);
+
         // $("#medal-detail").append(thisvis.find_ctry_data(d.id, d.properties.name));
 
       });

@@ -500,6 +500,28 @@ class AtheleteVis {
     d3.selectAll(".weight").attr("transform", "translate(" + (margin + 15 + wid) + ",0)");
     d3.selectAll(".weighttext").attr("transform", "translate(" + textwid + ",0)");
     d3.selectAll(".weightaxis").attr("transform", "translate(" + (margin + 15 + wid) + ",600)");
+
+    //add horizontal rectangle following the mouse
+
+    var focus = box_g.append("g")
+      .attr("class", "focus");
+      // .style("display", "none");
+
+    focus.append("rect")
+      .attr("class", "y-hover-rect")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("height", barWidth)
+      .attr("width", 620)
+      .attr("transform", "translate(" + (margin + 5) + ")");
+
+
+    // box_g.on("mousemove", function(d) {
+    //   let mouse_coords = d3.mouse(this);
+    //   console.log(mouse_coords[1]);
+    //   // svg.selectAll(".highlight_box")
+    //   //   .attr("y", mouse_coords[1]);
+    // });
   }
 
   // // set x linear func for input height
