@@ -171,17 +171,17 @@ class AtheleteVis {
             });
             //Get the height data via games
             var filtered_height = filtered_data.map(function(d) {
-                return d.Height;
+                return Number(d.Height);
             });
             filtered_height = filtered_height.sort(this.sortNumber);
             // Get the weight data via games
             var filtered_weight = filtered_data.map(function(d) {
-                return d.Weight;
+                return Number(d.Weight);
             });
             filtered_weight = filtered_weight.sort(this.sortNumber);
             // Get the age data via games
             var filtered_age = filtered_data.map(function(d) {
-                return d.Age;
+                return Number(d.Age);
             });
             filtered_age = filtered_age.sort(this.sortNumber);
 
@@ -222,7 +222,7 @@ class AtheleteVis {
       });
       var x = d3.scaleLinear()
           .domain([min_h, max_h])
-          .range([0, (this.chart_w - margin) / 3]);
+          .range([0, (this.chart_w - margin - 5) / 3 - 10]);
       return x(data);
   }
     // set x linear func for input weight
@@ -237,7 +237,8 @@ class AtheleteVis {
         });
         var x = d3.scaleLinear()
             .domain([min_w, max_w])
-            .range([(this.chart_w - margin) / 3, 2 * (this.chart_w - margin) / 3]);
+            .range([0, (this.chart_w - margin - 5) / 3 - 10]);
+            //.range([(this.chart_w - margin) / 3, 2 * (this.chart_w - margin) / 3]);
         return x(data);
     }
     // set x linear func for input age
@@ -252,7 +253,8 @@ class AtheleteVis {
         });
         var x = d3.scaleLinear()
             .domain([min_a, max_a])
-            .range([2 * (this.chart_w - margin) / 3, this.chart_w - margin]);
+            .range([0, (this.chart_w - margin - 5) / 3 - 10]);
+            //.range([2 * (this.chart_w - margin) / 3, this.chart_w - margin]);
         return x(data);
     }
 
@@ -261,7 +263,7 @@ class AtheleteVis {
   // Show boxplot in default mode (All sex)
   show_athelete_default() {
     var thisvis = this;
-    var margin = 120;
+    var margin = 100;
     var min_h = d3.min(this.athelete_data, function(d) {
       return d.Height;
     });
@@ -291,15 +293,15 @@ class AtheleteVis {
       // Define X scales for height
       var x_h = d3.scaleLinear()
           .domain([min_h, max_h])
-          .range([0, (this.chart_w - margin) / 3]);
+          .range([0, (this.chart_w - margin - 5) / 3 - 10]);
       // Define X scales for weight
       var x_w = d3.scaleLinear()
           .domain([min_w, max_w])
-          .range([0, (this.chart_w - margin) / 3]);
+          .range([0, (this.chart_w - margin - 5) / 3 - 10]);
       // Define X scales for age
       var x_a = d3.scaleLinear()
           .domain([min_a, max_a])
-          .range([0, (this.chart_w - margin) / 3]);
+          .range([0, (this.chart_w - margin - 5) / 3 - 10]);
 
       // Define y scales
       var y = d3.scalePoint()
@@ -312,21 +314,56 @@ class AtheleteVis {
 
     // Add axes.
     //First the X axis and label.
+      // x axis for height
     this.svg.append("g")
       .attr("class", "a_axis")
       .attr("transform", "translate(" + (margin+5) + ",600)")
       .call(d3.axisBottom(x_h));
+      // x axis for weight
+      this.svg.append("g")
+          .attr("class", "a_axis")
+          .attr("transform", "translate(" + (margin+5+(this.chart_w-margin-5)/3) + ",600)")
+          .call(d3.axisBottom(x_w));
+      // x axis for age
+      this.svg.append("g")
+          .attr("class", "a_axis")
+          .attr("transform", "translate(" + (margin+5+2*(this.chart_w-margin-5)/3) + ",600)")
+          .call(d3.axisBottom(x_a));
 
+    // later change this to add label func
     this.svg.append("text")
       .attr("class", "a_axis-label")
       .attr("y", 630)
-      .attr("x", (this.chart_w - margin) / 3 - 8)
+      .attr("x", (this.chart_w - margin -5) / 3 - 35)
       .style("text-anchor", "middle")
       .text("Height")
       .style("font-size", "10px");
 
+    this.svg.append("text")
+        .attr("class", "a_axis-label")
+        .attr("y", 630)
+        .attr("x", (this.chart_w - margin -5) - 35)
+        .style("text-anchor", "middle")
+        .text("Age")
+        .style("font-size", "10px");
+
+    this.svg.append("text")
+        .attr("class", "a_axis-label")
+        .attr("y", 630)
+        .attr("x", (this.chart_w - margin -5) * 2 / 3 - 35)
+        .style("text-anchor", "middle")
+        .text("Weight")
+        .style("font-size", "10px");
+
     this.svg.append("g")
         .attr("class", "a");
+
+
+
+
+
+      // this.svg.append("g")
+      //     .attr("class", "a");
 
 
     // Then the Y axis.
@@ -465,11 +502,26 @@ class AtheleteVis {
             .style("stroke", "gold")
             .style("stroke-width", 3)
             .style("stroke-dasharray", "4,4");
+
         //line for input weight
+        this.svg.append("line")
+            .attr("x1", this.x_w(weight))
+            .attr("x2", this.x_w(weight))
+            .attr("y1", 0)
+            .attr("y2", 620)
+            .style("stroke", "gold")
+            .style("stroke-width", 3)
+            .style("stroke-dasharray", "4,4");
 
         //line for input age
-
-
+        this.svg.append("line")
+            .attr("x1", this.x_a(age))
+            .attr("x2", this.x_a(age))
+            .attr("y1", 0)
+            .attr("y2", 620)
+            .style("stroke", "gold")
+            .style("stroke-width", 3)
+            .style("stroke-dasharray", "4,4");
 
         console.log("line printed!")
     }
