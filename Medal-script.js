@@ -1,4 +1,5 @@
 $(document).ready(() => {
+  $("#color-detail").html(color_detail());
   d3.queue()
     .defer(d3.json, "https://raw.githubusercontent.com/xlulu/inls641_OlympicAnalysisVis/master/world_countries.json")
     .defer(d3.csv, "https://raw.githubusercontent.com/xlulu/inls641_OlympicAnalysisVis/master/data/medal_board_data.csv")
@@ -9,9 +10,9 @@ $(document).ready(() => {
       medal_vis_location.game_options();
       medal_vis_location.color_circles();
 
-      $( "text:contains('2016')" ).css( "fill", "goldenrod" );
-      $("#2016").css( "fill", "goldenrod" );
-      $("#color-detail").html(color_detail());
+      $("text:contains('2016')").css("fill", "goldenrod");
+      $("#2016").css("fill", "goldenrod");
+
       // addTable();
 
     });
@@ -40,22 +41,22 @@ $(document).ready(() => {
 });
 
 var color_dic = {
-  yellow : ['Swimming', 'Athletics', 'Cycling', 'Modern Pentathlon', 'Triathlon', 'Canoeing', 'Rowing', 'Sailing', 'Alpinism', 'Motorboating', 'Aeronautics'],
-  black : ['Shooting', 'Archery'],
-  red : ['Fencing', 'Wrestling', 'Judo', 'Boxing', 'Taekwondo', 'Weightlifting', 'Tug-Of-War'],
-  blue : ['Gymnastics', 'Rhythmic Gymnastics', 'Trampolining', 'Synchronized Swimming', 'Diving', 'Equestrianism', 'Art Competitions', 'Figure Skating'],
-  green :['Football', 'Handball', 'Water', 'Polo', 'Hockey', 'Basketball', 'Volleyball', 'Tennis', 'Badminton', 'Beach Volleyball', 'Table Tennis', 'Golf', 'Softball', 'Rugby Sevens', 'Rugby', 'Lacrosse', 'Polo', 'Cricket', 'Racquets', 'Croquet', 'Ice Hockey', 'Roque', 'Jeu De Paume', 'Basque Pelota']
+  yellow: ['Swimming', 'Athletics', 'Cycling', 'Modern Pentathlon', 'Triathlon', 'Canoeing', 'Rowing', 'Sailing', 'Alpinism', 'Motorboating', 'Aeronautics'],
+  black: ['Shooting', 'Archery'],
+  red: ['Fencing', 'Wrestling', 'Judo', 'Boxing', 'Taekwondo', 'Weightlifting', 'Tug-Of-War'],
+  blue: ['Gymnastics', 'Rhythmic Gymnastics', 'Trampolining', 'Synchronized Swimming', 'Diving', 'Equestrianism', 'Art Competitions', 'Figure Skating'],
+  green: ['Football', 'Handball', 'Water', 'Polo', 'Hockey', 'Basketball', 'Volleyball', 'Tennis', 'Badminton', 'Beach Volleyball', 'Table Tennis', 'Golf', 'Softball', 'Rugby Sevens', 'Rugby', 'Lacrosse', 'Polo', 'Cricket', 'Racquets', 'Croquet', 'Ice Hockey', 'Roque', 'Jeu De Paume', 'Basque Pelota']
 };
 
 // red yellow blue black green
 var colors = ["red", "yellow", "blue", "black", "green"];
 
 var rgb = {
-  red : "#d03113",
-  yellow :"#F7C007",
-  blue : "#0396e6",
-  black : "#3C3C3C",
-  green : "#3F8E1C"
+  red: "#d03113",
+  yellow: "#F7C007",
+  blue: "#0396e6",
+  black: "#3C3C3C",
+  green: "#3F8E1C"
 };
 
 
@@ -72,7 +73,7 @@ class MedalVis_Location {
     this.year_city = {};
     this.medal_data.map(function(d) {
       thisvis.year_city[d.Year] = d.City;
-      });
+    });
     this.radius = d3.scaleLinear()
       .domain([0, 230])
       .range([0, 120]);
@@ -106,36 +107,36 @@ class MedalVis_Location {
   }
 
   setYear(new_year) {
-    $( "text:contains('2016')" ).css( "fill", "white" );
-    $("#2016").css( "fill", "white" );
+    $("text:contains('2016')").css("fill", "white");
+    $("#2016").css("fill", "white");
     this.year = new_year;
     var city = this.year_city[new_year];
     $("#olympic-info").html("<b>" + new_year + "  </b><b>" + city + "</b>");
     $("#medal-detail").html("Click on a country to show details..");
     this.show_medals_changes();
     this.game_options();
-    if(this.number == true)
-        this.sort_circles();
+    if (this.number == true)
+      this.sort_circles();
   }
 
   // Callback for changing the kind of the medal.
   setMedal(new_medal) {
     this.medal = new_medal;
     this.show_medals_changes();
-    if(this.number == true)
-        this.sort_circles();
+    if (this.number == true)
+      this.sort_circles();
   }
 
   // Callback for changing the game.
   setGame(new_game) {
     this.game = new_game;
     this.show_medals_changes();
-    if(this.number == true)
-        this.sort_circles();
+    if (this.number == true)
+      this.sort_circles();
   }
 
   // function for play button, can see the trend of changes for medals through years
-  play(){
+  play() {
     var year_data = d3.set(this.medal_data.map(function(d) {
         return d.Year;
       }))
@@ -143,48 +144,51 @@ class MedalVis_Location {
       .sort();
 
     var thisvis = this;
-    for(var i = 0; i < 29; i++){
-      (function (i){
-        setTimeout(function(){
+    for (var i = 0; i < 29; i++) {
+      (function(i) {
+        setTimeout(function() {
           thisvis.setYear(year_data[i]);
 
-          $( "text:contains('" + year_data[i] + "')" ).css( "fill", "goldenrod" );
-          $("#" + year_data[i]).css( "fill", "goldenrod" );
-          $( "text:contains('" + year_data[i-1] + "')" ).css( "fill", "white" );
-          $("#" + year_data[i-1]).css( "fill", "white" );
-        }, 150*i);
+          $("text:contains('" + year_data[i] + "')").css("fill", "goldenrod");
+          $("#" + year_data[i]).css("fill", "goldenrod");
+          $("text:contains('" + year_data[i - 1] + "')").css("fill", "white");
+          $("#" + year_data[i - 1]).css("fill", "white");
+        }, 150 * i);
       })(i);
     }
   }
 
   // function for show detail info for each country when user click on the bubble
-  find_ctry_data(country_id, country_name){
+  find_ctry_data(country_id, country_name) {
     var thisvis = this;
-    var details_info = "<table class=\"medal-info\"><tr><td class=\"ctry-name\">" + this.year + " " + country_name + "</td></tr>";
+    var details_info = "<table id='medal-info'>";
+    var ctry_year = this.year + " " + country_name;
     var medal_data_year = this.medal_data.filter(function(d) {
       return d.Year == thisvis.year;
     });
     var country_medal_data = medal_data_year.filter(function(d) {
       return (d.NOC == country_id);
     });
-    var groupby_Sport = d3.nest().key(function(d) {return d.Sport;})
-                        .entries(country_medal_data);
+    var groupby_Sport = d3.nest().key(function(d) {
+        return d.Sport;
+      })
+      .entries(country_medal_data);
 
-    groupby_Sport.forEach(function(d){
+    groupby_Sport.forEach(function(d) {
       details_info += "<tr><td class=\"sport-name\"><br>" + d.key + "<br></td></tr>";
-      for(var i = 0; i < d.values.length; i++){
-        if(d.values[i].Medal == "Gold")
-            details_info += "<tr><td><span class=\"golddot\"></span> ";
-        else if(d.values[i].Medal == "Silver")
-            details_info += "<tr><td><span class=\"silverdot\"></span> ";
+      for (var i = 0; i < d.values.length; i++) {
+        if (d.values[i].Medal == "Gold")
+          details_info += "<tr><td><span class=\"golddot\"></span> ";
+        else if (d.values[i].Medal == "Silver")
+          details_info += "<tr><td><span class=\"silverdot\"></span> ";
         else
-            details_info += "<tr><td><span class=\"bronzedot\"></span> ";
+          details_info += "<tr><td><span class=\"bronzedot\"></span> ";
         details_info += d.values[i].Medal + "</td><td>" + d.values[i].Event + "</td></tr>";
       }
     });
 
     details_info += "</table>";
-    return details_info;
+    return [ctry_year, details_info];
 
   }
 
@@ -335,7 +339,9 @@ class MedalVis_Location {
     time_svg.selectAll(".rec")
       .data(year_data)
       .enter().append("rect")
-      .attr("id", function(d){ return d;})
+      .attr("id", function(d) {
+        return d;
+      })
       .attr("class", "rec")
       .attr("x", function(d) {
         return x(d);
@@ -370,7 +376,7 @@ class MedalVis_Location {
         focus.style("display", "none");
       })
       .on("mousemove", handleMouseMove);
-      // .on("click", handleClick);
+    // .on("click", handleClick);
 
     function handleMouseMove(d) {
       //refresh the timeline once change
@@ -398,7 +404,7 @@ class MedalVis_Location {
 
     function handleClick(d) {
       //clear the highlight
-      d3.selectAll(".tick text").classed("clicked",false);
+      d3.selectAll(".tick text").classed("clicked", false);
       handleMouseOut();
       //add new highlight
       var x0 = x.invert(d3.mouse(this)[0]),
@@ -451,38 +457,44 @@ class MedalVis_Location {
       .style("opacity", 0.6);
 
     var ctry_g = this.svg.append("g")
-          .attr("class", "bubble")
-              .selectAll("g")
-              .data(this.country_data.features)
-              .enter().append("g")
-              .attr("class", "ctr_g")
-              .attr("transform", function(d) {
-                return "translate(" + path.centroid(d) + ")";
-              })
-              .on('mouseover', function(d) {
-                if (d.medal_count) {
-                  thisvis.tool_tip.show(d);
-                }
-                d3.select("#" + d.id)
-                  .style("opacity", 1.0)
-                  .style("stroke", "white")
-                  .style("stroke-width", 2);
-                d3.select(this).style("opacity", 0.7);
-              })
-              .on('mouseout', function(d) {
-                if (d.medal_count) {
-                  thisvis.tool_tip.hide(d);
-                }
-                d3.select("#" + d.id)
-                  .style("opacity", 0.6)
-                  .style("stroke", "white")
-                  .style("stroke-width", 0);
-                d3.select(this).style("opacity", 1);
-              })
-              .on('click', function(d) {
-                $("#medal-detail").html(thisvis.find_ctry_data(d.id, d.properties.name));
+      .attr("class", "bubble")
+      .selectAll("g")
+      .data(this.country_data.features)
+      .enter().append("g")
+      .attr("class", "ctr_g")
+      .attr("transform", function(d) {
+        return "translate(" + path.centroid(d) + ")";
+      })
+      .on('mouseover', function(d) {
+        if (d.medal_count) {
+          thisvis.tool_tip.show(d);
+        }
+        d3.select("#" + d.id)
+          .style("opacity", 1.0)
+          .style("stroke", "white")
+          .style("stroke-width", 2);
+        d3.select(this).style("opacity", 0.7);
+      })
+      .on('mouseout', function(d) {
+        if (d.medal_count) {
+          thisvis.tool_tip.hide(d);
+        }
+        d3.select("#" + d.id)
+          .style("opacity", 0.6)
+          .style("stroke", "white")
+          .style("stroke-width", 0);
+        d3.select(this).style("opacity", 1);
+      })
+      .on('click', function(d) {
+        var [country, medal] = thisvis.find_ctry_data(d.id, d.properties.name);
+        var div_height = $("#color-detail").height();
 
-              });
+        $("#medal-detail b").text(country);
+        $("#medal-detail").append(medal);
+        $("#medal-info").attr("height",div_height-15);
+        // $("#medal-detail").append(thisvis.find_ctry_data(d.id, d.properties.name));
+
+      });
 
     ctry_g.attr('id', function(d) {
         return "g-" + d.id;
@@ -498,20 +510,22 @@ class MedalVis_Location {
       .style("fill-opacity", "0.7");
 
     ctry_g.each(
-        function(d){
-          var elt = d3.select(this);
-          if (elt.attr("id") != null && elt.attr("id").startsWith("g-")){
-            if(d.medal_count > 15){
-              elt.append('text')
-                .attr("dx", -12)
-                .attr("dy", 3)
-                .text(function(d){return d.id;})
-                .attr("font-size", "12px")
-                .style("fill", "#272727bd");
-            }
+      function(d) {
+        var elt = d3.select(this);
+        if (elt.attr("id") != null && elt.attr("id").startsWith("g-")) {
+          if (d.medal_count > 15) {
+            elt.append('text')
+              .attr("dx", -12)
+              .attr("dy", 3)
+              .text(function(d) {
+                return d.id;
+              })
+              .attr("font-size", "12px")
+              .style("fill", "#272727bd");
           }
         }
-      );
+      }
+    );
 
   }
 
@@ -561,16 +575,19 @@ class MedalVis_Location {
     this.svg.selectAll(".ctr_g")
       .data(this.country_data.features)
       .each( // add text again based on new size of bubbles
-        function(d){
+        function(d) {
           var elt = d3.select(this);
-          if (elt.attr("id") != null && elt.attr("id").startsWith("g-")){
-            if(d.medal_count > 15){
+          if (elt.attr("id") != null && elt.attr("id").startsWith("g-")) {
+            if (d.medal_count > 15) {
               elt.append('text')
                 .attr("dx", -12)
                 .attr("dy", 3)
-                .text(function(d){return d.id;})
+                .text(function(d) {
+                  return d.id;
+                })
                 .attr("font-size", "12px")
-                .style("fill", "#272727bd");}
+                .style("fill", "#272727bd");
+            }
           }
         }
       ).on('mouseover', function(d) {
@@ -598,136 +615,148 @@ class MedalVis_Location {
   // Show sorted circles after click the "number" button
   sort_circles() {
 
-  var thisvis = this;
-  var radius_map = new Map();
+    var thisvis = this;
+    var radius_map = new Map();
 
-  // Get all the non-zero redius value of all circles.
-  this.svg.selectAll("circle")
-    .each(
-      function(d){
-        var elt = d3.select(this);
-        if(elt.attr("r") > 0){
-          radius_map.set(elt.attr("id"), elt.attr("r"));
+    // Get all the non-zero redius value of all circles.
+    this.svg.selectAll("circle")
+      .each(
+        function(d) {
+          var elt = d3.select(this);
+          if (elt.attr("r") > 0) {
+            radius_map.set(elt.attr("id"), elt.attr("r"));
+          }
         }
+      );
+
+    // sort map by values
+    // reference to https://stackoverflow.com/questions/37982476/how-to-sort-a-map-by-value-in-javascript
+    const sorted_radius_map = new Map([...radius_map.entries()].sort((a, b) => b[1] - a[1]));
+    let sorted_ctry = Array.from(sorted_radius_map.keys());
+
+    // compute the position of circles after movement.
+    let x_pos = 0;
+    let y_start = [];
+    y_start.push(2 * Number(this.svg.select("#" + sorted_ctry[0]).attr("r")) + 15);
+
+    // The row will display current circle.
+    let row = 1;
+    for (var i in sorted_ctry) {
+      let g_id = "#g-" + sorted_ctry[i].substr(2, 4);
+      let current_r = Number(this.svg.select("#" + sorted_ctry[i]).attr("r"));
+
+      x_pos += current_r + 15;
+
+      if ((x_pos > 800) && (!y_start[row])) {
+        y_start.push(y_start[row - 1] + 15 + 2 * current_r);
+        row += 1;
+        x_pos = current_r + 15;
       }
-    );
 
-  // sort map by values
-  // reference to https://stackoverflow.com/questions/37982476/how-to-sort-a-map-by-value-in-javascript
-  const sorted_radius_map = new Map([...radius_map.entries()].sort((a, b) => b[1] - a[1]));
-  let sorted_ctry = Array.from(sorted_radius_map.keys());
+      let y_pos = y_start[row - 1] - current_r;
 
-  // compute the position of circles after movement.
-  let x_pos = 0;
-  let y_start = [];
-  y_start.push(2 * Number(this.svg.select("#" + sorted_ctry[0]).attr("r")) + 15);
+      this.svg.select(g_id)
+        .transition().duration(1000)
+        .attr("transform", "translate(" + x_pos + ", " + y_pos + ")")
+        .duration(1000);
 
-  // The row will display current circle.
-  let row = 1;
-  for (var i in sorted_ctry){
-    let g_id = "#g-" + sorted_ctry[i].substr(2, 4);
-    let current_r = Number(this.svg.select("#" + sorted_ctry[i]).attr("r"));
-
-    x_pos += current_r + 15;
-
-    if ((x_pos > 800)&& (!y_start[row])) {
-      y_start.push(y_start[row-1] + 15 + 2 * current_r);
-      row += 1;
-      x_pos = current_r + 15;
+      x_pos += current_r;
     }
 
-    let y_pos = y_start[row-1] - current_r;
-
-    this.svg.select(g_id)
-      .transition().duration(1000)
-      .attr("transform", "translate(" + x_pos + ", " + y_pos + ")")
-      .duration(1000);
-
-    x_pos += current_r;
   }
-
-}
 
   game_options() {
-  this.data_filter();
-  var games = this.data_filter().map(function(d){return d.Sport;});
-  games = Array.from(new Set(games)).sort().reverse();
+    this.data_filter();
+    var games = this.data_filter().map(function(d) {
+      return d.Sport;
+    });
+    games = Array.from(new Set(games)).sort().reverse();
 
-  // add the sport list of the selected year into the game drop-down menu
-  $("#game-options").empty();
-  $("#game-options").append('<option value="All" id = "games-all">All</option>');
-  for (var i in games) {
-    var game_to_add = "<option value= '" + games[i] + "'>" + games[i] + "</option>";
-    $("#games-all").after(game_to_add);
+    // add the sport list of the selected year into the game drop-down menu
+    $("#game-options").empty();
+    $("#game-options").append('<option value="All" id = "games-all">All</option>');
+    for (var i in games) {
+      var game_to_add = "<option value= '" + games[i] + "'>" + games[i] + "</option>";
+      $("#games-all").after(game_to_add);
+    }
   }
-}
 
   // Color the country circles
   color_circles(medal_data) {
-  var noc_color_count = {};
-  // Reference to https://stackoverflow.com/questions/40774697/how-to-group-an-array-of-objects-by-key
-  var groupBy_NOC = this.medal_data.reduce(function (r, d) {
-        r[d.NOC] = r[d.NOC] || [];
-        r[d.NOC].push(d);
-        return r;
+    var noc_color_count = {};
+    // Reference to https://stackoverflow.com/questions/40774697/how-to-group-an-array-of-objects-by-key
+    var groupBy_NOC = this.medal_data.reduce(function(r, d) {
+      r[d.NOC] = r[d.NOC] || [];
+      r[d.NOC].push(d);
+      return r;
     }, Object.create(null));
-  //console.log(groupBy_NOC);
+    //console.log(groupBy_NOC);
 
-  // red yellow blue black green
-  var colors = ["red", "yellow", "blue", "black", "green"];
-  var rgb = {
-    red : "#d03113",
-    yellow :"#F7C007",
-    blue : "#0396e6",
-    black : "#3C3C3C",
-    green : "#3F8E1C"
-  };
+    // red yellow blue black green
+    var colors = ["red", "yellow", "blue", "black", "green"];
+    var rgb = {
+      red: "#d03113",
+      yellow: "#F7C007",
+      blue: "#0396e6",
+      black: "#3C3C3C",
+      green: "#3F8E1C"
+    };
 
-  for (var i in groupBy_NOC){
-    noc_color_count [i] = [];
-    let color_sport_quantity = this.count_color(groupBy_NOC[i]);
-    //console.log(color_sport_quantity);
-    // count the number of sports in different color for each country.
-    for (var j in colors){
-      noc_color_count[i].push(Number((color_sport_quantity[colors[j]])));
+    for (var i in groupBy_NOC) {
+      noc_color_count[i] = [];
+      let color_sport_quantity = this.count_color(groupBy_NOC[i]);
+      //console.log(color_sport_quantity);
+      // count the number of sports in different color for each country.
+      for (var j in colors) {
+        noc_color_count[i].push(Number((color_sport_quantity[colors[j]])));
+      }
     }
+
+    // console.log(noc_color_count);
+
+    var thisvis = this;
+    this.svg.selectAll("circle")
+      .data(this.country_data.features)
+      .each( // add text again based on new size of bubbles
+        function(d) {
+          var elt = d3.select(this);
+          let noc = elt.attr('id').substr(2, 4);
+          if (thisvis.svg.select("#c-" + noc).attr("r") > 0) {
+            let arr = noc_color_count[noc];
+            let max_index = arr.indexOf(Math.max(...arr));
+            elt.style("fill", rgb[colors[max_index]]);
+          }
+        });
   }
-
-  // console.log(noc_color_count);
-
-  var thisvis = this;
-  this.svg.selectAll("circle")
-    .data(this.country_data.features)
-    .each( // add text again based on new size of bubbles
-      function(d){
-        var elt = d3.select(this);
-        let noc = elt.attr('id').substr(2,4);
-        if (thisvis.svg.select("#c-"+noc).attr("r") > 0){
-          let arr = noc_color_count[noc];
-          let max_index = arr.indexOf(Math.max(...arr));
-          elt.style("fill", rgb[colors[max_index]]);
-        }
-    });
-}
 
   // For each country, count the number of medals of each color.
   // Each color contains a list of sports.
-  count_color(data){
+  count_color(data) {
 
     let color_count = {
-      red : 0,
-      yellow : 0,
-      black : 0,
-      green : 0,
-      blue : 0
+      red: 0,
+      yellow: 0,
+      black: 0,
+      green: 0,
+      blue: 0
     };
 
     data.forEach(function(d) {
-      if(color_dic.yellow.includes(d.Sport)){color_count.yellow++;}
-      if(color_dic.red.includes(d.Sport)){color_count.red++;}
-      if(color_dic.black.includes(d.Sport)){color_count.black++;}
-      if(color_dic.blue.includes(d.Sport)){color_count.blue++;}
-      if(color_dic.green.includes(d.Sport)){color_count.green++;}
+      if (color_dic.yellow.includes(d.Sport)) {
+        color_count.yellow++;
+      }
+      if (color_dic.red.includes(d.Sport)) {
+        color_count.red++;
+      }
+      if (color_dic.black.includes(d.Sport)) {
+        color_count.black++;
+      }
+      if (color_dic.blue.includes(d.Sport)) {
+        color_count.blue++;
+      }
+      if (color_dic.green.includes(d.Sport)) {
+        color_count.green++;
+      }
     });
 
     return color_count;
@@ -739,12 +768,12 @@ class MedalVis_Location {
 // function for show detail info of colors, the sports included in each color.
 function color_detail() {
 
-  var color_info = "<table class=\"color-info\"><b style = \"line-height:2\">Color Infos</b>";
+  var color_info = "<table class='color-info'><b style = 'line-height:2'>Color Infos</b>";
 
-  for (var i in color_dic){
-    color_info += "<tr><td class=\"color\" width = \"50px\" style = \"background-color:" + rgb[i] + "\""+ i + "\"></td><td class=\"sport\">";
-    for (var j in color_dic[i].sort()){
-      color_info += "<span class = \"sport-span\"> " + color_dic[i][j] + "</span>";
+  for (var i in color_dic) {
+    color_info += "<tr><td class='color' width = '10px' style = \"background-color:" + rgb[i] + "\"" + i + "\"></td><td class='sport'>";
+    for (var j in color_dic[i].sort()) {
+      color_info += "<span class = 'sport-span " + i + "'>" + color_dic[i][j] + "</span>";
     }
     color_info += "</td></tr>";
   }
