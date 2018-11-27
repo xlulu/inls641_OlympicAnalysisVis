@@ -11,6 +11,9 @@ $(document).ready(() => {
 
       $( "text:contains('2016')" ).css( "fill", "goldenrod" );
       $("#2016").css( "fill", "goldenrod" );
+      $("#color-detail").html(color_detail());
+      // addTable();
+
     });
 
   //Listen the toggle clicking
@@ -37,11 +40,22 @@ $(document).ready(() => {
 });
 
 var color_dic = {
-  yellow : ['Swimming', 'Athletics', 'Cycling', 'Modern', 'Pentathlon', 'Triathlon', 'Canoeing', 'Rowing', 'Sailing', 'Alpinism', 'Motorboating', 'Aeronautics'],
+  yellow : ['Swimming', 'Athletics', 'Cycling', 'Modern Pentathlon', 'Triathlon', 'Canoeing', 'Rowing', 'Sailing', 'Alpinism', 'Motorboating', 'Aeronautics'],
   black : ['Shooting', 'Archery'],
   red : ['Fencing', 'Wrestling', 'Judo', 'Boxing', 'Taekwondo', 'Weightlifting', 'Tug-Of-War'],
   blue : ['Gymnastics', 'Rhythmic Gymnastics', 'Trampolining', 'Synchronized Swimming', 'Diving', 'Equestrianism', 'Art Competitions', 'Figure Skating'],
   green :['Football', 'Handball', 'Water', 'Polo', 'Hockey', 'Basketball', 'Volleyball', 'Tennis', 'Badminton', 'Beach Volleyball', 'Table Tennis', 'Golf', 'Softball', 'Rugby Sevens', 'Rugby', 'Lacrosse', 'Polo', 'Cricket', 'Racquets', 'Croquet', 'Ice Hockey', 'Roque', 'Jeu De Paume', 'Basque Pelota']
+};
+
+// red yellow blue black green
+var colors = ["red", "yellow", "blue", "black", "green"];
+
+var rgb = {
+  red : "#d65567",
+  yellow :"#ffc107",
+  blue : "#00a6cb",
+  black : "#607d8b",
+  green : "#8bc34a"
 };
 
 
@@ -173,6 +187,7 @@ class MedalVis_Location {
     return details_info;
 
   }
+
   // Count the medals
   count_medals(medal_data_year) {
     var medal_count_by_ctry = {};
@@ -718,4 +733,22 @@ class MedalVis_Location {
     return color_count;
   }
 
+}
+
+
+// function for show detail info of colors, the sports included in each color.
+function color_detail() {
+
+  var color_info = "<table class=\"color-info\"><b style = \"line-height:2\">Color Infos</b>";
+
+  for (var i in color_dic){
+    color_info += "<tr><td class=\"color\" width = \"50px\" style = \"background-color:" + rgb[i] + "\""+ i + "\"></td><td class=\"sport\">";
+    for (var j in color_dic[i].sort()){
+      color_info += "<span class = \"sport-span\"> " + color_dic[i][j] + "</span>";
+    }
+    color_info += "</td></tr>";
+  }
+
+  color_info += "</table>";
+  return color_info;
 }
