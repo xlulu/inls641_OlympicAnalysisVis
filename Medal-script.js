@@ -8,7 +8,6 @@ $(document).ready(() => {
       medal_vis_location.show_medals_default();
       medal_vis_location.game_options();
       medal_vis_location.color_circles();
-      medal_vis_location.color_info();
 
       $( "text:contains('2016')" ).css( "fill", "goldenrod" );
       $("#2016").css( "fill", "goldenrod" );
@@ -662,7 +661,7 @@ game_options() {
   // For each country, count the number of medals of each color.
   // Each color contains a list of sports.
   count_color(data){
-    
+
     let color_count = {
       red : 0,
       yellow : 0,
@@ -681,10 +680,6 @@ game_options() {
 
     return color_count;
 
-  }
-
-  color_info(){
-    console.log(color_dic);
   }
 
 }
