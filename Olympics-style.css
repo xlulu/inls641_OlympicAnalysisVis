@@ -268,6 +268,21 @@ select {
   margin-top: 2px;
 }
 
+.detail-info {
+  display: grid;
+  grid-gap: 0;
+  grid-template-areas:
+    "mdde code";
+}
+
+#medal-detail{
+  grid-area: mdde;
+}
+
+#color-detail{
+  grid-area: code;
+}
+
 #medal-toggle>b {
   font-size: 14px;
   width: 85%;

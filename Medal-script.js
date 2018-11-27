@@ -8,6 +8,7 @@ $(document).ready(() => {
       medal_vis_location.show_medals_default();
       medal_vis_location.game_options();
       medal_vis_location.color_circles();
+      medal_vis_location.color_info();
 
       $( "text:contains('2016')" ).css( "fill", "goldenrod" );
       $("#2016").css( "fill", "goldenrod" );
@@ -35,6 +36,14 @@ $(document).ready(() => {
   });
 
 });
+
+var color_dic = {
+  yellow : ['Swimming', 'Athletics', 'Cycling', 'Modern', 'Pentathlon', 'Triathlon', 'Canoeing', 'Rowing', 'Sailing', 'Alpinism', 'Motorboating', 'Aeronautics'],
+  black : ['Shooting', 'Archery'],
+  red : ['Fencing', 'Wrestling', 'Judo', 'Boxing', 'Taekwondo', 'Weightlifting', 'Tug-Of-War'],
+  blue : ['Gymnastics', 'Rhythmic Gymnastics', 'Trampolining', 'Synchronized Swimming', 'Diving', 'Equestrianism', 'Art Competitions', 'Figure Skating'],
+  green :['Football', 'Handball', 'Water', 'Polo', 'Hockey', 'Basketball', 'Volleyball', 'Tennis', 'Badminton', 'Beach Volleyball', 'Table Tennis', 'Golf', 'Softball', 'Rugby Sevens', 'Rugby', 'Lacrosse', 'Polo', 'Cricket', 'Racquets', 'Croquet', 'Ice Hockey', 'Roque', 'Jeu De Paume', 'Basque Pelota']
+};
 
 class MedalVis_Location {
 
@@ -588,7 +597,7 @@ class MedalVis_Location {
 
 }
 
-  game_options() {
+game_options() {
   this.data_filter();
   var games = this.data_filter().map(function(d){return d.Sport;});
   games = Array.from(new Set(games)).sort().reverse();
@@ -611,7 +620,7 @@ class MedalVis_Location {
         r[d.NOC].push(d);
         return r;
     }, Object.create(null));
-  console.log(groupBy_NOC);
+  // console.log(groupBy_NOC);
 
   // red yellow blue black green
   var colors = ["red", "yellow", "blue", "black", "green"];
@@ -626,7 +635,7 @@ class MedalVis_Location {
   for (var i in groupBy_NOC){
     noc_color_count [i] = [];
     let color_sport_quantity = this.count_color(groupBy_NOC[i]);
-    console.log(color_sport_quantity);
+    // console.log(color_sport_quantity);
     // count the number of sports in different color for each country.
     for (var j in colors){
       noc_color_count[i].push(Number((color_sport_quantity[colors[j]])));
@@ -653,31 +662,29 @@ class MedalVis_Location {
   // For each country, count the number of medals of each color.
   // Each color contains a list of sports.
   count_color(data){
+    
+    let color_count = {
+      red : 0,
+      yellow : 0,
+      black : 0,
+      green : 0,
+      blue : 0
+    };
 
-  var yellow = ['Swimming', 'Athletics', 'Cycling', 'Modern', 'Pentathlon', 'Triathlon', 'Canoeing', 'Rowing', 'Sailing', 'Alpinism', 'Motorboating', 'Aeronautics'];
-  var black = ['Shooting', 'Archery'];
-  var red  = ['Fencing', 'Wrestling', 'Judo', 'Boxing', 'Taekwondo', 'Weightlifting', 'Tug-Of-War'];
-  var blue = ['Gymnastics', 'Rhythmic Gymnastics', 'Trampolining', 'Synchronized Swimming', 'Diving', 'Equestrianism', 'Art Competitions', 'Figure Skating'];
-  var green = ['Football', 'Handball', 'Water', 'Polo', 'Hockey', 'Basketball', 'Volleyball', 'Tennis', 'Badminton', 'Beach Volleyball', 'Table Tennis', 'Golf', 'Softball', 'Rugby Sevens', 'Rugby', 'Lacrosse', 'Polo', 'Cricket', 'Racquets', 'Croquet', 'Ice Hockey', 'Roque', 'Jeu De Paume', 'Basque Pelota'];
+    data.forEach(function(d) {
+      if(color_dic.yellow.includes(d.Sport)){color_count.yellow++;}
+      if(color_dic.red.includes(d.Sport)){color_count.red++;}
+      if(color_dic.black.includes(d.Sport)){color_count.black++;}
+      if(color_dic.blue.includes(d.Sport)){color_count.blue++;}
+      if(color_dic.green.includes(d.Sport)){color_count.green++;}
+    });
 
-  let color_count = {
-    red : 0,
-    yellow : 0,
-    black : 0,
-    green : 0,
-    blue : 0
-  };
+    return color_count;
 
-  data.forEach(function(d) {
-    if(yellow.includes(d.Sport)){color_count.yellow++;}
-    if(red.includes(d.Sport)){color_count.red++;}
-    if(black.includes(d.Sport)){color_count.black++;}
-    if(blue.includes(d.Sport)){color_count.blue++;}
-    if(green.includes(d.Sport)){color_count.green++;}
-  });
+  }
 
-  return color_count;
-
-}
+  color_info(){
+    console.log(color_dic);
+  }
 
 }
