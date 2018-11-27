@@ -277,6 +277,7 @@ select {
 .detail-info {
   display: grid;
   grid-gap: 0;
+  grid-template-columns: 55% auto;
   grid-template-areas:
     "mdde code";
 }
@@ -332,6 +333,18 @@ select {
 
 .bronzedot{
     background-color:#CD7F32;
+}
+
+.sport-span{
+  font-size: 12px;
+  border-radius: 5px;
+  height: 20px;
+  margin-left: 10px;
+  margin-bottom: 2.5px;
+  padding: 3px;
+  display: inline-table;
+  background-color: #e5e5e5;
+  /* color: #272727bd; */
 }
 
 #play-year{
