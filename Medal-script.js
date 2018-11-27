@@ -51,11 +51,11 @@ var color_dic = {
 var colors = ["red", "yellow", "blue", "black", "green"];
 
 var rgb = {
-  red : "#d65567",
-  yellow :"#ffc107",
-  blue : "#00a6cb",
-  black : "#607d8b",
-  green : "#8bc34a"
+  red : "#d03113",
+  yellow :"#F7C007",
+  blue : "#0396e6",
+  black : "#3C3C3C",
+  green : "#3F8E1C"
 };
 
 
@@ -678,7 +678,7 @@ class MedalVis_Location {
   var rgb = {
     red : "#d03113",
     yellow :"#F7C007",
-    blue : "#1981c7",
+    blue : "#0396e6",
     black : "#3C3C3C",
     green : "#3F8E1C"
   };
