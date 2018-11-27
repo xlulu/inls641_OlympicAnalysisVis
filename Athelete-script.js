@@ -79,6 +79,8 @@ $(document).ready(() => {
 
 });
 
+const margin = 100;
+
 class AtheleteVis {
   constructor(athelete_data) {
     this.athelete_data = athelete_data;
@@ -94,7 +96,7 @@ class AtheleteVis {
       .sort();
     console.log(this.games_data);
 
-    this.height_data = [];
+    this.box_data = [];
 
     // Get a reference to the  SVG element.
     this.svg = d3.select("#athelete-chart")
@@ -192,15 +194,29 @@ class AtheleteVis {
             // })
             // console.log(filtered_height);
             var record = {};
-            var localMin = d3.min(filtered_height);
-            var localMax = d3.max(filtered_height);
+            var h_min = d3.min(filtered_height);
+            var h_max = d3.max(filtered_height);
+            var w_min = d3.min(filtered_weight);
+            var w_max = d3.max(filtered_weight);
+            var a_min = d3.min(filtered_age);
+            var a_max = d3.max(filtered_age);
+
             record["game"] = game;
-            record["height"] = filtered_height;
-            record["quartile"] = this.boxQuartiles(filtered_height);
-            record["whiskers"] = [localMin, localMax];
-            this.height_data.push(record);
+            record["quartile"] = [];
+            record["quartile"] = record["quartile"].concat(this.boxQuartiles(filtered_height));
+            record["quartile"] = record["quartile"].concat(this.boxQuartiles(filtered_weight));
+            record["quartile"] = record["quartile"].concat(this.boxQuartiles(filtered_age));
+            //record["height"] = filtered_height;
+            //record["quartile"] = this.boxQuartiles(filtered_height);
+
+            // record["w_quartile"] = this.boxQuartiles(filtered_weight);
+            // record["a_quartile"] = this.boxQuartiles(filtered_age);
+            record["whiskers"] = [h_min, h_max, w_min, w_max, a_min, a_max];
+            // record["w_whiskers"] = [w_min, w_max];
+            // record["a_whiskers"] = [a_min, a_max];
+            this.box_data.push(record);
         }
-        console.log(this.height_data);
+        console.log(this.box_data);
     }
 
 
@@ -213,7 +229,6 @@ class AtheleteVis {
   // set x linear func for input height
   x_h(data){
       var thisvis = this;
-      var margin = 120;
       var min_h = d3.min(this.athelete_data, function(d) {
           return d.Height;
       });
@@ -228,7 +243,6 @@ class AtheleteVis {
     // set x linear func for input weight
     x_w(data){
         var thisvis = this;
-        var margin = 120;
         var min_w = d3.min(this.athelete_data, function(d) {
             return d.Weight;
         });
@@ -244,7 +258,6 @@ class AtheleteVis {
     // set x linear func for input age
     x_a(data){
         var thisvis = this;
-        var margin = 120;
         var min_a = d3.min(this.athelete_data, function(d) {
             return d.Age;
         });
@@ -263,15 +276,13 @@ class AtheleteVis {
   // Show boxplot in default mode (All sex)
   show_athelete_default() {
     var thisvis = this;
-    var margin = 100;
     var min_h = d3.min(this.athelete_data, function(d) {
       return d.Height;
     });
     var max_h = d3.max(this.athelete_data, function(d) {
       return d.Height;
     });
-    console.log("min h:" + min_h);
-    console.log("max h:" + max_h);
+
     var min_w = d3.min(this.athelete_data, function(d) {
       //console.log(typeof(d.Weight));
       return d.Weight;
@@ -287,8 +298,6 @@ class AtheleteVis {
     var max_a = d3.max(this.athelete_data, function(d) {
       return d.Age;
     });
-      console.log("min a:" + min_a);
-      console.log("max a:" + max_a);
 
       // Define X scales for height
       var x_h = d3.scaleLinear()
@@ -359,13 +368,6 @@ class AtheleteVis {
         .attr("class", "a");
 
 
-
-
-
-      // this.svg.append("g")
-      //     .attr("class", "a");
-
-
     // Then the Y axis.
     this.svg.append("g")
       .attr("class", "a_a_axis")
@@ -380,7 +382,7 @@ class AtheleteVis {
     // Draw the box plot horizontal lines
     var barWidth = 10;
     var verticalLines = box_g.selectAll(".horizontalLines")
-      .data(this.height_data)
+      .data(this.box_data)
       .enter()
       .append("line")
       .attr("x1", function(datum) {
@@ -401,9 +403,10 @@ class AtheleteVis {
       .attr("stroke-width", 1)
       .attr("fill", "none");
 
+
     // Draw the boxes of the box plot, filled in white and on top of vertical lines
     var rects = box_g.selectAll("rect")
-      .data(this.height_data)
+      .data(this.box_data)
       .enter()
       .append("rect")
       .attr("height", barWidth)
@@ -478,7 +481,7 @@ class AtheleteVis {
 
       // Draw the whiskers at the min for this series
       var verticalLine = box_g.selectAll(".whiskers")
-        .data(this.height_data)
+        .data(this.box_data)
         .enter()
         .append("line")
         .attr("x1", lineConfig.x1)
@@ -499,6 +502,7 @@ class AtheleteVis {
             .attr("x2", this.x_h(height))
             .attr("y1", 0)
             .attr("y2", 620)
+            .attr("transform", "translate(" + (margin+5) + ",")
             .style("stroke", "gold")
             .style("stroke-width", 3)
             .style("stroke-dasharray", "4,4");
@@ -509,6 +513,7 @@ class AtheleteVis {
             .attr("x2", this.x_w(weight))
             .attr("y1", 0)
             .attr("y2", 620)
+            .attr("transform", "translate(" + (margin+5+(this.chart_w-margin-5)/3) + ")")
             .style("stroke", "gold")
             .style("stroke-width", 3)
             .style("stroke-dasharray", "4,4");
@@ -519,6 +524,7 @@ class AtheleteVis {
             .attr("x2", this.x_a(age))
             .attr("y1", 0)
             .attr("y2", 620)
+            .attr("transform", "translate(" + (margin+5+2*(this.chart_w-margin-5)/3) + ")")
             .style("stroke", "gold")
             .style("stroke-width", 3)
             .style("stroke-dasharray", "4,4");
