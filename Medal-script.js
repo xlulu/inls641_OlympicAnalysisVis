@@ -7,8 +7,10 @@ $(document).ready(() => {
       medal_vis_location.show_timeline();
       medal_vis_location.show_medals_default();
       medal_vis_location.game_options();
+      medal_vis_location.color_circles();
 
       $( "text:contains('2016')" ).css( "fill", "goldenrod" );
+      $("#2016").css( "fill", "goldenrod" );
     });
 
   //Listen the toggle clicking
@@ -79,8 +81,9 @@ class MedalVis_Location {
       });
   }
 
-
   setYear(new_year) {
+    $( "text:contains('2016')" ).css( "fill", "white" );
+    $("#2016").css( "fill", "white" );
     this.year = new_year;
     var city = this.year_city[new_year];
     $("#olympic-info").html("<b>" + new_year + "  </b><b>" + city + "</b>");
@@ -104,6 +107,29 @@ class MedalVis_Location {
     this.show_medals_changes();
     if(this.number == true)
         this.sort_circles();
+  }
+
+  // function for play button, can see the trend of changes for medals through years
+  play(){
+    var year_data = d3.set(this.medal_data.map(function(d) {
+        return d.Year;
+      }))
+      .values()
+      .sort();
+
+    var thisvis = this;
+    for(var i = 0; i < 29; i++){
+      (function (i){
+        setTimeout(function(){
+          thisvis.setYear(year_data[i]);
+
+          $( "text:contains('" + year_data[i] + "')" ).css( "fill", "goldenrod" );
+          $("#" + year_data[i]).css( "fill", "goldenrod" );
+          $( "text:contains('" + year_data[i-1] + "')" ).css( "fill", "white" );
+          $("#" + year_data[i-1]).css( "fill", "white" );
+        }, 150*i);
+      })(i);
+    }
   }
 
   // Count the medals
@@ -253,6 +279,7 @@ class MedalVis_Location {
     time_svg.selectAll(".rec")
       .data(year_data)
       .enter().append("rect")
+      .attr("id", function(d){ return d;})
       .attr("class", "rec")
       .attr("x", function(d) {
         return x(d);
@@ -573,6 +600,84 @@ class MedalVis_Location {
     var game_to_add = "<option value= '" + games[i] + "'>" + games[i] + "</option>";
     $("#games-all").after(game_to_add);
   }
+}
+
+  // Color the country circles
+  color_circles(medal_data) {
+  var noc_color_count = {};
+  // Reference to https://stackoverflow.com/questions/40774697/how-to-group-an-array-of-objects-by-key
+  var groupBy_NOC = this.medal_data.reduce(function (r, d) {
+        r[d.NOC] = r[d.NOC] || [];
+        r[d.NOC].push(d);
+        return r;
+    }, Object.create(null));
+  console.log(groupBy_NOC);
+
+  // red yellow blue black green
+  var colors = ["red", "yellow", "blue", "black", "green"];
+  var rgb = {
+    red : "#d65567",
+    yellow :"#ffc107",
+    blue : "#00a6cb",
+    black : "#607d8b",
+    green : "#8bc34a"
+  };
+
+  for (var i in groupBy_NOC){
+    noc_color_count [i] = [];
+    let color_sport_quantity = this.count_color(groupBy_NOC[i]);
+    console.log(color_sport_quantity);
+    // count the number of sports in different color for each country.
+    for (var j in colors){
+      noc_color_count[i].push(Number((color_sport_quantity[colors[j]])));
+    }
+  }
+
+  // console.log(noc_color_count);
+
+  var thisvis = this;
+  this.svg.selectAll("circle")
+    .data(this.country_data.features)
+    .each( // add text again based on new size of bubbles
+      function(d){
+        var elt = d3.select(this);
+        let noc = elt.attr('id').substr(2,4);
+        if (thisvis.svg.select("#c-"+noc).attr("r") > 0){
+          let arr = noc_color_count[noc];
+          let max_index = arr.indexOf(Math.max(...arr));
+          elt.style("fill", rgb[colors[max_index]]);
+        }
+    });
+}
+
+  // For each country, count the number of medals of each color.
+  // Each color contains a list of sports.
+  count_color(data){
+
+  var yellow = ['Swimming', 'Athletics', 'Cycling', 'Modern', 'Pentathlon', 'Triathlon', 'Canoeing', 'Rowing', 'Sailing', 'Alpinism', 'Motorboating', 'Aeronautics'];
+  var black = ['Shooting', 'Archery'];
+  var red  = ['Fencing', 'Wrestling', 'Judo', 'Boxing', 'Taekwondo', 'Weightlifting', 'Tug-Of-War'];
+  var blue = ['Gymnastics', 'Rhythmic Gymnastics', 'Trampolining', 'Synchronized Swimming', 'Diving', 'Equestrianism', 'Art Competitions', 'Figure Skating'];
+  var green = ['Football', 'Handball', 'Water', 'Polo', 'Hockey', 'Basketball', 'Volleyball', 'Tennis', 'Badminton', 'Beach Volleyball', 'Table Tennis', 'Golf', 'Softball', 'Rugby Sevens', 'Rugby', 'Lacrosse', 'Polo', 'Cricket', 'Racquets', 'Croquet', 'Ice Hockey', 'Roque', 'Jeu De Paume', 'Basque Pelota'];
+
+  let color_count = {
+    red : 0,
+    yellow : 0,
+    black : 0,
+    green : 0,
+    blue : 0
+  };
+
+  data.forEach(function(d) {
+    if(yellow.includes(d.Sport)){color_count.yellow++;}
+    if(red.includes(d.Sport)){color_count.red++;}
+    if(black.includes(d.Sport)){color_count.black++;}
+    if(blue.includes(d.Sport)){color_count.blue++;}
+    if(green.includes(d.Sport)){color_count.green++;}
+  });
+
+  return color_count;
+
 }
 
 }

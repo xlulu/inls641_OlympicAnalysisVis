@@ -41,10 +41,10 @@
       <h2>MedalBoard</h2>
       <!-- here to draw the time slot -->
       <div class = "time-slot">
-
       </div>
       <!-- here to the drop-down menu -->
       <div class = "drop-down medal-menu">
+
         <div class = "select-medal">
           <!-- 'medalFilter' is used to filter the data by specific medal  -->
           <select id = "medal-options" onchange="medal_vis_location.setMedal(this.value);">
@@ -55,6 +55,7 @@
           </select>
           <b>medals</b>
         </div>
+
         <div class = "select-game">
           <!-- 'gameFilter' is used to filter the data by specific game  -->
           <select id = "game-options" onchange="medal_vis_location.setGame(this.value);">
@@ -62,11 +63,13 @@
           </select>
           <b>games</b>
         </div>
+          <button id = "play-year" onclick = "medal_vis_location.play()">Play</button>
       </div>
       <div id = "olympic-info">
          <b>2016</b>
          <b>Rio de Janeiro</b>
       </div>
+
       <div class = "medal-artboard">
         <!-- here to draw the chart -->
         <div id = "medal-chart"></div>
