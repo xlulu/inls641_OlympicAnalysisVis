@@ -761,12 +761,12 @@ function color_detail() {
   for (var i in colors) {
     c = colors[i];
     // the name of each color
-    color_info += "<tr><td class = 'colordot' style = 'background-color:" + 
-                  rgb[c].color + "'></td><td class='color-name' style = 'color:" + 
+    color_info += "<tr><td class = 'colordot' style = 'background-color:" +
+                  rgb[c].color + "'></td><td class='color-name' style = 'color:" +
                   rgb[c].color + "'>" + rgb[c].name + "</td>";
     // the color bar
     color_info += "<tr><td style = 'width:10px; background-color:" + rgb[c].color + "'</td><td class='sport'>";
-    
+
     // the sports in each color
     for (var j in color_dic[c].sort()) {
       color_info += "<span class = 'sport-span " + c + "'>" + color_dic[c][j] + "</span>";
