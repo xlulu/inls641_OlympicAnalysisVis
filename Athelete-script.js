@@ -74,6 +74,7 @@ $(document).ready(() => {
         });
         //Once click the "See" button, get the input information
         $(".see-result").click(function() {
+          $("#box-svg").children().remove();
           if ($(".toggle-female").hasClass("down")) {
             sex = "F";
           } else {
@@ -87,8 +88,8 @@ $(document).ready(() => {
           console.log("weight: " + weight);
           console.log("sex: " + sex);
           // call function to write the filter and give result
+            athelete_vis.calculateData(sex);
             athelete_vis.inputLine(age, height, weight, sex);
-
         });
 
       });
@@ -210,7 +211,6 @@ $(document).ready(() => {
             record["quartile"] = this.boxQuartiles(filtered_hwa[f]);
             record["whiskers"] = [localMin, localMax];
             this.ath_info_data[f].push(record);
-
           }
 
         }
@@ -301,16 +301,17 @@ $(document).ready(() => {
         var box_g = this.svg.append("g")
           .attr("transform", "translate(" + (margin + 5) + ",1.5)")
           .attr("class", this.game_chart[info])
-            .on("mousemove", function(d) {
-                let mouse_coords = d3.mouse(this);
-                console.log(mouse_coords[1]);
-                svg.selectAll(".highlight_box")
-                    .attr("y", mouse_coords[1]);
-            })
-            .on("mouseout", function(d) {
-                svg.selectAll(".vertical_line")
-                    .attr("y", -100);
-            });
+            // .on("mousemove", function(d) {
+            //     let mouse_coords = d3.mouse(this);
+            //     console.log(mouse_coords[1]);
+            //     svg.selectAll(".highlight_box")
+            //         .attr("y", mouse_coords[1]);
+            // })
+            // .on("mouseout", function(d) {
+            //     svg.selectAll(".vertical_line")
+            //         .attr("y", -100);
+            // })
+        ;
 
 
 
@@ -327,7 +328,6 @@ $(document).ready(() => {
           //             .attr("x1", -100)   //-100 are inc
           //             .attr("x2", -100);
           //     })
-        ;
 
 
           // Vertical line to show the values
@@ -340,17 +340,17 @@ $(document).ready(() => {
           //     .style("stroke", "black")
           //     .style("stroke-width", 4); // multiple lines?
 
-          // this.svg.select(#box_svg).
-          box_g.append("rect")
-              .attr("class", "highlight_box")
-              .attr("x", 0)
-              .attr("y", -100)
-              .attr("height", 10)
-              .attr("width", 620)
-              .style("stroke", "black")
-              .style("stroke-width", 4)
-              .style("fill", "gray")
-              .style("opacity", 30);
+          // // this.svg.select(#box_svg).
+          // box_g.append("rect")
+          //     .attr("class", "highlight_box")
+          //     .attr("x", 0)
+          //     .attr("y", -100)
+          //     .attr("height", 10)
+          //     .attr("width", 620)
+          //     .style("stroke", "black")
+          //     .style("stroke-width", 4)
+          //     .style("fill", "gray")
+          //     .style("opacity", 30);
 
 
           // Draw the box plot horizontal lines
@@ -503,64 +503,99 @@ $(document).ready(() => {
 
       }
 
-        // // set x linear func for input height
+
+        // x_h(data){
+        //     var thisvis = this;
         //
-      // still need to change the data for F and M
-        x_h(data){
+        //     var min_h = d3.min(this.athelete_data, function(d) {
+        //         return parseInt(d.Height);
+        //     });
+        //     var max_h = d3.max(this.athelete_data, function(d) {
+        //         return parseInt(d.Height);
+        //     });
+        //
+        //     var x = d3.scaleLinear()
+        //         .domain([min_h - 1, max_h + 1])
+        //         .range([0, (this.chart_w - margin - 5) / 3 - 10]);
+        //     return x(data);
+        //
+        //
+        // }
+        // set x linear func for input weight
+        // x_w(data){
+        //     var thisvis = this;
+        //     var min_w = d3.min(this.athelete_data, function(d) {
+        //         return parseInt(d.Weight);
+        //     });
+        //     var max_w = d3.max(this.athelete_data, function(d) {
+        //         return parseInt(d.Weight);
+        //     });
+        //     var x = d3.scaleLinear()
+        //         .domain([min_w - 1, max_w + 1])
+        //         .range([0, (this.chart_w - margin - 5) / 3 - 10]);
+        //     //.range([(this.chart_w - margin) / 3, 2 * (this.chart_w - margin) / 3]);
+        //     return x(data);
+        // }
+        // // set x linear func for input age
+        // x_a(data){
+        //     var thisvis = this;
+        //     var min_a = d3.min(this.athelete_data, function(d) {
+        //         return parseInt(d.Age);
+        //     });
+        //     var max_a = d3.max(this.athelete_data, function(d) {
+        //         return parseInt(d.Age);
+        //     });
+        //     var x = d3.scaleLinear()
+        //         .domain([min_a, max_a])
+        //         .range([0, (this.chart_w - margin - 5) / 3 - 10]);
+        //     //.range([2 * (this.chart_w - margin) / 3, this.chart_w - margin]);
+        //     return x(data);
+        // }
+
+
+
+        // // set x linear func for input height
+        // still need to change the data for F and M
+        inputLine(age, height, weight, sex) {
             var thisvis = this;
+            var show_data = this.athelete_data.filter(function(d) {
+                return d.Sex == sex;});
 
-            var min_h = d3.min(this.athelete_data, function(d) {
+            var min_h = d3.min(show_data, function(d) {
                 return parseInt(d.Height);
             });
-            var max_h = d3.max(this.athelete_data, function(d) {
+            var max_h = d3.max(show_data, function(d) {
                 return parseInt(d.Height);
             });
 
-            var x = d3.scaleLinear()
+            var x_h = d3.scaleLinear()
                 .domain([min_h - 1, max_h + 1])
                 .range([0, (this.chart_w - margin - 5) / 3 - 10]);
-            return x(data);
 
-
-        }
-        // set x linear func for input weight
-        x_w(data){
-            var thisvis = this;
-            var min_w = d3.min(this.athelete_data, function(d) {
+            var min_w = d3.min(show_data, function(d) {
                 return parseInt(d.Weight);
             });
-            var max_w = d3.max(this.athelete_data, function(d) {
+            var max_w = d3.max(show_data, function(d) {
                 return parseInt(d.Weight);
             });
-            var x = d3.scaleLinear()
+            var x_w = d3.scaleLinear()
                 .domain([min_w - 1, max_w + 1])
                 .range([0, (this.chart_w - margin - 5) / 3 - 10]);
-            //.range([(this.chart_w - margin) / 3, 2 * (this.chart_w - margin) / 3]);
-            return x(data);
-        }
-        // set x linear func for input age
-        x_a(data){
-            var thisvis = this;
-            var min_a = d3.min(this.athelete_data, function(d) {
+
+            var min_a = d3.min(show_data, function(d) {
                 return parseInt(d.Age);
             });
-            var max_a = d3.max(this.athelete_data, function(d) {
+            var max_a = d3.max(show_data, function(d) {
                 return parseInt(d.Age);
             });
-            var x = d3.scaleLinear()
+            var x_a = d3.scaleLinear()
                 .domain([min_a, max_a])
                 .range([0, (this.chart_w - margin - 5) / 3 - 10]);
-            //.range([2 * (this.chart_w - margin) / 3, this.chart_w - margin]);
-            return x(data);
-        }
 
-
-
-        inputLine(age, height, weight, sex) {
             // line for input height
             this.svg.append("line")
-                .attr("x1", this.x_h(height))
-                .attr("x2", this.x_h(height))
+                .attr("x1", x_h(height))
+                .attr("x2", x_h(height))
                 .attr("y1", 0)
                 .attr("y2", 620)
                 .attr("transform", "translate(" + (margin+ 5) + ")")
@@ -570,8 +605,8 @@ $(document).ready(() => {
 
             //line for input weight
             this.svg.append("line")
-                .attr("x1", this.x_w(weight))
-                .attr("x2", this.x_w(weight))
+                .attr("x1", x_w(weight))
+                .attr("x2", x_w(weight))
                 .attr("y1", 0)
                 .attr("y2", 620)
                 .attr("transform", "translate(" + (margin+5+(this.chart_w-margin-5)/3) + ")")
@@ -582,8 +617,8 @@ $(document).ready(() => {
 
             //line for input age
             this.svg.append("line")
-                .attr("x1", this.x_a(age))
-                .attr("x2", this.x_a(age))
+                .attr("x1", x_a(age))
+                .attr("x2", x_a(age))
                 .attr("y1", 0)
                 .attr("y2", 620)
                 .attr("transform", "translate(" + (margin + 30 + 2 * ((this.chart_w - margin - 32) / 3)) + ")")
