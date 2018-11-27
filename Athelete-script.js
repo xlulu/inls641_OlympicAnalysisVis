@@ -79,20 +79,21 @@ $(document).ready(() => {
           } else {
             sex = "M";
           }
-          age = Number($('#age-input').val());
-          height = Number($('#height-input').val());
-          weight = Number($('#weight-input').val());
+          var age = Number($('#age-input').val());
+          var height = Number($('#height-input').val());
+          var weight = Number($('#weight-input').val());
           console.log("age: " + age);
           console.log("height: " + height);
           console.log("weight: " + weight);
           console.log("sex: " + sex);
           // call function to write the filter and give result
+            athelete_vis.inputLine(age, height, weight, sex);
 
         });
 
       });
 
-
+    const margin = 100;
 
     class AtheleteVis {
       //reference: https://blog.datasyndrome.com/a-simple-box-plot-in-d3-dot-js-44e7083c9a9e
@@ -127,8 +128,35 @@ $(document).ready(() => {
           .attr("id", "box-svg")
           .attr("width", "100%")
           .attr("height", 650)
-          .style("margin-top", "10px");
-        // .style("background-color", "#000000");
+          .style("margin-top", "10px")
+            // .on("mousemove", function(d) {
+            //     let mouse_coords = d3.mouse(this);
+            //     console.log(mouse_coords[1]);
+            //     svg.selectAll(".highlight_box")
+            //         .attr("y", mouse_coords[1]);
+            // })
+            // .on("mouseout", function(d) {
+            //     svg.selectAll(".vertical_line")
+            //         .attr("y", -100);
+            // })
+        ;
+
+
+          // this.svg.select(#box_svg).append("rect")
+          //     .attr("class", "highlight_box")
+          //     .attr("x", 0)
+          //     .attr("y", -100)
+          //     .attr("height", 10)
+          //     .attr("width", 620)
+          //     .style("stroke", "black")
+          //     .style("stroke-width", 4)
+          //     .style("fill", "gray")
+          //     .style("opacity", 30);
+
+
+
+
+          // .style("background-color", "#000000");
 
       }
       // Return the quantile needed for the boxplot
@@ -267,13 +295,65 @@ $(document).ready(() => {
           .style("font-weight", "300")
           .style("font-size", "11px");
 
+
+
         // Trasfer the boxplot
         var box_g = this.svg.append("g")
           .attr("transform", "translate(" + (margin + 5) + ",1.5)")
-          .attr("class", this.game_chart[info]);
+          .attr("class", this.game_chart[info])
+            .on("mousemove", function(d) {
+                let mouse_coords = d3.mouse(this);
+                console.log(mouse_coords[1]);
+                svg.selectAll(".highlight_box")
+                    .attr("y", mouse_coords[1]);
+            })
+            .on("mouseout", function(d) {
+                svg.selectAll(".vertical_line")
+                    .attr("y", -100);
+            });
 
 
-        // Draw the box plot horizontal lines
+
+
+            // .on("mousemove", function(d) {
+          //     let mouse_coords = d3.mouse(this);
+          //     box_g.selectAll(".vertical_line")
+          //         .attr("x1", mouse_coords[0])
+          //         .attr("x2", mouse_coords[0]);
+          //     console.log(mouse_coords[0]); // ??? I can show the coords but cant move the line???
+          // })
+          //   .on("mouseout", function(d) {
+          //         box_g.selectAll(".vertical_line")
+          //             .attr("x1", -100)   //-100 are inc
+          //             .attr("x2", -100);
+          //     })
+        ;
+
+
+          // Vertical line to show the values
+          // box_g.append("line")
+          //     .attr("class", "vertical_line")
+          //     .attr("x1", -100)
+          //     .attr("x2", -100)
+          //     .attr("y1", 0)
+          //     .attr("y2", 620)
+          //     .style("stroke", "black")
+          //     .style("stroke-width", 4); // multiple lines?
+
+          // this.svg.select(#box_svg).
+          box_g.append("rect")
+              .attr("class", "highlight_box")
+              .attr("x", 0)
+              .attr("y", -100)
+              .attr("height", 10)
+              .attr("width", 620)
+              .style("stroke", "black")
+              .style("stroke-width", 4)
+              .style("fill", "gray")
+              .style("opacity", 30);
+
+
+          // Draw the box plot horizontal lines
         var barWidth = 10;
         var verticalLines = box_g.selectAll(".horizontalLines")
           .data(this.ath_info_data[info])
@@ -384,7 +464,33 @@ $(document).ready(() => {
             .attr("y2", lineConfig.y2)
             .attr("stroke", this.color_chart[this.gender][0])
             .attr("stroke-width", 1)
-            .attr("fill", "none");
+            .attr("fill", "none")
+              // .on("mousemove", function(d) {
+                  //     let mouse_coords = d3.mouse(this);
+                  //     box_g.selectAll(".vertical_line")
+                  //         .attr("x1", mouse_coords[0])
+                  //         .attr("x2", mouse_coords[0]);
+                  //     console.log(mouse_coords[0]); // ??? I can show the coords but cant move the line???
+                  // })
+                  //   .on("mouseout", function(d) {
+                  //         box_g.selectAll(".vertical_line")
+                  //             .attr("x1", -100)   //-100 are inc
+                  //             .attr("x2", -100);
+                  //     })
+
+          ;
+
+
+            // // Vertical line to show the values
+            // this.svg.append("line")
+            //     .attr("class", "vertical_line")
+            //     .attr("x1", -100)
+            //     .attr("x2", -100)
+            //     .attr("y1", 0)
+            //     .attr("y2", 620)
+            //     .style("stroke", "black")
+            //     .style("stroke-width", 70);
+
         }
 
         //render the boxplot
@@ -395,42 +501,99 @@ $(document).ready(() => {
         d3.selectAll(".weighttext").attr("transform", "translate(" + textwid + ",0)");
         d3.selectAll(".weightaxis").attr("transform", "translate(" + (margin + 15 + wid) + ",600)");
 
-        // inputLine(age, height, weight, sex) {
-        //     // line for input height
-        //     this.svg.append("line")
-        //         .attr("x1", this.x_h(height))
-        //         .attr("x2", this.x_h(height))
-        //         .attr("y1", 0)
-        //         .attr("y2", 620)
-        //         .attr("transform", "translate(" + (margin+5) + ",")
-        //         .style("stroke", "gold")
-        //         .style("stroke-width", 3)
-        //         .style("stroke-dasharray", "4,4");
-        //
-        //     //line for input weight
-        //     this.svg.append("line")
-        //         .attr("x1", this.x_w(weight))
-        //         .attr("x2", this.x_w(weight))
-        //         .attr("y1", 0)
-        //         .attr("y2", 620)
-        //         .attr("transform", "translate(" + (margin+5+(this.chart_w-margin-5)/3) + ")")
-        //         .style("stroke", "gold")
-        //         .style("stroke-width", 3)
-        //         .style("stroke-dasharray", "4,4");
-        //
-        //     //line for input age
-        //     this.svg.append("line")
-        //         .attr("x1", this.x_a(age))
-        //         .attr("x2", this.x_a(age))
-        //         .attr("y1", 0)
-        //         .attr("y2", 620)
-        //         .attr("transform", "translate(" + (margin+5+2*(this.chart_w-margin-5)/3) + ")")
-        //         .style("stroke", "gold")
-        //         .style("stroke-width", 3)
-        //         .style("stroke-dasharray", "4,4");
-        //
-        //     console.log("line printed!")
-        // }
-
       }
+
+        // // set x linear func for input height
+        //
+      // still need to change the data for F and M
+        x_h(data){
+            var thisvis = this;
+
+            var min_h = d3.min(this.athelete_data, function(d) {
+                return parseInt(d.Height);
+            });
+            var max_h = d3.max(this.athelete_data, function(d) {
+                return parseInt(d.Height);
+            });
+
+            var x = d3.scaleLinear()
+                .domain([min_h - 1, max_h + 1])
+                .range([0, (this.chart_w - margin - 5) / 3 - 10]);
+            return x(data);
+
+
+        }
+        // set x linear func for input weight
+        x_w(data){
+            var thisvis = this;
+            var min_w = d3.min(this.athelete_data, function(d) {
+                return parseInt(d.Weight);
+            });
+            var max_w = d3.max(this.athelete_data, function(d) {
+                return parseInt(d.Weight);
+            });
+            var x = d3.scaleLinear()
+                .domain([min_w - 1, max_w + 1])
+                .range([0, (this.chart_w - margin - 5) / 3 - 10]);
+            //.range([(this.chart_w - margin) / 3, 2 * (this.chart_w - margin) / 3]);
+            return x(data);
+        }
+        // set x linear func for input age
+        x_a(data){
+            var thisvis = this;
+            var min_a = d3.min(this.athelete_data, function(d) {
+                return parseInt(d.Age);
+            });
+            var max_a = d3.max(this.athelete_data, function(d) {
+                return parseInt(d.Age);
+            });
+            var x = d3.scaleLinear()
+                .domain([min_a, max_a])
+                .range([0, (this.chart_w - margin - 5) / 3 - 10]);
+            //.range([2 * (this.chart_w - margin) / 3, this.chart_w - margin]);
+            return x(data);
+        }
+
+
+
+        inputLine(age, height, weight, sex) {
+            // line for input height
+            this.svg.append("line")
+                .attr("x1", this.x_h(height))
+                .attr("x2", this.x_h(height))
+                .attr("y1", 0)
+                .attr("y2", 620)
+                .attr("transform", "translate(" + (margin+ 5) + ")")
+                .style("stroke", "gold")
+                .style("stroke-width", 3)
+                .style("stroke-dasharray", "4,4");
+
+            //line for input weight
+            this.svg.append("line")
+                .attr("x1", this.x_w(weight))
+                .attr("x2", this.x_w(weight))
+                .attr("y1", 0)
+                .attr("y2", 620)
+                .attr("transform", "translate(" + (margin+5+(this.chart_w-margin-5)/3) + ")")
+            //d3.selectAll(".weightaxis").attr("transform", "translate(" + (margin + 15 + wid) + ",600)");
+                .style("stroke", "gold")
+                .style("stroke-width", 3)
+                .style("stroke-dasharray", "4,4");
+
+            //line for input age
+            this.svg.append("line")
+                .attr("x1", this.x_a(age))
+                .attr("x2", this.x_a(age))
+                .attr("y1", 0)
+                .attr("y2", 620)
+                .attr("transform", "translate(" + (margin + 30 + 2 * ((this.chart_w - margin - 32) / 3)) + ")")
+                // .attr("transform", "translate(" + (margin+5+2*(this.chart_w-margin-5)/3) + ")")
+                .style("stroke", "gold")
+                .style("stroke-width", 3)
+                .style("stroke-dasharray", "4,4");
+
+            console.log("line printed!")
+        }
+
+
     }
