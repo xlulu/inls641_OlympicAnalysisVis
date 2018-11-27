@@ -47,6 +47,17 @@ var color_dic = {
   green :['Football', 'Handball', 'Water', 'Polo', 'Hockey', 'Basketball', 'Volleyball', 'Tennis', 'Badminton', 'Beach Volleyball', 'Table Tennis', 'Golf', 'Softball', 'Rugby Sevens', 'Rugby', 'Lacrosse', 'Polo', 'Cricket', 'Racquets', 'Croquet', 'Ice Hockey', 'Roque', 'Jeu De Paume', 'Basque Pelota']
 };
 
+// red yellow blue black green
+var colors = ["red", "yellow", "blue", "black", "green"];
+
+var rgb = {
+  red : "#d65567",
+  yellow :"#ffc107",
+  blue : "#00a6cb",
+  black : "#607d8b",
+  green : "#8bc34a"
+};
+
 
 class MedalVis_Location {
 
@@ -662,16 +673,6 @@ class MedalVis_Location {
     }, Object.create(null));
   //console.log(groupBy_NOC);
 
-  // red yellow blue black green
-  var colors = ["red", "yellow", "blue", "black", "green"];
-  var rgb = {
-    red : "#d65567",
-    yellow :"#ffc107",
-    blue : "#00a6cb",
-    black : "#607d8b",
-    green : "#8bc34a"
-  };
-
   for (var i in groupBy_NOC){
     noc_color_count [i] = [];
     let color_sport_quantity = this.count_color(groupBy_NOC[i]);
@@ -731,7 +732,7 @@ function color_detail() {
   var color_info = "<table class=\"color-info\"><b style = \"line-height:2\">Color Infos</b>";
 
   for (var i in color_dic){
-    color_info += "<tr><td class=\"color\" id = \"circle-"+ i + "\">"+ i +"</td><td class=\"sport\">";
+    color_info += "<tr><td class=\"color\" width = \"50px\" style = \"background-color:" + rgb[i] + "\""+ i + "\"></td><td class=\"sport\">";
     for (var j in color_dic[i].sort()){
       color_info += "<span class = \"sport-span\"> " + color_dic[i][j] + "</span>";
     }
@@ -739,7 +740,5 @@ function color_detail() {
   }
 
   color_info += "</table>";
-
   return color_info;
-
 }
