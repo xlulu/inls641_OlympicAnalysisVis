@@ -83,6 +83,8 @@ $(document).ready(() => {
 
 });
 
+const margin = 100;
+
 class AtheleteVis {
   //reference: https://blog.datasyndrome.com/a-simple-box-plot-in-d3-dot-js-44e7083c9a9e
   constructor(athelete_data) {
@@ -271,8 +273,7 @@ class AtheleteVis {
       .style("font-weight","300")
       .style("font-size","14px");
 
-
-    // Then the X axis.
+    // Then the Y axis.
     this.svg.append("g")
       .attr("class", "a_a_axis")
       .attr("transform", "translate(" + margin + ",5)")
@@ -312,6 +313,7 @@ class AtheleteVis {
       .attr("stroke", "#177410")
       .attr("stroke-width", 1)
       .attr("fill", "none");
+
 
     // Draw the boxes of the box plot, filled in white and on top of vertical lines
     var rects = box_g.selectAll("rect")
@@ -410,6 +412,42 @@ class AtheleteVis {
     d3.selectAll(".weighttext").attr("transform", "translate(" + textwid + ",0)");
     d3.selectAll(".weightaxis").attr("transform", "translate(" + (margin + 15 + wid) + ",600)");
 
+    // inputLine(age, height, weight, sex) {
+    //     // line for input height
+    //     this.svg.append("line")
+    //         .attr("x1", this.x_h(height))
+    //         .attr("x2", this.x_h(height))
+    //         .attr("y1", 0)
+    //         .attr("y2", 620)
+    //         .attr("transform", "translate(" + (margin+5) + ",")
+    //         .style("stroke", "gold")
+    //         .style("stroke-width", 3)
+    //         .style("stroke-dasharray", "4,4");
+    //
+    //     //line for input weight
+    //     this.svg.append("line")
+    //         .attr("x1", this.x_w(weight))
+    //         .attr("x2", this.x_w(weight))
+    //         .attr("y1", 0)
+    //         .attr("y2", 620)
+    //         .attr("transform", "translate(" + (margin+5+(this.chart_w-margin-5)/3) + ")")
+    //         .style("stroke", "gold")
+    //         .style("stroke-width", 3)
+    //         .style("stroke-dasharray", "4,4");
+    //
+    //     //line for input age
+    //     this.svg.append("line")
+    //         .attr("x1", this.x_a(age))
+    //         .attr("x2", this.x_a(age))
+    //         .attr("y1", 0)
+    //         .attr("y2", 620)
+    //         .attr("transform", "translate(" + (margin+5+2*(this.chart_w-margin-5)/3) + ")")
+    //         .style("stroke", "gold")
+    //         .style("stroke-width", 3)
+    //         .style("stroke-dasharray", "4,4");
+    //
+    //     console.log("line printed!")
+    // }
 
   }
 
