@@ -47,7 +47,7 @@ var color_dic = {
 };
 
 // red yellow blue black green
-var colors = ["red", "yellow", "blue", "green", "black"];
+var colors = ["yellow", "red", "blue", "green", "black"];
 
 var rgb = {
   red: { color: "#d03113", name: "Fight"},
@@ -758,15 +758,18 @@ function color_detail() {
 
   var color_info = "<table class='color-info'><b style='text-align:left'>Colors Info</b>";
 
-  for (var i in color_dic) {
+  for (var i in colors) {
+    c = colors[i];
     // the name of each color
-    color_info += "<tr><td class = 'colordot' style = 'background-color:" + rgb[i].color + "'></td><td class='color-name' style = 'color:" + rgb[i].color + "'>" + rgb[i].name + "</td>";
+    color_info += "<tr><td class = 'colordot' style = 'background-color:" + 
+                  rgb[c].color + "'></td><td class='color-name' style = 'color:" + 
+                  rgb[c].color + "'>" + rgb[c].name + "</td>";
     // the color bar
-    color_info += "<tr><td style = 'width:10px; background-color:" + rgb[i].color + "'</td><td class='sport'>";
+    color_info += "<tr><td style = 'width:10px; background-color:" + rgb[c].color + "'</td><td class='sport'>";
     
     // the sports in each color
-    for (var j in color_dic[i].sort()) {
-      color_info += "<span class = 'sport-span " + i + "'>" + color_dic[i][j] + "</span>";
+    for (var j in color_dic[c].sort()) {
+      color_info += "<span class = 'sport-span " + c + "'>" + color_dic[c][j] + "</span>";
     }
     color_info += "</td></tr>";
   }
