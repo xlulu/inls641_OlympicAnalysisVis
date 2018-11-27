@@ -107,7 +107,8 @@ h2 {
   height: 60px;
   margin-bottom: 20px;
 }
-.axis > path{
+
+.axis>path {
   stroke: #FFFFFF;
   stroke-width: 2px;
 }
@@ -116,26 +117,23 @@ h2 {
   stroke: #FFFFFF;
   stroke-width: 6px;
 } */
-.axis .tick text{
+.axis .tick text {
   fill: #FFFFFF;
   font-family: 'Andale Mono';
   font-size: 10px;
-
 }
 
-.clicked{
+.clicked {
   fill: goldenrod;
   font-family: 'Andale Mono';
   font-size: 12px;
-
 }
 
-.axis .tick line  {
+.axis .tick line {
   stroke: #FFFFFF;
-
 }
 
-.axis .tick line :hover{
+.axis .tick line :hover {
   stroke: goldenrod;
   stroke-width: 8px;
 }
@@ -143,9 +141,8 @@ h2 {
 .hover-line {
   stroke: goldenrod;
   stroke-width: 2px;
-  stroke-dasharray: 3,3;
+  stroke-dasharray: 3, 3;
 }
-
 
 .toggle-background {
   background-color: #000000;
@@ -155,7 +152,7 @@ h2 {
 }
 
 /* set the style of toggles in Athlete page */
-.tog-sex, .tog-female, .tog-male, .toggle-male, .toggle-female, .see-result{
+.tog-sex, .tog-female, .tog-male, .toggle-male, .toggle-female, .see-result {
   border: 0px solid #3E4246;
   font-size: 14px;
   padding-top: 8px;
@@ -180,6 +177,7 @@ h2 {
   margin-bottom: -10px;
   margin-top: -5px;
 }
+
 .athelete-ins p {
   margin-top: 5px;
 }
@@ -197,9 +195,11 @@ h2 {
   margin-right: 15px;
   font-size: 15px;
 }
-.athelete-input{
+
+.athelete-input {
   margin-bottom: 5px;
 }
+
 .athelete-input>* {
   /* border-color: #3E4246; */
   border: 0.15em solid;
@@ -217,7 +217,7 @@ h2 {
 }
 
 /* ok button style */
-.see-result{
+.see-result {
   border-radius: 7px;
   background-color: #54C58F;
 }
@@ -254,7 +254,7 @@ select {
   margin-top: 120%;
 }
 
-.tog-number, .tog-location{
+.tog-number, .tog-location {
   width: 85%;
   border: 2px solid #000000;
   font-size: 14px;
@@ -282,11 +282,11 @@ select {
     "mdde code";
 }
 
-#medal-detail{
+#medal-detail {
   grid-area: mdde;
 }
 
-#color-detail{
+#color-detail {
   grid-area: code;
 }
 
@@ -314,28 +314,27 @@ select {
     "mech togl";
 }
 
-
 .golddot, .silverdot, .bronzedot {
-    height: 10px;
-    width: 10px;
-    border-radius: 50%;
-    margin-left: 15px;
-    display: inline-block;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  margin-left: 15px;
+  display: inline-block;
 }
 
 .golddot {
-  background-color:goldenrod;
+  background-color: goldenrod;
 }
 
-.silverdot{
-  background-color:silver;
+.silverdot {
+  background-color: silver;
 }
 
-.bronzedot{
-    background-color:#CD7F32;
+.bronzedot {
+  background-color: #CD7F32;
 }
 
-.sport-span{
+.sport-span {
   font-size: 12px;
   border-radius: 5px;
   height: 20px;
@@ -343,11 +342,10 @@ select {
   margin-bottom: 2.5px;
   padding: 3px;
   display: inline-table;
-  background-color: #e5e5e5;
-  /* color: #272727bd; */
+  color: #000000;
 }
 
-#play-year{
+#play-year {
   border: 2px solid #000000;
   font-size: 12px;
   padding-top: 8px;
@@ -365,11 +363,19 @@ select {
     "mdde code";
 }
 
-#medal-detail{
-  grid-area: mdde;
+#medal-detail b, #color-detail b {
+  border-bottom: 1.5px dotted;
+  line-height: 2;
 }
 
-#color-detail{
+#medal-detail {
+  grid-area: mdde;
+}
+.color-info{
+  margin-top:30px;
+}
+
+#color-detail {
   grid-area: code;
 }
 
@@ -382,6 +388,29 @@ select {
   text-align: right;
 }
 
-.medal-info {
+#medal-info {
+  display: block;
+  overflow-y: scroll;
   font-size: 12px;
+  margin-top: 5px;
+}
+
+.yellow {
+  background-color: rgba(247, 192, 7, 0.6);
+}
+
+.black {
+  background-color: rgba(60, 60, 60, 0.4);
+}
+
+.red {
+  background-color: rgba(208, 49, 19, 0.6);
+}
+
+.green {
+  background-color: rgba(63, 142, 28, 0.6);
+}
+
+.blue {
+  background-color: rgba(3, 150, 230, 0.6);
 }
