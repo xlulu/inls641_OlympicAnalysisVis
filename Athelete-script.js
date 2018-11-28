@@ -267,7 +267,6 @@ class AtheleteVis {
     .on('mouseout', function(d){
       d3.select(this).style("opacity", "0");
     });
-
   }
 
   // Show boxplot in default mode (All sex)
@@ -379,6 +378,32 @@ class AtheleteVis {
       .attr("class", function(datum) {
         return datum.game;
       });
+
+    //*************************************
+    //  feel free to delete
+    // why it didnt work? this part
+    // Draw the texts of the boxplot
+      var txt_show = box_g.selectAll("rect")
+          .data(this.ath_info_data[info])
+          .enter()
+          //attr("class", )
+          .attr("front-size", "15px")
+          .attr("x", function(datum) {
+              return x_h(datum.quartile[0]);
+          })
+          .attr("y", function(datum) {
+            console.log(y(datum.game));
+            return y(datum.game);
+          })
+          .text(function(d){return datum.quartile[0]});
+
+
+          // .style("font-size", "10px")
+          // .style("font-family", "'Yanone Kaffeesatz', sans-serif")
+          // .style("font-weight", "300")
+          // .style("font-size", "14px");
+          // .text(function(d){datum.quartile[0]});
+      //*************************************
 
     // Now render all the vertical lines at once - the whiskers and the median
     var verticalLineConfigs = [
