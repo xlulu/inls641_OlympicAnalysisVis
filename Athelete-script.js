@@ -254,21 +254,23 @@ class AtheleteVis {
     d3.select(".a_a_axis")
       .selectAll(".tick")
       .append("rect")
-      .attr("width", this.chart_w)
-      .attr("height", 18)
-      .attr("id", function(d) {
-        return "rec-" + d.replace(/\s/g, "-");
-      })
-      .attr("transform", "translate(" + -margin + ", -8)")
-      .call(y_axis)
-      .style("fill", "black")
-      .style("opacity", "0")
-      .on('mouseover', function(d) {
-        d3.select(this).style("fill", "black").style("opacity", 0.2);
-      })
-      .on('mouseout', function(d) {
-        d3.select(this).style("opacity", "0");
-      });
+        .attr("width", this.chart_w)
+        .attr("height", 18)
+        .attr("id", function(d) {
+          return "rec-" + d.replace(/\s/g, "-");
+        })
+        .attr("transform", "translate(" + -margin + ", -8)")
+        .call(y_axis)
+        .style("fill", "#E3E3E3")
+        .style("opacity", "0")
+        .on('mouseover', function(d) {
+          d3.select(this).style("fill", "#E3E3E3").style("opacity", 0.7);
+          $("text:contains('"+ d + "')").css("fill", "goldenrod").css("font-weight", "bolder");
+        })
+        .on('mouseout', function(d) {
+          d3.select(this).style("opacity", "0");
+          $("text:contains('"+ d + "')").css("fill", "black").css("font-weight", "normal");
+        });
 
     // console.log(this.games_data);
     for (var i in this.games_data) {
@@ -277,9 +279,11 @@ class AtheleteVis {
         function() {
           d3.select(this)
             .on('mouseover', function(d) {
-              d3.select("#rec-" + target).style("fill", "black").style("opacity", 0.2);
+              d3.selectAll("text." + target).attr("display", "block");
+              d3.select("#rec-" + target).style("fill", "#E3E3E3").style("opacity", 0.7);
             })
             .on('mouseout', function(d) {
+              d3.selectAll("text." + target).attr("display", "none");
               d3.select("#rec-" + target).style("opacity", "0");
             });
         });
@@ -487,7 +491,7 @@ class AtheleteVis {
         .text(lineConfig.t1)
         .attr("font-size", "9px")
         .attr("color", "#000000")
-        // .attr("display","none")
+        .attr("display","none")
         .attr("class", function(datum) {
           return (datum.game).replace(/\s/g, "-");
         });
