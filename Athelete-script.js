@@ -386,6 +386,7 @@ class AtheleteVis {
       var txt_show = box_g.selectAll("rect")
           .data(this.ath_info_data[info])
           .enter()
+          .append("text")
           //attr("class", )
           .attr("front-size", "15px")
           .attr("x", function(datum) {
