@@ -294,6 +294,7 @@ class AtheleteVis {
     // this.svg.selectAll("g").remove();
     var thisvis = this;
     var margin = 100;
+    var format = d3.format("d");
     var wid = (this.chart_w - margin - 32) / 3;
     var textwid = (this.chart_w - margin) / 3 - 8;
     var [min_h, max_h] = this.get_min_max(info);
@@ -414,6 +415,9 @@ class AtheleteVis {
         },
         y2: function(datum) {
           return y(datum.game) + barWidth
+        },
+        t1: function(datum) {
+          return datum.whiskers[0];
         }
       },
       // Median line
@@ -429,6 +433,9 @@ class AtheleteVis {
         },
         y2: function(datum) {
           return y(datum.game) + barWidth
+        },
+        t1: function(datum) {
+          return datum.quartile[1];
         }
       },
       // Bottom whisker
@@ -444,6 +451,9 @@ class AtheleteVis {
         },
         y2: function(datum) {
           return y(datum.game) + barWidth
+        },
+        t1: function(datum) {
+          return datum.whiskers[1];
         }
       }
     ];
@@ -466,13 +476,29 @@ class AtheleteVis {
         .attr("class", function(datum) {
           return (datum.game).replace(/\s/g, "-");
         });
+
+      //Add the text
+      box_g.selectAll(".whiskerstext")
+        .data(this.ath_info_data[info])
+        .enter()
+        .append("text")
+        .attr("x", lineConfig.x1)
+        .attr("y", lineConfig.y1)
+        .text(lineConfig.t1)
+        .attr("font-size", "9px")
+        .attr("color", "#000000")
+        // .attr("display","none")
+        .attr("class", function(datum) {
+          return (datum.game).replace(/\s/g, "-");
+        });
+
     }
 
     //render the boxplot
-    d3.selectAll(".age").attr("transform", "translate(" + (margin + 25 + 2 * wid) + ",0)");
+    d3.selectAll(".age").attr("transform", "translate(" + (margin + 25 + 2 * wid) + ",2)");
     d3.selectAll(".agetext").attr("transform", "translate(" + (2 * textwid) + ",0)");
     d3.selectAll(".ageaxis").attr("transform", "translate(" + (margin + 25 + 2 * wid) + ",600)");
-    d3.selectAll(".weight").attr("transform", "translate(" + (margin + 15 + wid) + ",0)");
+    d3.selectAll(".weight").attr("transform", "translate(" + (margin + 15 + wid) + ",2)");
     d3.selectAll(".weighttext").attr("transform", "translate(" + textwid + ",0)");
     d3.selectAll(".weightaxis").attr("transform", "translate(" + (margin + 15 + wid) + ",600)");
 
@@ -534,6 +560,7 @@ class AtheleteVis {
     }
 
     // Display the result based on user input
+
     var result = proper_games.shift().reduce(function(res, v) {
       if (res.indexOf(v) === -1 && proper_games.every(function(a) {
           return a.indexOf(v) !== -1;
@@ -556,7 +583,7 @@ class AtheleteVis {
       result_info = "<table class='result-info' style='margin-left:auto; margin-right:auto;'>";
       result_info += "<tr><td>";
       for (var i in result) {
-        result_info += "<span class = 'games-span'>" + result[i].replace("-"," ") + "</span>";
+        result_info += "<span class = 'games-span'>" + result[i].replace("-", " ") + "</span>";
       }
       console.log(result_info);
       result_info += "</td></tr></table>";
