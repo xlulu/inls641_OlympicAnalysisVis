@@ -91,10 +91,10 @@ $(document).ready(() => {
     var age = Number($('#age-input').val());
     var height = Number($('#height-input').val());
     var weight = Number($('#weight-input').val());
-    console.log("age: " + age);
-    console.log("height: " + height);
-    console.log("weight: " + weight);
-    console.log("sex: " + sex);
+    // console.log("age: " + age);
+    // console.log("height: " + height);
+    // console.log("weight: " + weight);
+    // console.log("sex: " + sex);
     // call function to write the filter and give result
     athelete_vis.calculateData(sex);
     athelete_vis.show_athelete_default(0);
@@ -188,7 +188,7 @@ class AtheleteVis {
     var thisvis = this;
     this.setGender(g);
     //filter the data
-    console.log(this.games_data);
+    //console.log(this.games_data);
     for (var i in this.games_data) {
       var game = this.games_data[i];
       var filtered_data = this.athe_gender_data.filter(function(d) {
@@ -221,7 +221,7 @@ class AtheleteVis {
       }
 
     }
-    console.log(this.ath_info_data);
+    //console.log(this.ath_info_data);
   }
 
 
@@ -237,7 +237,7 @@ class AtheleteVis {
 
   // Show boxplot in default mode (All sex)
   show_athelete_default(info) {
-    console.log("in!");
+    //console.log("in!");
     // //remove the previous one
     // this.svg.selectAll("g").remove();
     var thisvis = this;
@@ -245,7 +245,7 @@ class AtheleteVis {
     var wid = (this.chart_w - margin - 32) / 3;
     var textwid = (this.chart_w - margin) / 3 - 8;
     var [min_h, max_h] = this.get_min_max(info);
-    console.log("range", i, min_h, max_h);
+    //console.log("range", i, min_h, max_h);
     // Define X scales for height
     var x_h = d3.scaleLinear()
       .domain([min_h - 1, max_h + 1])
@@ -423,27 +423,6 @@ class AtheleteVis {
     d3.selectAll(".weighttext").attr("transform", "translate(" + textwid + ",0)");
     d3.selectAll(".weightaxis").attr("transform", "translate(" + (margin + 15 + wid) + ",600)");
 
-
-    // ********** need to modify *************//
-    //add horizontal rectangle following the mouse to highlight all boxplots to match the sport
-    //   $("#box-svg").append("rect")
-    //       .attr("class", "y-hover-rect")
-    //       .attr("x", 0)
-    //       .attr("y", -100)
-    //       .attr("height", barWidth * 1.5)
-    //       .attr("width", 620)
-    //       //.attr("transform", "translate(" + (margin + 5) + ")")
-    //       .on("mousemove", function(d) {
-    //           let mouse_coords = d3.mouse(this);
-    //           console.log(mouse_coords[1]);
-    //           svg.selectAll(".y-hover-rect")
-    //               .attr("y", mouse_coords[1]);
-    //       })
-    //       .on("mouseout", function(d) {
-    //           svg.selectAll(".y-hover-rect")
-    //               .attr("y", -100);
-    //       });
-      // ********** need to modify *************//
   }
 
   //take the input
@@ -465,9 +444,9 @@ class AtheleteVis {
     }
 
     for (var i in input) {
-      console.log("input i", input[i]);
+      //console.log("input i", input[i]);
       var [min, max] = this.get_min_max(i);
-      console.log("min max", min, max);
+      //console.log("min max", min, max);
       if (input[i] <= max && input[i] >= min) {
         //input in range
         proper_games[i] = this.ath_info_data[i].filter(function(d) {
@@ -475,19 +454,19 @@ class AtheleteVis {
         }).map(function(d) {
           return d.game;
         });
-        console.log("games", proper_games[i]);
+        //console.log("games", proper_games[i]);
         //map the game to the boxplot
         for (var game in proper_games[i]) {
           var game_class = "." + this.game_chart[i] + " ." + proper_games[i][game];
-          console.log(game_class);
-          console.log(d3.selectAll(game_class));
+          //console.log(game_class);
+          //console.log(d3.selectAll(game_class));
           d3.selectAll(game_class)
             .style("fill", "#74B46F")
             .style("stroke", "#177410");
         }
         //draw the line fit of the value
         var scale_x = this.x_scale(min, max);
-        console.log(scale_x(input[i]));
+        //console.log(scale_x(input[i]));
         this.svg.append("line")
           .attr("x1", scale_x(input[i]))
           .attr("x2", scale_x(input[i]))
@@ -498,7 +477,19 @@ class AtheleteVis {
           .style("stroke-width", "1.5px")
           .style("stroke-dasharray", "2,2");
       }
-      console.log(proper_games);
+
     }
+
+    // Display the result based on user input
+    var result = proper_games.shift().reduce(function(res, v) {
+      if (res.indexOf(v) === -1 && proper_games.every(function(a) {
+        return a.indexOf(v) !== -1;
+    })) res.push(v);
+    return res;}, []);
+    console.log("final result", result);
+    var result_info = "You can try: ";
+    for(var i in result)
+       result_info += result[i] + " ";
+    $("#result-info").text(result_info);
   }
 }
