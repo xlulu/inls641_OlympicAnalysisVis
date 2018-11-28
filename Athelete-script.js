@@ -1,8 +1,5 @@
 $(document).ready(() => {
   //collapse the personal input
-
-  // $('#arrow').toggleClass('fa-rotate-180');
-  // $(this).find($(".fa")).removeClass('fa-chevron-circle-up').addClass('fa-chevron-circle-down');
   $(function() {
     $(".collapse").hide();
     $("#arrow").click(function(e) {
@@ -22,6 +19,9 @@ $(document).ready(() => {
       var gender = 'All';
       athelete_vis = new AtheleteVis(athelete_data);
       athelete_vis.calculateData(gender);
+      athelete_vis.show_athelete_default(0);
+      athelete_vis.show_athelete_default(1);
+      athelete_vis.show_athelete_default(2);
     });
 
   //Listen the toggle button served for the chart
@@ -34,6 +34,9 @@ $(document).ready(() => {
     // call function to draw chart with ALL athelete data
     var gender = 'All';
     athelete_vis.calculateData(gender);
+    athelete_vis.show_athelete_default(0);
+    athelete_vis.show_athelete_default(1);
+    athelete_vis.show_athelete_default(2);
   });
 
   //Female athelete
@@ -45,6 +48,9 @@ $(document).ready(() => {
     // call function to draw chart with FEMALE athelete data
     var gender = 'F';
     athelete_vis.calculateData(gender);
+    athelete_vis.show_athelete_default(0);
+    athelete_vis.show_athelete_default(1);
+    athelete_vis.show_athelete_default(2);
 
   });
 
@@ -57,7 +63,9 @@ $(document).ready(() => {
     // call function to draw chart with MALE athelete data
     var gender = 'M';
     athelete_vis.calculateData(gender);
-
+    athelete_vis.show_athelete_default(0);
+    athelete_vis.show_athelete_default(1);
+    athelete_vis.show_athelete_default(2);
   });
 
 
@@ -74,6 +82,7 @@ $(document).ready(() => {
   });
   //Once click the "See" button, get the input information
   $(".see-result").click(function() {
+    $("#box-svg").children().remove();
     if ($(".toggle-female").hasClass("down")) {
       sex = "F";
     } else {
@@ -87,40 +96,48 @@ $(document).ready(() => {
     console.log("weight: " + weight);
     console.log("sex: " + sex);
     // call function to write the filter and give result
-    athelete_vis.inputLine(age, height, weight, sex);
-
+    athelete_vis.calculateData(sex);
+    athelete_vis.show_athelete_default(0);
+    athelete_vis.show_athelete_default(1);
+    athelete_vis.show_athelete_default(2);
+    athelete_vis.inputLine(age, height, weight);
   });
 
 });
 
-const margin = 100;
 
 class AtheleteVis {
   //reference: https://blog.datasyndrome.com/a-simple-box-plot-in-d3-dot-js-44e7083c9a9e
   constructor(athelete_data) {
+
+    var thisvis = this;
     this.athelete_data = athelete_data;
+    //use to save the data after filtered by gender
+    this.athe_gender_data = [];
+    //use to save all the calculated data
+    this.ath_info_data = {};
     this.gender = "All";
     this.chart_w = $("#athelete-chart").width();
-    var thisvis = this;
+    this.margin = 100;
+    this.width_for_scale = (this.chart_w - this.margin - 5) / 3 - 10;
     //get all the games name
     this.games_data = d3.set(this.athelete_data.map(function(d) {
         return d.Sport;
       }))
       .values()
       .sort();
-    console.log(this.games_data);
 
     this.game_chart = {
       0: "Height",
       1: "Weight",
       2: "Age"
     };
+
     this.color_chart = {
       'All': ["#177410", "#74B46F"],
       'F': ["#BC4454", "#E0707E"],
       'M': ["#155F9F", "#67A1D3"]
     };
-    this.ath_info_data = {};
 
     // Get a reference to the SVG element.
     this.svg = d3.select("#athelete-chart")
@@ -128,35 +145,7 @@ class AtheleteVis {
       .attr("id", "box-svg")
       .attr("width", "100%")
       .attr("height", 650)
-      .style("margin-top", "10px")
-    // .on("mousemove", function(d) {
-    //     let mouse_coords = d3.mouse(this);
-    //     console.log(mouse_coords[1]);
-    //     svg.selectAll(".highlight_box")
-    //         .attr("y", mouse_coords[1]);
-    // })
-    // .on("mouseout", function(d) {
-    //     svg.selectAll(".vertical_line")
-    //         .attr("y", -100);
-    // })
-    ;
-
-
-    // this.svg.select(#box_svg).append("rect")
-    //     .attr("class", "highlight_box")
-    //     .attr("x", 0)
-    //     .attr("y", -100)
-    //     .attr("height", 10)
-    //     .attr("width", 620)
-    //     .style("stroke", "black")
-    //     .style("stroke-width", 4)
-    //     .style("fill", "gray")
-    //     .style("opacity", 30);
-
-
-
-
-    // .style("background-color", "#000000");
+      .style("margin-top", "10px");
 
   }
   // Return the quantile needed for the boxplot
@@ -170,6 +159,25 @@ class AtheleteVis {
   sortNumber(a, b) {
     return a - b;
   }
+  //Define the X scale
+  x_scale(min, max) {
+    return d3.scaleLinear()
+      .domain([min - 1, max + 1])
+      .range([0, this.width_for_scale]);
+  }
+
+  // Callback for changing the gender.
+  setGender(new_gender) {
+    var thisvis = this;
+    this.gender = new_gender;
+    if (new_gender == 'All') {
+      this.athe_gender_data = this.athelete_data;
+    } else {
+      this.athe_gender_data = this.athelete_data.filter(function(d) {
+        return d.Sex == thisvis.gender;
+      });
+    }
+  }
 
 
   // Tackle the data set
@@ -178,12 +186,12 @@ class AtheleteVis {
     this.ath_info_data[1] = [];
     this.ath_info_data[2] = [];
     var thisvis = this;
-    var gender_data = this.setGender(g);
+    this.setGender(g);
     //filter the data
     console.log(this.games_data);
     for (var i in this.games_data) {
       var game = this.games_data[i];
-      var filtered_data = gender_data.filter(function(d) {
+      var filtered_data = this.athe_gender_data.filter(function(d) {
         return d.Sport == game;
       });
       //Get the height data via games
@@ -210,49 +218,34 @@ class AtheleteVis {
         record["quartile"] = this.boxQuartiles(filtered_hwa[f]);
         record["whiskers"] = [localMin, localMax];
         this.ath_info_data[f].push(record);
-
       }
 
     }
     console.log(this.ath_info_data);
-    this.show_athelete_default(gender_data, 0);
-    this.show_athelete_default(gender_data, 1);
-    this.show_athelete_default(gender_data, 2);
   }
 
 
-  // Callback for changing the gender.
-  setGender(new_gender) {
-    var thisvis = this;
-    this.gender = new_gender;
-    // this.show_athelete_changes();
-    if (new_gender == 'All') {
-      return this.athelete_data;
-    } else {
-      return this.athelete_data.filter(function(d) {
-        return d.Sex == thisvis.gender;
-      });
-    }
+  get_min_max(i) {
+    var min_value = d3.min(this.ath_info_data[i], function(d) {
+      return d.whiskers[0];
+    });
+    var max_value = d3.max(this.ath_info_data[i], function(d) {
+      return d.whiskers[1];
+    });
+    return [min_value, max_value];
   }
 
   // Show boxplot in default mode (All sex)
-  show_athelete_default(athelete_gen_data, info) {
+  show_athelete_default(info) {
     console.log("in!");
     // //remove the previous one
     // this.svg.selectAll("g").remove();
     var thisvis = this;
     var margin = 100;
-    var min_h = d3.min(this.ath_info_data[info], function(d) {
-      return d.whiskers[0];
-    });
-    var max_h = d3.max(this.ath_info_data[info], function(d) {
-      return d.whiskers[1];
-    });
-
     var wid = (this.chart_w - margin - 32) / 3;
     var textwid = (this.chart_w - margin) / 3 - 8;
-
-    console.log(wid);
+    var [min_h, max_h] = this.get_min_max(info);
+    console.log("range", i, min_h, max_h);
     // Define X scales for height
     var x_h = d3.scaleLinear()
       .domain([min_h - 1, max_h + 1])
@@ -262,7 +255,7 @@ class AtheleteVis {
     // Define y scales
     var y = d3.scalePoint()
       .domain(this.games_data)
-      .range([0, 580]);
+      .range([5, 580]);
 
     var y_axis = d3.axisLeft().scale(y);
 
@@ -295,63 +288,10 @@ class AtheleteVis {
       .style("font-weight", "300")
       .style("font-size", "11px");
 
-
-
     // Trasfer the boxplot
     var box_g = this.svg.append("g")
       .attr("transform", "translate(" + (margin + 5) + ",1.5)")
       .attr("class", this.game_chart[info]);
-    // .on("mousemove", function(d) {
-    //     let mouse_coords = d3.mouse(this);
-    //     console.log(mouse_coords[1]);
-    //     svg.selectAll(".highlight_box")
-    //         .attr("y", mouse_coords[1]);
-    // })
-    // .on("mouseout", function(d) {
-    //     svg.selectAll(".vertical_line")
-    //         .attr("y", -100);
-    // });
-
-
-
-
-    // .on("mousemove", function(d) {
-    //     let mouse_coords = d3.mouse(this);
-    //     box_g.selectAll(".vertical_line")
-    //         .attr("x1", mouse_coords[0])
-    //         .attr("x2", mouse_coords[0]);
-    //     console.log(mouse_coords[0]); // ??? I can show the coords but cant move the line???
-    // })
-    //   .on("mouseout", function(d) {
-    //         box_g.selectAll(".vertical_line")
-    //             .attr("x1", -100)   //-100 are inc
-    //             .attr("x2", -100);
-    //     })
-
-
-
-    // Vertical line to show the values
-    // box_g.append("line")
-    //     .attr("class", "vertical_line")
-    //     .attr("x1", -100)
-    //     .attr("x2", -100)
-    //     .attr("y1", 0)
-    //     .attr("y2", 620)
-    //     .style("stroke", "black")
-    //     .style("stroke-width", 4); // multiple lines?
-
-    // this.svg.select(#box_svg).
-    // box_g.append("rect")
-    //   .attr("class", "highlight_box")
-    //   .attr("x", 0)
-    //   .attr("y", 0)
-    //   .attr("height", 10)
-    //   .attr("width", 620)
-    //   .style("stroke", "black")
-    //   .style("stroke-width", 4)
-    //   .style("fill", "gray")
-    //   .style("opacity", 30);
-
 
     // Draw the box plot horizontal lines
     var barWidth = 10;
@@ -375,8 +315,10 @@ class AtheleteVis {
       })
       .attr("stroke", this.color_chart[this.gender][0])
       .attr("stroke-width", 1)
-      .attr("fill", "none");
-
+      .attr("fill", "none")
+      .attr("class", function(datum) {
+        return datum.game;
+      });
 
     // Draw the boxes of the box plot, filled in white and on top of vertical lines
     var rects = box_g.selectAll("rect")
@@ -397,7 +339,10 @@ class AtheleteVis {
       })
       .attr("stroke", this.color_chart[this.gender][0])
       .attr("stroke-width", 1)
-      .attr("fill", this.color_chart[this.gender][1]);
+      .attr("fill", this.color_chart[this.gender][1])
+      .attr("class", function(datum) {
+        return datum.game;
+      });;
 
     // Now render all the vertical lines at once - the whiskers and the median
     var verticalLineConfigs = [
@@ -465,158 +410,74 @@ class AtheleteVis {
         .attr("stroke", this.color_chart[this.gender][0])
         .attr("stroke-width", 1)
         .attr("fill", "none")
-      // .on("mousemove", function(d) {
-      //     let mouse_coords = d3.mouse(this);
-      //     box_g.selectAll(".vertical_line")
-      //         .attr("x1", mouse_coords[0])
-      //         .attr("x2", mouse_coords[0]);
-      //     console.log(mouse_coords[0]); // ??? I can show the coords but cant move the line???
-      // })
-      //   .on("mouseout", function(d) {
-      //         box_g.selectAll(".vertical_line")
-      //             .attr("x1", -100)   //-100 are inc
-      //             .attr("x2", -100);
-      //     })
-
-      ;
-
-
-      // // Vertical line to show the values
-      // this.svg.append("line")
-      //     .attr("class", "vertical_line")
-      //     .attr("x1", -100)
-      //     .attr("x2", -100)
-      //     .attr("y1", 0)
-      //     .attr("y2", 620)
-      //     .style("stroke", "black")
-      //     .style("stroke-width", 70);
-
+        .attr("class", function(datum) {
+          return datum.game;
+        });
     }
 
     //render the boxplot
-    d3.selectAll(".age").attr("transform", "translate(" + (margin + 30 + 2 * wid) + ",0)");
+    d3.selectAll(".age").attr("transform", "translate(" + (margin + 25 + 2 * wid) + ",0)");
     d3.selectAll(".agetext").attr("transform", "translate(" + (2 * textwid) + ",0)");
-    d3.selectAll(".ageaxis").attr("transform", "translate(" + (margin + 30 + 2 * wid) + ",600)");
+    d3.selectAll(".ageaxis").attr("transform", "translate(" + (margin + 25 + 2 * wid) + ",600)");
     d3.selectAll(".weight").attr("transform", "translate(" + (margin + 15 + wid) + ",0)");
     d3.selectAll(".weighttext").attr("transform", "translate(" + textwid + ",0)");
     d3.selectAll(".weightaxis").attr("transform", "translate(" + (margin + 15 + wid) + ",600)");
 
-    //add horizontal rectangle following the mouse
-
-    var focus = box_g.append("g")
-      .attr("class", "focus");
-      // .style("display", "none");
-
-    focus.append("rect")
-      .attr("class", "y-hover-rect")
-      .attr("x", 0)
-      .attr("y", 0)
-      .attr("height", barWidth)
-      .attr("width", 620)
-      .attr("transform", "translate(" + (margin + 5) + ")");
-
-
-    // box_g.on("mousemove", function(d) {
-    //   let mouse_coords = d3.mouse(this);
-    //   console.log(mouse_coords[1]);
-    //   // svg.selectAll(".highlight_box")
-    //   //   .attr("y", mouse_coords[1]);
-    // });
   }
 
-  // // set x linear func for input height
-  //
-  // still need to change the data for F and M
-  x_h(data) {
+  //take the input
+  inputLine(age, height, weight) {
+    //First, judge the input scope if in the scope (whisker[0],whisker[1]), show the lines
+    //else if show the only line in scope and didnt recommend any games
+    //else unfortunately tell them they're not fit for the Olympics anymore
     var thisvis = this;
+    var proper_games = [];
+    var input = {
+      0: height,
+      1: weight,
+      2: age
+    };
+    var trans = {
+      0: (this.margin + 5),
+      1: (this.margin + 5 + (this.chart_w - this.margin - 5) / 3),
+      2: (this.margin + 25 + 2 * ((this.chart_w - this.margin - 32) / 3))
+    }
 
-    var min_h = d3.min(this.athelete_data, function(d) {
-      return parseInt(d.Height);
-    });
-    var max_h = d3.max(this.athelete_data, function(d) {
-      return parseInt(d.Height);
-    });
-
-    var x = d3.scaleLinear()
-      .domain([min_h - 1, max_h + 1])
-      .range([0, (this.chart_w - margin - 5) / 3 - 10]);
-    return x(data);
-
-
+    for (var i in input) {
+      console.log("input i", input[i]);
+      var [min, max] = this.get_min_max(i);
+      console.log("min max", min, max);
+      if (input[i] <= max && input[i] >= min) {
+        //input in range
+        proper_games[i] = this.ath_info_data[i].filter(function(d) {
+          return (d.quartile[0] <= input[i] && d.quartile[2] >= input[i]);
+        }).map(function(d) {
+          return d.game;
+        });
+        console.log("games", proper_games[i]);
+        //map the game to the boxplot
+        for (var game in proper_games[i]) {
+          var game_class = "." + this.game_chart[i] + " ." + proper_games[i][game];
+          console.log(game_class);
+          console.log(d3.selectAll(game_class));
+          d3.selectAll(game_class)
+            .style("fill", "#74B46F")
+            .style("stroke", "#177410");
+        }
+        //draw the line fit of the value
+        var scale_x = this.x_scale(min, max);
+        console.log(scale_x(input[i]));
+        this.svg.append("line")
+          .attr("x1", scale_x(input[i]))
+          .attr("x2", scale_x(input[i]))
+          .attr("y1", 0)
+          .attr("y2", 600)
+          .attr("transform", "translate(" + trans[i] + ")")
+          .style("stroke", "#177410")
+          .style("stroke-width", "1.5px")
+          .style("stroke-dasharray", "2,2");
+      }
+      console.log(proper_games);
+    }
   }
-  // set x linear func for input weight
-  x_w(data) {
-    var thisvis = this;
-    var min_w = d3.min(this.athelete_data, function(d) {
-      return parseInt(d.Weight);
-    });
-    var max_w = d3.max(this.athelete_data, function(d) {
-      return parseInt(d.Weight);
-    });
-    var x = d3.scaleLinear()
-      .domain([min_w - 1, max_w + 1])
-      .range([0, (this.chart_w - margin - 5) / 3 - 10]);
-    //.range([(this.chart_w - margin) / 3, 2 * (this.chart_w - margin) / 3]);
-    return x(data);
-  }
-  // set x linear func for input age
-  x_a(data) {
-    var thisvis = this;
-    var min_a = d3.min(this.athelete_data, function(d) {
-      return parseInt(d.Age);
-    });
-    var max_a = d3.max(this.athelete_data, function(d) {
-      return parseInt(d.Age);
-    });
-    var x = d3.scaleLinear()
-      .domain([min_a, max_a])
-      .range([0, (this.chart_w - margin - 5) / 3 - 10]);
-    //.range([2 * (this.chart_w - margin) / 3, this.chart_w - margin]);
-    return x(data);
-  }
-
-
-
-  inputLine(age, height, weight, sex) {
-    //get the min and max of the height, weight, age for specific gender
-    //if the input is in the scope then draw the line
-    // line for input height
-    this.svg.append("line")
-      .attr("x1", this.x_h(height))
-      .attr("x2", this.x_h(height))
-      .attr("y1", 0)
-      .attr("y2", 600)
-      .attr("transform", "translate(" + (margin + 5) + ")")
-      .style("stroke", "gold")
-      .style("stroke-width", 2);
-    // .style("stroke-dasharray", "4,4");
-
-    //line for input weight
-    this.svg.append("line")
-      .attr("x1", this.x_w(weight))
-      .attr("x2", this.x_w(weight))
-      .attr("y1", 0)
-      .attr("y2", 620)
-      .attr("transform", "translate(" + (margin + 5 + (this.chart_w - margin - 5) / 3) + ")")
-      //d3.selectAll(".weightaxis").attr("transform", "translate(" + (margin + 15 + wid) + ",600)");
-      .style("stroke", "gold")
-      .style("stroke-width", 3)
-      .style("stroke-dasharray", "4,4");
-
-    //line for input age
-    this.svg.append("line")
-      .attr("x1", this.x_a(age))
-      .attr("x2", this.x_a(age))
-      .attr("y1", 0)
-      .attr("y2", 620)
-      .attr("transform", "translate(" + (margin + 30 + 2 * ((this.chart_w - margin - 32) / 3)) + ")")
-      // .attr("transform", "translate(" + (margin+5+2*(this.chart_w-margin-5)/3) + ")")
-      .style("stroke", "gold")
-      .style("stroke-width", 3)
-      .style("stroke-dasharray", "4,4");
-
-    console.log("line printed!")
-  }
-
-
 }
