@@ -120,6 +120,7 @@ class MedalVis_Location {
   //  $("#medal-detail").html("Click on a country to show details..");
     this.show_medals_changes();
     this.game_options();
+    this.color_circles();
     if (this.number == true)
       this.sort_circles();
   }
@@ -691,14 +692,20 @@ class MedalVis_Location {
 
   // Color the country circles
   color_circles(medal_data) {
+
+    var thisvis = this;
     var noc_color_count = {};
+    var medal_data_year = this.medal_data.filter(function(d) {
+      return d.Year == thisvis.year;
+    });
+
     // Reference to https://stackoverflow.com/questions/40774697/how-to-group-an-array-of-objects-by-key
-    var groupBy_NOC = this.medal_data.reduce(function(r, d) {
+    var groupBy_NOC = medal_data_year.reduce(function(r, d) {
       r[d.NOC] = r[d.NOC] || [];
       r[d.NOC].push(d);
       return r;
     }, Object.create(null));
-    //console.log(groupBy_NOC);
+    // console.log(groupBy_NOC);
 
     for (var i in groupBy_NOC) {
       noc_color_count[i] = [];
