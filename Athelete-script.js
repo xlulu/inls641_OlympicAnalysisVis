@@ -282,7 +282,7 @@ class AtheleteVis {
             });
       });
     }
-      
+
   }
 
   // Show boxplot in default mode (All sex)
@@ -306,7 +306,7 @@ class AtheleteVis {
     var y = d3.scalePoint()
       .domain(this.games_data)
       .range([5, 580]);
-    
+
 
     var y_axis = d3.axisLeft().scale(y);
 
@@ -503,9 +503,9 @@ class AtheleteVis {
         proper_games[i] = this.ath_info_data[i].filter(function(d) {
           return (d.quartile[0] <= input[i] && d.quartile[2] >= input[i]);
         }).map(function(d) {
-          return d.game;
+          return d.game.replace(/\s/g , "-");
         });
-        //console.log("games", proper_games[i]);
+        console.log("games", proper_games[i]);
         //map the game to the boxplot
         for (var game in proper_games[i]) {
           var game_class = "." + this.game_chart[i] + " ." + proper_games[i][game];
@@ -537,7 +537,7 @@ class AtheleteVis {
         return a.indexOf(v) !== -1;
     })) res.push(v);
     return res;}, []);
-    // console.log("final result", result);
+    console.log("final result", result);
     var result_info = "You can try: ";
     for(var i in result)
        result_info += result[i] + " ";
