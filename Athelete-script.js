@@ -252,35 +252,37 @@ class AtheleteVis {
     var margin = 100;
 
     d3.select(".a_a_axis")
-    .selectAll(".tick")
-    .append("rect")
-    .attr("width", this.chart_w)
-    .attr("height", 18)
-    .attr("id", function(d){return "rec-"+d.replace(/\s/g , "-");})
-    .attr("transform", "translate(" + -margin + ", -8)")
-    .call(y_axis)
-    .style("fill", "black")
-    .style("opacity", "0")
-    .on('mouseover', function(d){
-      d3.select(this).style("fill", "black").style("opacity", 0.2);
-    })
-    .on('mouseout', function(d){
-      d3.select(this).style("opacity", "0");
-    });
+      .selectAll(".tick")
+      .append("rect")
+      .attr("width", this.chart_w)
+      .attr("height", 18)
+      .attr("id", function(d) {
+        return "rec-" + d.replace(/\s/g, "-");
+      })
+      .attr("transform", "translate(" + -margin + ", -8)")
+      .call(y_axis)
+      .style("fill", "black")
+      .style("opacity", "0")
+      .on('mouseover', function(d) {
+        d3.select(this).style("fill", "black").style("opacity", 0.2);
+      })
+      .on('mouseout', function(d) {
+        d3.select(this).style("opacity", "0");
+      });
 
     // console.log(this.games_data);
-    for (var i in this.games_data){
-      let target = this.games_data[i].replace(/\s/g , "-");
+    for (var i in this.games_data) {
+      let target = this.games_data[i].replace(/\s/g, "-");
       d3.selectAll("." + target).each(
-        function(){
+        function() {
           d3.select(this)
-            .on('mouseover', function(d){
+            .on('mouseover', function(d) {
               d3.select("#rec-" + target).style("fill", "black").style("opacity", 0.2);
             })
-            .on('mouseout', function(d){
+            .on('mouseout', function(d) {
               d3.select("#rec-" + target).style("opacity", "0");
             });
-      });
+        });
     }
 
   }
@@ -368,7 +370,7 @@ class AtheleteVis {
       .attr("stroke-width", 1)
       .attr("fill", "none")
       .attr("class", function(datum) {
-        return (datum.game).replace(/\s/g , "-");
+        return (datum.game).replace(/\s/g, "-");
       });
 
     // Draw the boxes of the box plot, filled in white and on top of vertical lines
@@ -392,7 +394,7 @@ class AtheleteVis {
       .attr("stroke-width", 1)
       .attr("fill", this.color_chart[this.gender][1])
       .attr("class", function(datum) {
-        return (datum.game).replace(/\s/g , "-");
+        return (datum.game).replace(/\s/g, "-");
       });
 
     // Now render all the vertical lines at once - the whiskers and the median
@@ -462,7 +464,7 @@ class AtheleteVis {
         .attr("stroke-width", 1)
         .attr("fill", "none")
         .attr("class", function(datum) {
-          return (datum.game).replace(/\s/g , "-");
+          return (datum.game).replace(/\s/g, "-");
         });
     }
 
@@ -503,7 +505,7 @@ class AtheleteVis {
         proper_games[i] = this.ath_info_data[i].filter(function(d) {
           return (d.quartile[0] <= input[i] && d.quartile[2] >= input[i]);
         }).map(function(d) {
-          return d.game.replace(/\s/g , "-");
+          return d.game.replace(/\s/g, "-");
         });
         console.log("games", proper_games[i]);
         //map the game to the boxplot
@@ -512,8 +514,8 @@ class AtheleteVis {
           console.log(game_class);
           //console.log(d3.selectAll(game_class));
           d3.selectAll(game_class)
-            .style("fill", "#74B46F")
-            .style("stroke", "#177410");
+            .style("fill", "#54C58F")
+            .style("stroke", "#31A86F");
         }
         //draw the line fit of the value
         var scale_x = this.x_scale(min, max);
@@ -524,7 +526,7 @@ class AtheleteVis {
           .attr("y1", 0)
           .attr("y2", 600)
           .attr("transform", "translate(" + trans[i] + ")")
-          .style("stroke", "#177410")
+          .style("stroke", "#31A86F")
           .style("stroke-width", "1.5px")
           .style("stroke-dasharray", "2,2");
       }
@@ -534,13 +536,33 @@ class AtheleteVis {
     // Display the result based on user input
     var result = proper_games.shift().reduce(function(res, v) {
       if (res.indexOf(v) === -1 && proper_games.every(function(a) {
-        return a.indexOf(v) !== -1;
-    })) res.push(v);
-    return res;}, []);
+          return a.indexOf(v) !== -1;
+        })) res.push(v);
+      return res;
+    }, []);
     console.log("final result", result);
-    var result_info = "You can try: ";
-    for(var i in result)
-       result_info += result[i] + " ";
-    $("#result-info").text(result_info);
+    $("#result-info").children().remove();
+    //judge if the result is empty
+    //empty
+    var result_text = "";
+    var result_info = "";
+    if (result.length < 1) {
+      result_text = "Oops, study harder!";
+      $("#result-info").append("<p class = 'comment'>" + result_text + "</p>");
+    } else {
+      result_text = "It's not too late to start your Olympics career in:";
+      $("#result-info").append("<p class = 'comment'>" + result_text + "</p>");
+      // var result_info = "You can try: ";
+      result_info = "<table class='result-info' style='margin-left:auto; margin-right:auto;'>";
+      result_info += "<tr><td>";
+      for (var i in result) {
+        result_info += "<span class = 'games-span'>" + result[i].replace("-"," ") + "</span>";
+      }
+      console.log(result_info);
+      result_info += "</td></tr></table>";
+      $("#result-info").append(result_info);
+    }
+
+
   }
 }
