@@ -22,6 +22,7 @@ $(document).ready(() => {
       athelete_vis.show_athelete_default(0);
       athelete_vis.show_athelete_default(1);
       athelete_vis.show_athelete_default(2);
+      athelete_vis.prepare_hover();
     });
 
   //Listen the toggle button served for the chart
@@ -37,6 +38,7 @@ $(document).ready(() => {
     athelete_vis.show_athelete_default(0);
     athelete_vis.show_athelete_default(1);
     athelete_vis.show_athelete_default(2);
+    athelete_vis.prepare_hover();
   });
 
   //Female athelete
@@ -51,6 +53,7 @@ $(document).ready(() => {
     athelete_vis.show_athelete_default(0);
     athelete_vis.show_athelete_default(1);
     athelete_vis.show_athelete_default(2);
+    athelete_vis.prepare_hover();
 
   });
 
@@ -66,6 +69,7 @@ $(document).ready(() => {
     athelete_vis.show_athelete_default(0);
     athelete_vis.show_athelete_default(1);
     athelete_vis.show_athelete_default(2);
+    athelete_vis.prepare_hover();
   });
 
 
@@ -101,6 +105,7 @@ $(document).ready(() => {
     athelete_vis.show_athelete_default(1);
     athelete_vis.show_athelete_default(2);
     athelete_vis.inputLine(age, height, weight);
+    athelete_vis.prepare_hover();
   });
 
 });
@@ -148,6 +153,7 @@ class AtheleteVis {
       .style("margin-top", "10px");
 
   }
+
   // Return the quantile needed for the boxplot
   boxQuartiles(h) {
     return [
@@ -156,9 +162,11 @@ class AtheleteVis {
       d3.quantile(h, 0.75)
     ];
   }
+
   sortNumber(a, b) {
     return a - b;
   }
+
   //Define the X scale
   x_scale(min, max) {
     return d3.scaleLinear()
@@ -178,7 +186,6 @@ class AtheleteVis {
       });
     }
   }
-
 
   // Tackle the data set
   calculateData(g) {
@@ -224,7 +231,6 @@ class AtheleteVis {
     //console.log(this.ath_info_data);
   }
 
-
   get_min_max(i) {
     var min_value = d3.min(this.ath_info_data[i], function(d) {
       return d.whiskers[0];
@@ -233,6 +239,35 @@ class AtheleteVis {
       return d.whiskers[1];
     });
     return [min_value, max_value];
+  }
+
+  prepare_hover() {
+
+    // Define y scales
+    var y = d3.scalePoint()
+      .domain(this.games_data)
+      .range([5, 580]);
+
+    var y_axis = d3.axisLeft().scale(y);
+    var margin = 100;
+
+    d3.select(".a_a_axis")
+    .selectAll(".tick")
+    .append("rect")
+    .attr("width", this.chart_w)
+    .attr("height", 18)
+    .attr("id", function(d){return "rec-"+d;})
+    .attr("transform", "translate(" + -margin + ", -8)")
+    .call(y_axis)
+    .style("fill", "black")
+    .style("opacity", "0")
+    .on('mouseover', function(d){
+      d3.select(this).style("fill", "black").style("opacity", 0.2);
+    })
+    .on('mouseout', function(d){
+      d3.select(this).style("opacity", "0");
+    });
+
   }
 
   // Show boxplot in default mode (All sex)
@@ -256,11 +291,12 @@ class AtheleteVis {
     var y = d3.scalePoint()
       .domain(this.games_data)
       .range([5, 580]);
+    
 
     var y_axis = d3.axisLeft().scale(y);
 
     // Add axes.
-    //First the Y axis and label.
+    //First the X axis and label.
     this.svg.append("g")
       .attr("class", this.game_chart[info] + "axis")
       .attr("transform", "translate(" + (margin + 5) + ",600)")
@@ -342,7 +378,7 @@ class AtheleteVis {
       .attr("fill", this.color_chart[this.gender][1])
       .attr("class", function(datum) {
         return datum.game;
-      });;
+      });
 
     // Now render all the vertical lines at once - the whiskers and the median
     var verticalLineConfigs = [
@@ -441,7 +477,7 @@ class AtheleteVis {
       0: (this.margin + 5),
       1: (this.margin + 5 + (this.chart_w - this.margin - 5) / 3),
       2: (this.margin + 25 + 2 * ((this.chart_w - this.margin - 32) / 3))
-    }
+    };
 
     for (var i in input) {
       //console.log("input i", input[i]);
@@ -458,7 +494,7 @@ class AtheleteVis {
         //map the game to the boxplot
         for (var game in proper_games[i]) {
           var game_class = "." + this.game_chart[i] + " ." + proper_games[i][game];
-          //console.log(game_class);
+          console.log(game_class);
           //console.log(d3.selectAll(game_class));
           d3.selectAll(game_class)
             .style("fill", "#74B46F")
@@ -486,7 +522,7 @@ class AtheleteVis {
         return a.indexOf(v) !== -1;
     })) res.push(v);
     return res;}, []);
-    console.log("final result", result);
+    // console.log("final result", result);
     var result_info = "You can try: ";
     for(var i in result)
        result_info += result[i] + " ";
