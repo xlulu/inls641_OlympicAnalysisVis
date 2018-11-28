@@ -423,6 +423,27 @@ class AtheleteVis {
     d3.selectAll(".weighttext").attr("transform", "translate(" + textwid + ",0)");
     d3.selectAll(".weightaxis").attr("transform", "translate(" + (margin + 15 + wid) + ",600)");
 
+
+    // ********** need to modify *************//
+    //add horizontal rectangle following the mouse to highlight all boxplots to match the sport
+    //   $("#box-svg").append("rect")
+    //       .attr("class", "y-hover-rect")
+    //       .attr("x", 0)
+    //       .attr("y", -100)
+    //       .attr("height", barWidth * 1.5)
+    //       .attr("width", 620)
+    //       //.attr("transform", "translate(" + (margin + 5) + ")")
+    //       .on("mousemove", function(d) {
+    //           let mouse_coords = d3.mouse(this);
+    //           console.log(mouse_coords[1]);
+    //           svg.selectAll(".y-hover-rect")
+    //               .attr("y", mouse_coords[1]);
+    //       })
+    //       .on("mouseout", function(d) {
+    //           svg.selectAll(".y-hover-rect")
+    //               .attr("y", -100);
+    //       });
+      // ********** need to modify *************//
   }
 
   //take the input
