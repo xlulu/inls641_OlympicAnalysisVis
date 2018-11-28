@@ -256,7 +256,7 @@ class AtheleteVis {
     .append("rect")
     .attr("width", this.chart_w)
     .attr("height", 18)
-    .attr("id", function(d){return "rec-"+d;})
+    .attr("id", function(d){return "rec-"+d.replace(/\s/g , "-");})
     .attr("transform", "translate(" + -margin + ", -8)")
     .call(y_axis)
     .style("fill", "black")
@@ -267,6 +267,22 @@ class AtheleteVis {
     .on('mouseout', function(d){
       d3.select(this).style("opacity", "0");
     });
+
+    // console.log(this.games_data);
+    for (var i in this.games_data){
+      let target = this.games_data[i].replace(/\s/g , "-");
+      d3.selectAll("." + target).each(
+        function(){
+          d3.select(this)
+            .on('mouseover', function(d){
+              d3.select("#rec-" + target).style("fill", "black").style("opacity", 0.2);
+            })
+            .on('mouseout', function(d){
+              d3.select("#rec-" + target).style("opacity", "0");
+            });
+      });
+    }
+      
   }
 
   // Show boxplot in default mode (All sex)
@@ -352,7 +368,7 @@ class AtheleteVis {
       .attr("stroke-width", 1)
       .attr("fill", "none")
       .attr("class", function(datum) {
-        return datum.game;
+        return (datum.game).replace(/\s/g , "-");
       });
 
     // Draw the boxes of the box plot, filled in white and on top of vertical lines
@@ -376,35 +392,8 @@ class AtheleteVis {
       .attr("stroke-width", 1)
       .attr("fill", this.color_chart[this.gender][1])
       .attr("class", function(datum) {
-        return datum.game;
+        return (datum.game).replace(/\s/g , "-");
       });
-
-    //*************************************
-    //  feel free to delete
-    // why it didnt work? this part
-    // Draw the texts of the boxplot
-      var txt_show = box_g.selectAll("rect")
-          .data(this.ath_info_data[info])
-          .enter()
-          .append("text")
-          //attr("class", )
-          .attr("front-size", "15px")
-          .attr("x", function(datum) {
-              return x_h(datum.quartile[0]);
-          })
-          .attr("y", function(datum) {
-            console.log(y(datum.game));
-            return y(datum.game);
-          })
-          .text(function(d){return datum.quartile[0]});
-
-
-          // .style("font-size", "10px")
-          // .style("font-family", "'Yanone Kaffeesatz', sans-serif")
-          // .style("font-weight", "300")
-          // .style("font-size", "14px");
-          // .text(function(d){datum.quartile[0]});
-      //*************************************
 
     // Now render all the vertical lines at once - the whiskers and the median
     var verticalLineConfigs = [
@@ -473,7 +462,7 @@ class AtheleteVis {
         .attr("stroke-width", 1)
         .attr("fill", "none")
         .attr("class", function(datum) {
-          return datum.game;
+          return (datum.game).replace(/\s/g , "-");
         });
     }
 

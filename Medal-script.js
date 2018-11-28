@@ -717,9 +717,6 @@ class MedalVis_Location {
       }
     }
 
-    // console.log(noc_color_count);
-
-    var thisvis = this;
     this.svg.selectAll("circle")
       .data(this.country_data.features)
       .each( // add text again based on new size of bubbles
