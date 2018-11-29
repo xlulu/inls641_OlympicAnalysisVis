@@ -283,13 +283,13 @@ class AtheleteVis {
             .on('mouseover', function(d) {
               d3.selectAll("text." + target).attr("display", "block");
               d3.select("#rec-" + target).style("fill", "#E3E3E3").style("opacity", 0.7);
-              $("text").filter(function() { return $(this).text() === d;})
+              $("text").filter(function() { return $(this).text() === target;})
                     .css("fill", "goldenrod").css("font-weight", "bolder");
             })
             .on('mouseout', function(d) {
               d3.selectAll("text." + target).attr("display", "none");
               d3.select("#rec-" + target).style("opacity", "0");
-              $("text").filter(function() { return $(this).text() === d;})
+              $("text").filter(function() { return $(this).text() === target;})
                     .css("fill", "black").css("font-weight", "normal");
             });
         });
