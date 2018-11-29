@@ -114,7 +114,7 @@ class MedalVis_Location {
     $("#2016").css("fill", "white");
     this.year = new_year;
     var city = this.year_city[new_year];
-    $("#olympic-info").html("<b>" + new_year + "  </b><b>" + city + "</b>");
+    $("#olympic-info").html("<b>" + new_year +" "+ city + "</b>");
     $("#medal-detail b").text("Click on a country to show details..");
     $("#medal-info").remove();
   //  $("#medal-detail").html("Click on a country to show details..");
@@ -452,7 +452,7 @@ class MedalVis_Location {
       .attr("class", "countries")
       .attr("width", "100%")
       .attr("height", 450)
-      .style("margin-top", "20px")
+      .style("margin-top", "5px")
       .selectAll("path").data(this.country_data.features)
       .enter().append("path")
       .attr("d", path)
@@ -530,7 +530,7 @@ class MedalVis_Location {
                 return d.id;
               })
               .attr("font-size", "12px")
-              .style("fill", "#272727bd");
+              .style("fill", "#3f3f3f");
           }
         }
       }
@@ -595,7 +595,7 @@ class MedalVis_Location {
                   return d.id;
                 })
                 .attr("font-size", "12px")
-                .style("fill", "#272727bd");
+                .style("fill", "#3f3f3f");
             }
           }
         }
@@ -671,14 +671,17 @@ class MedalVis_Location {
 
       x_pos += current_r;
     }
-
   }
 
   game_options() {
-    this.data_filter();
-    var games = this.data_filter().map(function(d) {
+    
+    var thisvis = this;
+    var games = this.medal_data.filter(function(d) {
+      return d.Year == thisvis.year;
+    }).map(function(d) {
       return d.Sport;
     });
+
     games = Array.from(new Set(games)).sort().reverse();
 
     // add the sport list of the selected year into the game drop-down menu
@@ -728,7 +731,7 @@ class MedalVis_Location {
             let max_index = arr.indexOf(Math.max(...arr));
             elt.style("fill", rgb[colors[max_index]].color);
           }
-        });
+      });
   }
 
   // For each country, count the number of medals of each color.

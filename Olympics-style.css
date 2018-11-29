@@ -366,14 +366,10 @@ select {
 }
 
 #play-year {
-  border: 2px solid #000000;
-  font-size: 12px;
+  border: none;
   padding-top: 8px;
   padding-bottom: 8px;
-  font-family: 'Andale Mono';
-  letter-spacing: -1px;
   background-color: #FFFFFF;
-  color: #3F3F3F;
 }
 
 .detail-info {
@@ -439,4 +435,10 @@ select {
 .comment {
   margin-bottom: 3px;
   margin-top: 5px;
+}
+#olympic-info{
+  margin-top:10px;
+}
+#olympic-info b{
+  border-bottom: 2px dotted;
 }
