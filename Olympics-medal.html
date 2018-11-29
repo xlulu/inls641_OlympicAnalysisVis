@@ -12,11 +12,14 @@
   <script src="https://d3js.org/d3-queue.v3.min.js"></script>
   <script src="https://unpkg.com/simple-statistics@6.0.1/dist/simple-statistics.min.js"></script>
   <script src="https://ils.unc.edu/~gotz/courses/js/gotz-d3-tip.js"></script>
-  <link rel="stylesheet" type="text/css" href="https://ils.unc.edu/~gotz/courses/js/d3-tip.css"/>
-  <script
-        src="https://code.jquery.com/jquery-3.3.1.min.js"
-        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous"></script>
+  <link rel="stylesheet" type="text/css" href="https://ils.unc.edu/~gotz/courses/js/d3-tip.css" />
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+  <script>
+    FontAwesomeConfig = {
+      autoReplaceSvg: 'nest'
+    }
+  </script>
   <script src="Medal-script.js"></script>
 </head>
 
@@ -24,7 +27,7 @@
   <div class="wrap">
     <header>
       <!-- <h1>Olympics Game Data Visulaiation</h1> -->
-      <img id = "title-img" src="Title.png" alt="olympics-title">
+      <img id="title-img" src="Title.png" alt="olympics-title">
     </header>
     <nav>
       <ul class="navitems">
@@ -34,20 +37,23 @@
       </ul>
     </nav>
     <div class="description">
-      <p>The medal board is designed to let users observe the change and the distribution of amount of medals won by different countries in previous Olympic Games. The basic idea of this graph is to use the circle size to display the amount of medals.</p>
-      <p>Users can change the year of Olympic Games by dragging the cursor on the timeline bar or by clicking on the year label directly, the size of the circles will change correspondingly. Users could also change the view by choosing “Location” tab or “Numbers” tab and add filters to the graph in order to see the numbers of a specific category: a specific game(balls, swim, etc) or a specific kind of medals(gold, silver, bronze). Users could view the detailed information about the medals one country won in one Olympic Game and their strengths by hovering their mouses on the circle.</p>
+      <p>The medal board is designed to let users observe the change and the distribution of amount of medals won by different countries in previous Olympic Games. The basic idea of this graph is to use the circle size to display the amount of
+        medals.</p>
+      <p>Users can change the year of Olympic Games by dragging the cursor on the timeline bar or by clicking on the year label directly, the size of the circles will change correspondingly. Users could also change the view by choosing “Location”
+        tab or “Numbers” tab and add filters to the graph in order to see the numbers of a specific category: a specific game(balls, swim, etc) or a specific kind of medals(gold, silver, bronze). Users could view the detailed information about the
+        medals one country won in one Olympic Game and their strengths by hovering their mouses on the circle.</p>
     </div>
-    <div class="chart" id = "MedalBoard">
+    <div class="chart" id="MedalBoard">
       <h2>MedalBoard</h2>
       <!-- here to draw the time slot -->
-      <div class = "time-slot">
+      <div class="time-slot">
       </div>
       <!-- here to the drop-down menu -->
-      <div class = "drop-down medal-menu">
+      <div class="drop-down medal-menu">
 
-        <div class = "select-medal">
+        <div class="select-medal">
           <!-- 'medalFilter' is used to filter the data by specific medal  -->
-          <select id = "medal-options" onchange="medal_vis_location.setMedal(this.value);">
+          <select id="medal-options" onchange="medal_vis_location.setMedal(this.value);">
             <option value="All">All</option>
             <option value="Gold">Gold</option>
             <option value="Silver">Silver</option>
@@ -56,36 +62,37 @@
           <b>medals</b>
         </div>
 
-        <div class = "select-game">
+        <div class="select-game">
           <!-- 'gameFilter' is used to filter the data by specific game  -->
-          <select id = "game-options" onchange="medal_vis_location.setGame(this.value);">
-            <option value="All" id = "games-all">All</option>
+          <select id="game-options" onchange="medal_vis_location.setGame(this.value);">
+            <option value="All" id="games-all">All</option>
           </select>
           <b>games</b>
         </div>
-          <button id = "play-year" onclick = "medal_vis_location.play()">Play</button>
+        <button id="play-year" onclick="medal_vis_location.play()">
+          <i class="fas fa-play-circle fa-lg"></i>
+        </button>
       </div>
-      <div id = "olympic-info">
-         <b>2016</b>
-         <b>Rio de Janeiro</b>
+      <div id="olympic-info">
+        <b>2016 Rio de Janeiro</b>
       </div>
 
-      <div class = "medal-artboard">
+      <div class="medal-artboard">
         <!-- here to draw the chart -->
-        <div id = "medal-chart"></div>
-        <div id = "medal-toggle">
-           <b>Sort by</b>
-           <button class = "tog-location down">Location</button>
-           <button class = "tog-number">Number</button>
+        <div id="medal-chart"></div>
+        <div id="medal-toggle">
+          <b>Sort by</b>
+          <button class="tog-location down">Location</button>
+          <button class="tog-number">Number</button>
         </div>
       </div>
 
-      <div class = "detail-info">
+      <div class="detail-info">
         <!-- here to show details -->
-        <div id = "medal-detail">
+        <div id="medal-detail">
           <b>Click on a country to show details..</b>
         </div>
-        <div id = "color-detail"><b>color infos</b></div>
+        <div id="color-detail"><b>color infos</b></div>
       </div>
 
     </div>

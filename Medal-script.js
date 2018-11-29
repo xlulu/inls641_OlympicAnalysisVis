@@ -114,7 +114,7 @@ class MedalVis_Location {
     $("#2016").css("fill", "white");
     this.year = new_year;
     var city = this.year_city[new_year];
-    $("#olympic-info").html("<b>" + new_year + "  </b><b>" + city + "</b>");
+    $("#olympic-info").html("<b>" + new_year +" "+ city + "</b>");
     $("#medal-detail b").text("Click on a country to show details..");
     $("#medal-info").remove();
   //  $("#medal-detail").html("Click on a country to show details..");
@@ -452,7 +452,7 @@ class MedalVis_Location {
       .attr("class", "countries")
       .attr("width", "100%")
       .attr("height", 450)
-      .style("margin-top", "20px")
+      .style("margin-top", "5px")
       .selectAll("path").data(this.country_data.features)
       .enter().append("path")
       .attr("d", path)
@@ -530,7 +530,7 @@ class MedalVis_Location {
                 return d.id;
               })
               .attr("font-size", "12px")
-              .style("fill", "#272727bd");
+              .style("fill", "#3f3f3f");
           }
         }
       }
@@ -595,7 +595,7 @@ class MedalVis_Location {
                   return d.id;
                 })
                 .attr("font-size", "12px")
-                .style("fill", "#272727bd");
+                .style("fill", "#3f3f3f");
             }
           }
         }
