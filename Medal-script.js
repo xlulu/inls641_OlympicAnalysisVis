@@ -527,7 +527,7 @@ class MedalVis_Location {
       function(d) {
         var elt = d3.select(this);
         if (elt.attr("id") != null && elt.attr("id").startsWith("g-")) {
-          if (d3.select("#c-"+ elt.attr("id").substr(2,4)).attr("r") > 8) {
+          if (d3.select("#c-"+ elt.attr("id").substr(2,4)).attr("r") > 7) {
             elt.append('text')
               .attr("dx", -12)
               .attr("dy", 3)
@@ -595,7 +595,7 @@ class MedalVis_Location {
         function(d) {
           var elt = d3.select(this);
           if (elt.attr("id") != null && elt.attr("id").startsWith("g-")) {
-            if (d3.select("#c-"+ elt.attr("id").substr(2,4)).attr("r") > 8) {
+            if (d3.select("#c-"+ elt.attr("id").substr(2,4)).attr("r") > 7) {
               elt.append('text')
                 .attr("dx", -12)
                 .attr("dy", 3)
