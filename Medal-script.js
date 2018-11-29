@@ -77,6 +77,10 @@ class MedalVis_Location {
     this.radius = d3.scaleLinear()
       .domain([0, 230])
       .range([0, 120]);
+    
+    this.game_radius = d3.scaleLinear()
+      .domain([0, 40])
+      .range([0, 100]);
 
     this.div_height = $("#color-detail").height();
     // console.log( this.div_height );
@@ -579,7 +583,10 @@ class MedalVis_Location {
     this.svg.selectAll("circle")
       .data(this.country_data.features)
       .attr("r", function(d) {
-        return thisvis.radius(d.medal_count);
+        if(thisvis.game == "All")
+          return thisvis.radius(d.medal_count);
+        else
+          return thisvis.game_radius(d.medal_count);
       });
 
     this.svg.selectAll(".ctr_g")
