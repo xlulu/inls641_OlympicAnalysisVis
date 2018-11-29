@@ -77,7 +77,7 @@ class MedalVis_Location {
     this.radius = d3.scaleLinear()
       .domain([0, 230])
       .range([0, 120]);
-    
+
     this.game_radius = d3.scaleLinear()
       .domain([0, 40])
       .range([0, 100]);
@@ -685,7 +685,7 @@ class MedalVis_Location {
     var thisvis = this;
 
     console.log(this.game);
-    
+
     var games = this.medal_data.filter(function(d) {
       return d.Year == thisvis.year;
     }).map(function(d) {
