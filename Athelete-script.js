@@ -265,11 +265,13 @@ class AtheleteVis {
         .style("opacity", "0")
         .on('mouseover', function(d) {
           d3.select(this).style("fill", "#E3E3E3").style("opacity", 0.7);
-          $("text:contains('"+ d + "')").css("fill", "goldenrod").css("font-weight", "bolder");
+          $("text").filter(function() { return $(this).text() === d;})
+                    .css("fill", "goldenrod").css("font-weight", "bolder");
         })
         .on('mouseout', function(d) {
           d3.select(this).style("opacity", "0");
-          $("text:contains('"+ d + "')").css("fill", "black").css("font-weight", "normal");
+          $("text").filter(function() { return $(this).text() === d;})
+                    .css("fill", "black").css("font-weight", "normal");
         });
 
     // console.log(this.games_data);
@@ -281,12 +283,14 @@ class AtheleteVis {
             .on('mouseover', function(d) {
               d3.selectAll("text." + target).attr("display", "block");
               d3.select("#rec-" + target).style("fill", "#E3E3E3").style("opacity", 0.7);
-              $("text:contains('"+ target + "')").css("fill", "goldenrod").css("font-weight", "bolder");
+              $("text").filter(function() { return $(this).text() === d;})
+                    .css("fill", "goldenrod").css("font-weight", "bolder");
             })
             .on('mouseout', function(d) {
               d3.selectAll("text." + target).attr("display", "none");
               d3.select("#rec-" + target).style("opacity", "0");
-              $("text:contains('"+ target + "')").css("fill", "black").css("font-weight", "normal");
+              $("text").filter(function() { return $(this).text() === d;})
+                    .css("fill", "black").css("font-weight", "normal");
             });
         });
     }
