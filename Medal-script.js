@@ -77,9 +77,13 @@ class MedalVis_Location {
     this.radius = d3.scaleLinear()
       .domain([0, 230])
       .range([0, 120]);
+    
+    this.game_radius = d3.scaleLinear()
+      .domain([0, 40])
+      .range([0, 100]);
 
     this.div_height = $("#color-detail").height();
-    console.log( this.div_height );
+    // console.log( this.div_height );
 
     // Get a reference to the SVG element.
     this.svg = d3.select("#medal-chart")
@@ -120,6 +124,7 @@ class MedalVis_Location {
   //  $("#medal-detail").html("Click on a country to show details..");
     this.show_medals_changes();
     this.game_options();
+    $("#game-options").val(this.game);
     this.color_circles();
     if (this.number == true)
       this.sort_circles();
@@ -498,7 +503,7 @@ class MedalVis_Location {
         $("#medal-detail b").text(country);
         $("#medal-info").remove();
         $("#medal-detail").append(medal);
-        console.log(thisvis.div_height);
+        // console.log(thisvis.div_height);
         $("#medal-info").attr("height",thisvis.div_height-15);
 
         // $("#medal-detail").append(thisvis.find_ctry_data(d.id, d.properties.name));
@@ -522,7 +527,7 @@ class MedalVis_Location {
       function(d) {
         var elt = d3.select(this);
         if (elt.attr("id") != null && elt.attr("id").startsWith("g-")) {
-          if (d.medal_count > 15) {
+          if (d3.select("#c-"+ elt.attr("id").substr(2,4)).attr("r") > 7) {
             elt.append('text')
               .attr("dx", -12)
               .attr("dy", 3)
@@ -578,7 +583,10 @@ class MedalVis_Location {
     this.svg.selectAll("circle")
       .data(this.country_data.features)
       .attr("r", function(d) {
-        return thisvis.radius(d.medal_count);
+        if(thisvis.game == "All")
+          return thisvis.radius(d.medal_count);
+        else
+          return thisvis.game_radius(d.medal_count);
       });
 
     this.svg.selectAll(".ctr_g")
@@ -587,7 +595,7 @@ class MedalVis_Location {
         function(d) {
           var elt = d3.select(this);
           if (elt.attr("id") != null && elt.attr("id").startsWith("g-")) {
-            if (d.medal_count > 15) {
+            if (d3.select("#c-"+ elt.attr("id").substr(2,4)).attr("r") > 7) {
               elt.append('text')
                 .attr("dx", -12)
                 .attr("dy", 3)
@@ -646,7 +654,7 @@ class MedalVis_Location {
     // compute the position of circles after movement.
     let x_pos = 0;
     let y_start = [];
-    y_start.push(2 * Number(this.svg.select("#" + sorted_ctry[0]).attr("r")) + 15);
+    y_start.push(2 * Number(this.svg.select("#" + sorted_ctry[0]).attr("r")) + 115);
 
     // The row will display current circle.
     let row = 1;
@@ -671,14 +679,19 @@ class MedalVis_Location {
 
       x_pos += current_r;
     }
-
   }
 
   game_options() {
-    this.data_filter();
-    var games = this.data_filter().map(function(d) {
+    var thisvis = this;
+
+    console.log(this.game);
+    
+    var games = this.medal_data.filter(function(d) {
+      return d.Year == thisvis.year;
+    }).map(function(d) {
       return d.Sport;
     });
+
     games = Array.from(new Set(games)).sort().reverse();
 
     // add the sport list of the selected year into the game drop-down menu
@@ -728,7 +741,7 @@ class MedalVis_Location {
             let max_index = arr.indexOf(Math.max(...arr));
             elt.style("fill", rgb[colors[max_index]].color);
           }
-        });
+      });
   }
 
   // For each country, count the number of medals of each color.
