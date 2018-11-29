@@ -120,6 +120,7 @@ class MedalVis_Location {
   //  $("#medal-detail").html("Click on a country to show details..");
     this.show_medals_changes();
     this.game_options();
+    $("#game-options").val(this.game);
     this.color_circles();
     if (this.number == true)
       this.sort_circles();
@@ -674,8 +675,10 @@ class MedalVis_Location {
   }
 
   game_options() {
-    
     var thisvis = this;
+
+    console.log(this.game);
+    
     var games = this.medal_data.filter(function(d) {
       return d.Year == thisvis.year;
     }).map(function(d) {
