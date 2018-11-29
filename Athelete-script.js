@@ -293,7 +293,6 @@ class AtheleteVis {
 
   // Show boxplot in default mode (All sex)
   show_athelete_default(info) {
-    //console.log("in!");
     // //remove the previous one
     // this.svg.selectAll("g").remove();
     var thisvis = this;
@@ -537,11 +536,11 @@ class AtheleteVis {
         }).map(function(d) {
           return d.game.replace(/\s/g, "-");
         });
-        console.log("games", proper_games[i]);
+        // console.log("games", proper_games[i]);
         //map the game to the boxplot
         for (var game in proper_games[i]) {
           var game_class = "." + this.game_chart[i] + " ." + proper_games[i][game];
-          console.log(game_class);
+          // console.log(game_class);
           //console.log(d3.selectAll(game_class));
           d3.selectAll(game_class)
             .style("fill", "#54C58F")
@@ -571,7 +570,7 @@ class AtheleteVis {
         })) res.push(v);
       return res;
     }, []);
-    console.log("final result", result);
+    // console.log("final result", result);
     $("#result-info").children().remove();
     //judge if the result is empty
     //empty
@@ -589,7 +588,7 @@ class AtheleteVis {
       for (var i in result) {
         result_info += "<span class = 'games-span'>" + result[i].replace("-", " ") + "</span>";
       }
-      console.log(result_info);
+      // console.log(result_info);
       result_info += "</td></tr></table>";
       $("#result-info").append(result_info);
     }

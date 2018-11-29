@@ -79,7 +79,7 @@ class MedalVis_Location {
       .range([0, 120]);
 
     this.div_height = $("#color-detail").height();
-    console.log( this.div_height );
+    // console.log( this.div_height );
 
     // Get a reference to the SVG element.
     this.svg = d3.select("#medal-chart")
@@ -498,7 +498,7 @@ class MedalVis_Location {
         $("#medal-detail b").text(country);
         $("#medal-info").remove();
         $("#medal-detail").append(medal);
-        console.log(thisvis.div_height);
+        // console.log(thisvis.div_height);
         $("#medal-info").attr("height",thisvis.div_height-15);
 
         // $("#medal-detail").append(thisvis.find_ctry_data(d.id, d.properties.name));
@@ -646,7 +646,7 @@ class MedalVis_Location {
     // compute the position of circles after movement.
     let x_pos = 0;
     let y_start = [];
-    y_start.push(2 * Number(this.svg.select("#" + sorted_ctry[0]).attr("r")) + 15);
+    y_start.push(2 * Number(this.svg.select("#" + sorted_ctry[0]).attr("r")) + 115);
 
     // The row will display current circle.
     let row = 1;
