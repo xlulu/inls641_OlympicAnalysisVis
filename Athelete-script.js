@@ -541,13 +541,11 @@ class AtheleteVis {
     };
     var result_text = "";
     var result_info = "";
-    var space_input = false;
+    var out_input = false;
     for (var i in input) {
       //console.log("input i", input[i]);
       var [min, max] = this.get_min_max(i);
-      if (input[i] == 0) {
-        space_input = true;
-      } else if (input[i] <= max && input[i] >= min) {
+      if (input[i] <= max && input[i] >= min) {
         //input in range
         proper_games[i] = this.ath_info_data[i].filter(function(d) {
           return (d.quartile[0] <= input[i] && d.quartile[2] >= input[i]);
@@ -575,6 +573,8 @@ class AtheleteVis {
           .style("stroke", "#31A86F")
           .style("stroke-width", "1.5px")
           .style("stroke-dasharray", "2,2");
+      }else if (input[i] != 0) {
+        out_input = true;
       }
     }
     console.log("games", proper_games);
@@ -591,21 +591,28 @@ class AtheleteVis {
     console.log("final result", result);
     console.log("length",proper_games);
     console.log("length",proper_games.length);
-    if (result.length < 1 || !space_input) {
+    console.log("space")
+    if (result.length < 1) {
       result_text = "Oops, study harder!";
       $("#result-info").append("<p class = 'comment'>" + result_text + "</p>");
-    } else {
-      result_text = "It's not too late to start your Olympics career in:";
-      $("#result-info").append("<p class = 'comment'>" + result_text + "</p>");
-      // var result_info = "You can try: ";
-      result_info = "<table class='result-info' style='margin-left:auto; margin-right:auto;'>";
-      result_info += "<tr><td>";
-      for (var i in result) {
-        result_info += "<span class = 'games-span'>" + result[i].replace("-", " ") + "</span>";
+    } else{
+      if(out_input == false || proper_games.length >1){
+        result_text = "It's not too late to start your Olympics career in:";
+        $("#result-info").append("<p class = 'comment'>" + result_text + "</p>");
+        // var result_info = "You can try: ";
+        result_info = "<table class='result-info' style='margin-left:auto; margin-right:auto;'>";
+        result_info += "<tr><td>";
+        for (var i in result) {
+          result_info += "<span class = 'games-span'>" + result[i].replace("-", " ") + "</span>";
+        }
+        // console.log(result_info);
+        result_info += "</td></tr></table>";
+        $("#result-info").append(result_info);
+      }else{
+        result_text = "Oops, study harder!";
+        $("#result-info").append("<p class = 'comment'>" + result_text + "</p>");
       }
-      // console.log(result_info);
-      result_info += "</td></tr></table>";
-      $("#result-info").append(result_info);
+
     }
 
 
