@@ -99,6 +99,7 @@ $(document).ready(() => {
     // console.log("height: " + height);
     // console.log("weight: " + weight);
     // console.log("sex: " + sex);
+    $("#result-info").children().remove();
     // call function to write the filter and give result
     athelete_vis.calculateData(sex);
     athelete_vis.show_athelete_default(0);
@@ -254,25 +255,29 @@ class AtheleteVis {
     d3.select(".a_a_axis")
       .selectAll(".tick")
       .append("rect")
-        .attr("width", this.chart_w)
-        .attr("height", 18)
-        .attr("id", function(d) {
-          return "rec-" + d.replace(/\s/g, "-");
-        })
-        .attr("transform", "translate(" + -margin + ", -8)")
-        .call(y_axis)
-        .style("fill", "#E3E3E3")
-        .style("opacity", "0")
-        .on('mouseover', function(d) {
-          d3.select(this).style("fill", "#E3E3E3").style("opacity", 0.7);
-          $("text").filter(function() { return $(this).text() === d;})
-                    .css("fill", "goldenrod").css("font-weight", "bolder");
-        })
-        .on('mouseout', function(d) {
-          d3.select(this).style("opacity", "0");
-          $("text").filter(function() { return $(this).text() === d;})
-                    .css("fill", "black").css("font-weight", "normal");
-        });
+      .attr("width", this.chart_w)
+      .attr("height", 18)
+      .attr("id", function(d) {
+        return "rec-" + d.replace(/\s/g, "-");
+      })
+      .attr("transform", "translate(" + -margin + ", -8)")
+      .call(y_axis)
+      .style("fill", "#E3E3E3")
+      .style("opacity", "0")
+      .on('mouseover', function(d) {
+        d3.select(this).style("fill", "#E3E3E3").style("opacity", 0.7);
+        $("text").filter(function() {
+            return $(this).text() === d;
+          })
+          .css("fill", "goldenrod").css("font-weight", "bolder");
+      })
+      .on('mouseout', function(d) {
+        d3.select(this).style("opacity", "0");
+        $("text").filter(function() {
+            return $(this).text() === d;
+          })
+          .css("fill", "black").css("font-weight", "normal");
+      });
 
     // console.log(this.games_data);
     for (var i in this.games_data) {
@@ -283,14 +288,18 @@ class AtheleteVis {
             .on('mouseover', function(d) {
               d3.selectAll("text." + target).attr("display", "block");
               d3.select("#rec-" + target).style("fill", "#E3E3E3").style("opacity", 0.7);
-              $("text").filter(function() { return $(this).text() === target;})
-                    .css("fill", "goldenrod").css("font-weight", "bolder");
+              $("text").filter(function() {
+                  return $(this).text() === target;
+                })
+                .css("fill", "goldenrod").css("font-weight", "bolder");
             })
             .on('mouseout', function(d) {
               d3.selectAll("text." + target).attr("display", "none");
               d3.select("#rec-" + target).style("opacity", "0");
-              $("text").filter(function() { return $(this).text() === target;})
-                    .css("fill", "black").css("font-weight", "normal");
+              $("text").filter(function() {
+                  return $(this).text() === target;
+                })
+                .css("fill", "black").css("font-weight", "normal");
             });
         });
     }
@@ -496,7 +505,7 @@ class AtheleteVis {
         .text(lineConfig.t1)
         .attr("font-size", "9px")
         .attr("color", "#000000")
-        .attr("display","none")
+        .attr("display", "none")
         .attr("class", function(datum) {
           return (datum.game).replace(/\s/g, "-");
         });
@@ -530,19 +539,21 @@ class AtheleteVis {
       1: (this.margin + 5 + (this.chart_w - this.margin - 5) / 3),
       2: (this.margin + 25 + 2 * ((this.chart_w - this.margin - 32) / 3))
     };
-
+    var result_text = "";
+    var result_info = "";
+    var space_input = false;
     for (var i in input) {
       //console.log("input i", input[i]);
       var [min, max] = this.get_min_max(i);
-      //console.log("min max", min, max);
-      if (input[i] <= max && input[i] >= min) {
+      if (input[i] == 0) {
+        space_input = true;
+      } else if (input[i] <= max && input[i] >= min) {
         //input in range
         proper_games[i] = this.ath_info_data[i].filter(function(d) {
           return (d.quartile[0] <= input[i] && d.quartile[2] >= input[i]);
         }).map(function(d) {
           return d.game.replace(/\s/g, "-");
         });
-        // console.log("games", proper_games[i]);
         //map the game to the boxplot
         for (var game in proper_games[i]) {
           var game_class = "." + this.game_chart[i] + " ." + proper_games[i][game];
@@ -565,8 +576,9 @@ class AtheleteVis {
           .style("stroke-width", "1.5px")
           .style("stroke-dasharray", "2,2");
       }
-
     }
+    console.log("games", proper_games);
+    console.log(proper_games.length);
 
     // Display the result based on user input
 
@@ -576,13 +588,10 @@ class AtheleteVis {
         })) res.push(v);
       return res;
     }, []);
-    // console.log("final result", result);
-    $("#result-info").children().remove();
-    //judge if the result is empty
-    //empty
-    var result_text = "";
-    var result_info = "";
-    if (result.length < 1) {
+    console.log("final result", result);
+    console.log("length",proper_games);
+    console.log("length",proper_games.length);
+    if (result.length < 1 || !space_input) {
       result_text = "Oops, study harder!";
       $("#result-info").append("<p class = 'comment'>" + result_text + "</p>");
     } else {
